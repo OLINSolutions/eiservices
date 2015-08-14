@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="ToteLinkUpdate" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tmp="http://tempuri.org/" xmlns:tns="http://tempuri.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+			<xsd:import namespace="http://tempuri.org/" schemaLocation="StatusNotification.xsd"/>
+				<xsd:import namespace="http://tempuri.org/" schemaLocation="UpdateNotification.xsd"/>
+		</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="UpdateNotificationRequest">
+    <wsdl:part name="parameters" element="tmp:UpdateNotification">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="StatusNotificationRequest">
+    <wsdl:part name="parameters" element="tmp:StatusNotification">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ToteLinkUpdate">
+    <wsdl:operation name="StatusNotification">
+      <wsdl:input message="tmp:StatusNotificationRequest">
+    </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateNotification">
+      <wsdl:input message="tmp:UpdateNotificationRequest">
+    </wsdl:input>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ToteLinkUpdateSOAP" type="tmp:ToteLinkUpdate">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="StatusNotification">
+      <soap:operation soapAction="http://tempuri.org/IUpdateService/StatusNotification" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateNotification">
+      <soap:operation soapAction="http://tempuri.org/IUpdateService/UpdateNotification" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ToteLinkUpdateService">
+    <wsdl:port name="ToteLinkUpdateSOAP" binding="tmp:ToteLinkUpdateSOAP">
+      <soap:address location="http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

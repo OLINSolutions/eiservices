@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration>
+  <Appenders>
+    <Console name="STDOUT" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d %-5p [%t] %C{2} - %m - %X%n"/>
+    </Console>
+    <RollingFile name="RollingFileLogger" fileName="/tmp/UtoteServices/UtoteServices.log"
+                 filePattern="/tmp/UtoteServices/$${date:yyyy-MM}/UtoteServices-%d{yyyy-MM-dd-HH}-%i.log.gz">
+      <PatternLayout>
+        <Pattern>%d %t %-5p %c{2} - %m - %X%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="12" modulate="true"/>
+        <SizeBasedTriggeringPolicy size="250 MB"/>
+      </Policies>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Logger name="com.ei.eiservices.utote.ReqRespDumpFilter" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.client.processor.ConfigurationRequestProcessor" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.client.processor.ProgramRequestProcessor" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.client.processor.ResultRequestProcessor" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.client.processor.StatusRequestProcessor" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.client.programservice.ProgramServiceStub" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.service.totelinkupdate" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.service.totelinkupdate.ToteLinkUpdateServiceStub" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.service.handler.ToteLinkUpdateServiceHandler" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.service.handler.ToteLinkInitializationServiceHandler" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.jpa" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.model" level="DEBUG"/>
+    <Root level="DEBUG">
+      <AppenderRef ref="STDOUT" level="INFO"/>
+      <AppenderRef ref="RollingFileLogger" level="DEBUG"/>
+    </Root>
+  </Loggers>
+</Configuration>
+    <!--
+    <Logger name="com.unitedtote.schema.totelink._2008._06.pubsub.StatusChangeE" level="DEBUG"/>
+    <Logger name="com.unitedtote.schema.totelink._2008._06.pubsub.StatusChange" level="DEBUG"/>
+    <Logger name="com.unitedtote.schema.totelink._2008._06.pubsub.UpdatesE" level="DEBUG"/>
+    <Logger name="com.unitedtote.schema.totelink._2008._06.pubsub.Updates" level="DEBUG"/>
+    <Logger name="org.tempuri.UpdateNotificationE" level="DEBUG"/>
+    <Logger name="org.tempuri.UpdateNotification" level="DEBUG"/>
+    <Logger name="org.tempuri.StatusNotificationE" level="DEBUG"/>
+    <Logger name="org.tempuri.StatusNotification" level="DEBUG"/>
+    <Logger name="org.tempuri.imports.ExtensionMapper" level="DEBUG"/>
+    -->

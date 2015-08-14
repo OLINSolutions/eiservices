@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ToteLinkUpdate" targetNamespace="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+	<xs:complexType name="Updates">
+		<xs:sequence>
+			<xs:element minOccurs="1" name="SiteId" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="1" name="RunId" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="1" name="MessageTime" nillable="true" type="xs:dateTime"/>
+			<xs:element minOccurs="1" name="TransactionTime" nillable="true" type="xs:dateTime"/>
+			<xs:element minOccurs="1" name="Type" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="Data" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="Section" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="Group" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="Track" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="Post" nillable="true" type="xs:boolean"/>
+			<xs:element minOccurs="0" name="EventId" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="RaceId" nillable="true" type="xs:int"/>
+			<xs:element minOccurs="0" name="Source" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="SourceIds" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="TrackCode" nillable="true" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Updates" nillable="true" type="tns:Updates"/>
+	<xs:complexType name="StatusChange">
+		<xs:sequence>
+			<xs:element minOccurs="1" name="SiteId" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="1" name="RunId" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="1" name="MessageTime" nillable="true" type="xs:dateTime"/>
+			<xs:element minOccurs="1" name="TransactionTime" nillable="true" type="xs:dateTime"/>
+			<xs:element minOccurs="1" name="Action" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="EventId" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="RaceId" nillable="true" type="xs:int"/>
+			<xs:element minOccurs="0" name="Source" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="Status" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="MTP" nillable="true" type="xs:long"/>
+			<xs:element minOccurs="0" name="SourceIds" nillable="true" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="StatusChange" nillable="true" type="tns:StatusChange"/>
+	</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="StatusNotificationRequest">
+    <wsdl:part element="tns:StatusChange" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="UpdateNotificationRequest">
+  	<wsdl:part element="tns:Updates" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="ToteLinkUpdate">
+    <wsdl:operation name="StatusNotification">
+      <wsdl:input message="tns:StatusNotificationRequest"/>
+        </wsdl:operation>
+    <wsdl:operation name="UpdateNotification">
+    	<wsdl:input message="tns:UpdateNotificationRequest"/>
+        </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ToteLinkUpdateSOAP" type="tns:ToteLinkUpdate">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="StatusNotification">
+      <soap:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/PubSub/StatusNotification" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateNotification">
+      <soap:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/PubSub/UpdateNotification" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ToteLinkUpdateService">
+    <wsdl:port binding="tns:ToteLinkUpdateSOAP" name="ToteLinkUpdateSOAP">
+      <soap:address location="http://esb1.rtwbeta.com"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

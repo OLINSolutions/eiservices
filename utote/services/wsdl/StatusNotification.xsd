@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:tns="http://tempuri.org/"
+	xmlns:tsc="http://schema.unitedtote.com/ToteLink/2008/06/PubSub"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	targetNamespace="http://tempuri.org/">
+	<xs:import schemaLocation="StatusChange.xsd"
+		namespace="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" />
+	<xs:complexType name="StatusNotification">
+		<xs:sequence>
+			<xs:element name="StatusChange" nillable="false"
+				type="tsc:StatusChange" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="StatusNotification" nillable="true" 
+		type="tns:StatusNotification"/>
+</xs:schema>

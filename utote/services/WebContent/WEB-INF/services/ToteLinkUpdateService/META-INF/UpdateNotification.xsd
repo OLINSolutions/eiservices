@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://tempuri.org/" xmlns:tu="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+    <xs:import namespace="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" schemaLocation="Updates.xsd"/>
+    <xs:complexType name="UpdateNotification">
+        <xs:sequence>
+            <xs:element name="Updates" type="tu:Updates"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="UpdateNotification" nillable="true" type="tns:UpdateNotification"/>
+</xs:schema>

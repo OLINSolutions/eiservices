@@ -1,0 +1,26 @@
+/*
+ * XML Type:  RaceStatus
+ * Namespace: http://schema.unitedtote.com/ToteLink/2008/06/Program
+ * Java type: com.unitedtote.schema.totelink._2008._06.program.RaceStatus
+ *
+ * Automatically generated - do not modify.
+ */
+package com.unitedtote.schema.totelink._2008._06.program.impl;
+/**
+ * An XML RaceStatus(@http://schema.unitedtote.com/ToteLink/2008/06/Program).
+ *
+ * This is an atomic type that is a restriction of com.unitedtote.schema.totelink._2008._06.program.RaceStatus.
+ */
+public class RaceStatusImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements com.unitedtote.schema.totelink._2008._06.program.RaceStatus
+{
+    
+    public RaceStatusImpl(org.apache.xmlbeans.SchemaType sType)
+    {
+        super(sType, false);
+    }
+    
+    protected RaceStatusImpl(org.apache.xmlbeans.SchemaType sType, boolean b)
+    {
+        super(sType, b);
+    }
+}

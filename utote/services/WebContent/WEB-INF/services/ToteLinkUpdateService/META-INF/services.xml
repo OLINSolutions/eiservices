@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- This file was auto-generated from WSDL --><!-- by the Apache Axis2 version: 1.6.3  Built on : Jun 27, 2015 (11:17:49 BST) --><serviceGroup>
+    <service name="ToteLinkUpdateService">
+        <messageReceivers>
+            <messageReceiver mep="http://www.w3.org/ns/wsdl/in-only" class="com.ei.eiservices.utote.service.totelinkupdate.ToteLinkUpdateServiceMessageReceiverInOnly"/>
+        </messageReceivers>
+        <parameter name="ServiceClass">com.ei.eiservices.utote.service.handler.ToteLinkUpdateServiceHandler</parameter>
+        <parameter name="useOriginalwsdl">true</parameter>
+        <parameter name="modifyUserWSDLPortAddress">true</parameter>
+        <operation name="UpdateNotification" mep="http://www.w3.org/ns/wsdl/in-only" namespace="http://tempuri.org/">
+            <actionMapping>http://tempuri.org/IUpdateService/UpdateNotification</actionMapping>
+        </operation>
+        <operation name="StatusNotification" mep="http://www.w3.org/ns/wsdl/in-only" namespace="http://tempuri.org/">
+            <actionMapping>http://tempuri.org/IUpdateService/StatusNotification</actionMapping>
+        </operation>
+    </service>
+</serviceGroup>
