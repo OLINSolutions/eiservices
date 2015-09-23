@@ -19,6 +19,7 @@ import javax.persistence.*;
 	@NamedStoredProcedureQuery( name="Race.updatePostTime", procedureName="`Race.UpdatePostTime`", 
 	parameters={ @StoredProcedureParameter(mode=ParameterMode.IN, name="pRacesId", type=Integer.class), 
 		         @StoredProcedureParameter(mode=ParameterMode.IN, name="pTzOffset", type=String.class),
+		         @StoredProcedureParameter(mode=ParameterMode.IN, name="pTzName", type=String.class),
 			     @StoredProcedureParameter(mode=ParameterMode.IN, name="pNewPostTime", type=String.class)
 	})
 })

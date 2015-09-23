@@ -17,6 +17,11 @@
 		<class>com.ei.eiservices.utote.model.Horse</class>
 		<class>com.ei.eiservices.utote.model.Event</class>
 		<class>com.ei.eiservices.utote.model.Race</class>
+		<class>com.ei.eiservices.utote.model.UtotePrice</class>
+		<class>com.ei.eiservices.utote.model.UtotePoolPrice</class>
+		<class>com.ei.eiservices.utote.model.UtotePosition</class>
+		<class>com.ei.eiservices.utote.model.UtoteResult</class>
+		<class>com.ei.eiservices.utote.model.UtoteFinisher</class>
 		<shared-cache-mode>ALL</shared-cache-mode>
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://ei-mysql-rtwbeta1.cc9mhtud8wb1.us-west-2.rds.amazonaws.com:6940/rtwbeta"/>
