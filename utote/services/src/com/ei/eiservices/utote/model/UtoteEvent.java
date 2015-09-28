@@ -588,8 +588,15 @@ public class UtoteEvent implements Serializable {
                 this.rtwTracksid = ev.getTracksid();
                 if (null != ev.getEQBCode()) {
                     this.rtwTracksuniquecode = ev.getEQBCode();
+                    log4j.debug("loadRtwEvent - Setting rtwTracksuniquecode to {} from EQBCode for RTW Event/Track type.  EventId={}, TrackType={}", this.rtwTracksuniquecode, this.eventId, this.trackType);
+                } else if (null != ev.getTMHCode()) {
+                    this.rtwTracksuniquecode = ev.getTMHCode();
+                    log4j.debug("loadRtwEvent - Setting rtwTracksuniquecode to {} from TMHCode for RTW Event/Track type.  EventId={}, TrackType={}", this.rtwTracksuniquecode, this.eventId, this.trackType);
                 } else if (null != ev.getEQBHCode()) {
                     this.rtwTracksuniquecode = ev.getEQBHCode();
+                    log4j.debug("loadRtwEvent - Setting rtwTracksuniquecode to {} from EQBHCode for RTW Event/Track type.  EventId={}, TrackType={}", this.rtwTracksuniquecode, this.eventId, this.trackType);
+                } else {
+                    log4j.warn("loadRtwEvent - Could not find a value to put into rtwTracksuniquecode for RTW Event/Track type.  EventId={}, TrackType={}", this.rtwTracksuniquecode, this.eventId, this.trackType);
                 }
                 this.rtwTimezone = ev.getTimezone().substring(4, 10);
                 this.rtwTimezoneName = ev.getTimezoneName();
