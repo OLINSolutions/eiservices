@@ -1,293 +1,341 @@
 package com.ei.eiservices.utote.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 /**
  * The persistent class for the events database table.
- * 
+ *
  */
 @Entity
 @Table(name="events")
 @NamedQueries({
-	@NamedQuery(name="Event.findAll", query="SELECT e FROM Event e"),
-	@NamedQuery(name="Event.findByCHRIMS", query="SELECT e FROM Event e where e.CHRIMSCode = :code"),
-	@NamedQuery(name="Event.findByCHRIMS2", query="SELECT e FROM Event e where e.CHRIMS2Code = :code"),
+    @NamedQuery(name="Event.findAll", query="SELECT e FROM Event e"),
+    @NamedQuery(name="Event.findByCHRIMS", query="SELECT e FROM Event e where e.CHRIMSCode = :code"),
+    @NamedQuery(name="Event.findByCHRIMS2", query="SELECT e FROM Event e where e.CHRIMS2Code = :code"),
 })
 public class Event implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="`idEvents`", insertable=true, updatable=false, unique=true, nullable=false)
-	private int idEvents = 0;
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="`idEvents`", insertable=true, updatable=false, unique=true, nullable=false)
+    private int idEvents = 0;
 
-	@Column(length=2)
-	private String CHRIMS2Code = null;
+    @Column(length=2)
+    private String CHRIMS2Code = null;
 
-	@Column(length=3)
-	private String CHRIMSCode = null;
+    @Column(length=3)
+    private String CHRIMSCode = null;
 
-	@Column(nullable=false, length=2)
-	private String country = null;
+    @Column(nullable=false, length=2)
+    private String country = null;
 
-	@Column(length=10)
-	private String EQBCode = null;
+    @Column(length=10)
+    private String EQBCode = null;
 
-	@Column(length=10)
-	private String EQBHCode = null;
+    @Column(length=10)
+    private String EQBHCode = null;
 
-	@Column(length=50)
-	private String eventName = null;
+    @Column(length=50)
+    private String eventName = null;
 
-	@Column(nullable=false)
-	private boolean hasHarness = false;
+    @Column(nullable=false)
+    private boolean hasHarness = false;
 
-	@Temporal(TemporalType.DATE)
-	private Date inceptionDate = null;
+    @Temporal(TemporalType.DATE)
+    private Date inceptionDate = null;
 
-	@Temporal(TemporalType.DATE)
-	private Date retireDate = null;
+    @Temporal(TemporalType.DATE)
+    private Date retireDate = null;
 
-	@Column(length=100)
-	private String sourceCHRIMSEventCodes = null;
+    @Column(length=100)
+    private String sourceCHRIMSEventCodes = null;
 
-	@Column(nullable=false, length=2)
-	private String state = null;
+    @Column(nullable=false, length=2)
+    private String state = null;
 
-	@Column(length=40)
-	private String timezone = null;
+    @Column(length=40)
+    private String timezone = null;
 
-	@Column(length=40)
-	private String timezoneName = null;
+    @Column(length=40)
+    private String timezoneName = null;
 
-	@Column(length=10)
-	private String TMHCode = null;
+    @Column(length=40)
+    private String PHPTimezoneName = null;
 
-	@Column(length=2)
-	private String TMHSelector = null;
+    @Column(length=10)
+    private String TMHCode = null;
 
-	@Column(length=45)
-	private String toteCo = null;
+    @Column(length=2)
+    private String TMHSelector = null;
 
-	@Column(nullable=false, length=50)
-	private String trackName = null;
+    @Column(length=45)
+    private String toteCo = null;
 
-	private int tracksid = 0;
+    @Column(nullable=false, length=50)
+    private String trackName = null;
 
-	@Column(length=10)
-	private String USTAHCode = null;
+    @Column
+    private int tracksid = 0;
 
-	public Event() {
-	}
+    @Column(length=10)
+    private String USTAHCode = null;
 
-	public int getIdEvents() {
-		return this.idEvents;
-	}
+    public Event() {
+    }
 
-	public void setIdEvents(int idEvents) {
-		this.idEvents = idEvents;
-	}
+    public int getIdEvents() {
+        return this.idEvents;
+    }
 
-	public String getCHRIMS2Code() {
-		return this.CHRIMS2Code;
-	}
+    public void setIdEvents(int idEvents) {
+        this.idEvents = idEvents;
+    }
 
-	public void setCHRIMS2Code(String CHRIMS2Code) {
-		this.CHRIMS2Code = CHRIMS2Code;
-	}
+    public String getCHRIMS2Code() {
+        return this.CHRIMS2Code;
+    }
 
-	public String getCHRIMSCode() {
-		return this.CHRIMSCode;
-	}
+    public void setCHRIMS2Code(String CHRIMS2Code) {
+        this.CHRIMS2Code = CHRIMS2Code;
+    }
 
-	public void setCHRIMSCode(String CHRIMSCode) {
-		this.CHRIMSCode = CHRIMSCode;
-	}
+    public String getCHRIMSCode() {
+        return this.CHRIMSCode;
+    }
 
-	public String getCountry() {
-		return this.country;
-	}
+    public void setCHRIMSCode(String CHRIMSCode) {
+        this.CHRIMSCode = CHRIMSCode;
+    }
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
+    public String getCountry() {
+        return this.country;
+    }
 
-	public String getEQBCode() {
-		return this.EQBCode;
-	}
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
-	public void setEQBCode(String EQBCode) {
-		this.EQBCode = EQBCode;
-	}
+    public String getEQBCode() {
+        return this.EQBCode;
+    }
 
-	public String getEQBHCode() {
-		return this.EQBHCode;
-	}
+    public void setEQBCode(String EQBCode) {
+        this.EQBCode = EQBCode;
+    }
 
-	public void setEQBHCode(String EQBHCode) {
-		this.EQBHCode = EQBHCode;
-	}
+    public String getEQBHCode() {
+        return this.EQBHCode;
+    }
 
-	public String getEventName() {
-		return this.eventName;
-	}
+    public void setEQBHCode(String EQBHCode) {
+        this.EQBHCode = EQBHCode;
+    }
 
-	public void setEventName(String eventName) {
-		this.eventName = eventName;
-	}
+    public String getEventName() {
+        return this.eventName;
+    }
 
-	public boolean getHasHarness() {
-		return this.hasHarness;
-	}
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
 
-	public void setHasHarness(boolean hasHarness) {
-		this.hasHarness = hasHarness;
-	}
+    public boolean getHasHarness() {
+        return this.hasHarness;
+    }
 
-	public Date getInceptionDate() {
-		return this.inceptionDate;
-	}
+    public void setHasHarness(boolean hasHarness) {
+        this.hasHarness = hasHarness;
+    }
 
-	public void setInceptionDate(Date inceptionDate) {
-		this.inceptionDate = inceptionDate;
-	}
+    public Date getInceptionDate() {
+        return this.inceptionDate;
+    }
 
-	public Date getRetireDate() {
-		return this.retireDate;
-	}
+    public void setInceptionDate(Date inceptionDate) {
+        this.inceptionDate = inceptionDate;
+    }
 
-	public void setRetireDate(Date retireDate) {
-		this.retireDate = retireDate;
-	}
+    public Date getRetireDate() {
+        return this.retireDate;
+    }
 
-	public String getSourceCHRIMSEventCodes() {
-		return this.sourceCHRIMSEventCodes;
-	}
+    public void setRetireDate(Date retireDate) {
+        this.retireDate = retireDate;
+    }
 
-	public void setSourceCHRIMSEventCodes(String sourceCHRIMSEventCodes) {
-		this.sourceCHRIMSEventCodes = sourceCHRIMSEventCodes;
-	}
+    public String getSourceCHRIMSEventCodes() {
+        return this.sourceCHRIMSEventCodes;
+    }
 
-	public String getState() {
-		return this.state;
-	}
+    public void setSourceCHRIMSEventCodes(String sourceCHRIMSEventCodes) {
+        this.sourceCHRIMSEventCodes = sourceCHRIMSEventCodes;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
+    public String getState() {
+        return this.state;
+    }
 
-	public String getTimezone() {
-		return this.timezone;
-	}
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	public void setTimezone(String timezone) {
-		this.timezone = timezone;
-	}
+    public String getTimezone() {
+        return this.timezone;
+    }
 
-	public String getTimezoneName() {
-		return this.timezoneName;
-	}
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
 
-	public void setTimezoneName(String timezoneName) {
-		this.timezoneName = timezoneName;
-	}
+    public String getTimezoneName() {
+        return this.timezoneName;
+    }
 
-	public String getTMHCode() {
-		return this.TMHCode;
-	}
+    public void setTimezoneName(String timezoneName) {
+        this.timezoneName = timezoneName;
+    }
 
-	public void setTMHCode(String TMHCode) {
-		this.TMHCode = TMHCode;
-	}
+    public String getTMHCode() {
+        return this.TMHCode;
+    }
 
-	public String getTMHSelector() {
-		return this.TMHSelector;
-	}
+    public void setTMHCode(String TMHCode) {
+        this.TMHCode = TMHCode;
+    }
 
-	public void setTMHSelector(String TMHSelector) {
-		this.TMHSelector = TMHSelector;
-	}
+    public String getTMHSelector() {
+        return this.TMHSelector;
+    }
 
-	public String getToteCo() {
-		return this.toteCo;
-	}
+    public void setTMHSelector(String TMHSelector) {
+        this.TMHSelector = TMHSelector;
+    }
 
-	public void setToteCo(String toteCo) {
-		this.toteCo = toteCo;
-	}
+    public String getToteCo() {
+        return this.toteCo;
+    }
 
-	public String getTrackName() {
-		return this.trackName;
-	}
+    public void setToteCo(String toteCo) {
+        this.toteCo = toteCo;
+    }
 
-	public void setTrackName(String trackName) {
-		this.trackName = trackName;
-	}
+    public String getTrackName() {
+        return this.trackName;
+    }
 
-	public int getTracksid() {
-		return this.tracksid;
-	}
+    public void setTrackName(String trackName) {
+        this.trackName = trackName;
+    }
 
-	public void setTracksid(int tracksid) {
-		this.tracksid = tracksid;
-	}
+    public int getTracksid() {
+        return this.tracksid;
+    }
 
-	public String getUSTAHCode() {
-		return this.USTAHCode;
-	}
+    public void setTracksid(int tracksid) {
+        this.tracksid = tracksid;
+    }
 
-	public void setUSTAHCode(String USTAHCode) {
-		this.USTAHCode = USTAHCode;
-	}
+    public String getUSTAHCode() {
+        return this.USTAHCode;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Event [idEvents=").append(idEvents).append(", ");
-		if (CHRIMS2Code != null)
-			builder.append("CHRIMS2Code=").append(CHRIMS2Code).append(", ");
-		if (CHRIMSCode != null)
-			builder.append("CHRIMSCode=").append(CHRIMSCode).append(", ");
-		if (country != null)
-			builder.append("country=").append(country).append(", ");
-		if (EQBCode != null)
-			builder.append("EQBCode=").append(EQBCode).append(", ");
-		if (EQBHCode != null)
-			builder.append("EQBHCode=").append(EQBHCode).append(", ");
-		if (eventName != null)
-			builder.append("eventName=").append(eventName).append(", ");
-		builder.append("hasHarness=").append(hasHarness).append(", ");
-		if (inceptionDate != null)
-			builder.append("inceptionDate=").append(inceptionDate).append(", ");
-		if (retireDate != null)
-			builder.append("retireDate=").append(retireDate).append(", ");
-		if (sourceCHRIMSEventCodes != null)
-			builder.append("sourceCHRIMSEventCodes=").append(sourceCHRIMSEventCodes).append(", ");
-		if (state != null)
-			builder.append("state=").append(state).append(", ");
-		if (timezone != null)
-			builder.append("timezone=").append(timezone).append(", ");
-		if (timezoneName != null)
-			builder.append("timezoneName=").append(timezoneName).append(", ");
-		if (TMHCode != null)
-			builder.append("TMHCode=").append(TMHCode).append(", ");
-		if (TMHSelector != null)
-			builder.append("TMHSelector=").append(TMHSelector).append(", ");
-		if (toteCo != null)
-			builder.append("toteCo=").append(toteCo).append(", ");
-		if (trackName != null)
-			builder.append("trackName=").append(trackName).append(", ");
-		builder.append("tracksid=").append(tracksid).append(", ");
-		if (USTAHCode != null)
-			builder.append("USTAHCode=").append(USTAHCode);
-		builder.append("]");
-		return builder.toString();
-	}
+    public void setUSTAHCode(String USTAHCode) {
+        this.USTAHCode = USTAHCode;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Event [idEvents=").append(idEvents).append(", ");
+        if (CHRIMS2Code != null) {
+            builder.append("CHRIMS2Code=").append(CHRIMS2Code).append(", ");
+        }
+        if (CHRIMSCode != null) {
+            builder.append("CHRIMSCode=").append(CHRIMSCode).append(", ");
+        }
+        if (country != null) {
+            builder.append("country=").append(country).append(", ");
+        }
+        if (EQBCode != null) {
+            builder.append("EQBCode=").append(EQBCode).append(", ");
+        }
+        if (EQBHCode != null) {
+            builder.append("EQBHCode=").append(EQBHCode).append(", ");
+        }
+        if (eventName != null) {
+            builder.append("eventName=").append(eventName).append(", ");
+        }
+        builder.append("hasHarness=").append(hasHarness).append(", ");
+        if (inceptionDate != null) {
+            builder.append("inceptionDate=").append(inceptionDate).append(", ");
+        }
+        if (retireDate != null) {
+            builder.append("retireDate=").append(retireDate).append(", ");
+        }
+        if (sourceCHRIMSEventCodes != null) {
+            builder.append("sourceCHRIMSEventCodes=").append(sourceCHRIMSEventCodes).append(", ");
+        }
+        if (state != null) {
+            builder.append("state=").append(state).append(", ");
+        }
+        if (timezone != null) {
+            builder.append("timezone=").append(timezone).append(", ");
+        }
+        if (timezoneName != null) {
+            builder.append("timezoneName=").append(timezoneName).append(", ");
+        }
+        if (PHPTimezoneName != null) {
+            builder.append("PHPTimezoneName=").append(PHPTimezoneName).append(", ");
+        }
+        if (TMHCode != null) {
+            builder.append("TMHCode=").append(TMHCode).append(", ");
+        }
+        if (TMHSelector != null) {
+            builder.append("TMHSelector=").append(TMHSelector).append(", ");
+        }
+        if (toteCo != null) {
+            builder.append("toteCo=").append(toteCo).append(", ");
+        }
+        if (trackName != null) {
+            builder.append("trackName=").append(trackName).append(", ");
+        }
+        builder.append("tracksid=").append(tracksid).append(", ");
+        if (USTAHCode != null) {
+            builder.append("USTAHCode=").append(USTAHCode);
+        }
+        builder.append("]");
+        return builder.toString();
+    }
+
+    /**
+     * @return the pHPtimezoneName
+     */
+    public String getPHPTimezoneName() {
+        return PHPTimezoneName;
+    }
+
+    /**
+     * @param pHPtimezoneName the pHPtimezoneName to set
+     */
+    public void setPHPTimezoneName(String pHPTimezoneName) {
+        PHPTimezoneName = pHPTimezoneName;
+    }
 
 }

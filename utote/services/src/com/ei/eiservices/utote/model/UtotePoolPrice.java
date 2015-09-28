@@ -31,12 +31,27 @@ public class UtotePoolPrice implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="`idUtotePoolPrice`", insertable=true, updatable=false, unique=true, nullable=false)
     private int idUtotePoolPrice = 0;
+
+    @Column(name = "`idParent`", unique=true, nullable=false, insertable=true, updatable=true)
     private int idParent = 0;
+
+    @Column(nullable=false, length=3)
     private String poolId = null;
+
+    @Column(length=12)
     private String poolName = null;
+
+    @Column
     private boolean refund = false;
+
+    @Column(precision=10, scale=3)
     private BigDecimal carryOver = null;
+
+    @Column
     private boolean hasPrices = false;
 
     // @ManyToOne(optional = false, cascade = CascadeType.REFRESH)
@@ -52,9 +67,6 @@ public class UtotePoolPrice implements Serializable {
     }
 
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="`idUtotePoolPrice`", insertable=true, updatable=false, unique=true, nullable=false)
     public int getIdUtotePoolPrice() {
         return this.idUtotePoolPrice;
     }
@@ -63,7 +75,6 @@ public class UtotePoolPrice implements Serializable {
     }
 
 
-    @Column(name = "`idParent`", unique=true, nullable=false, insertable=true, updatable=true)
     public int getIdParent() {
         return this.idParent;
     }
@@ -72,7 +83,6 @@ public class UtotePoolPrice implements Serializable {
     }
 
 
-    @Column(nullable=false, length=3)
     public String getPoolId() {
         return this.poolId;
     }
@@ -81,7 +91,6 @@ public class UtotePoolPrice implements Serializable {
     }
 
 
-    @Column(length=12)
     public String getPoolName() {
         return this.poolName;
     }
@@ -98,7 +107,6 @@ public class UtotePoolPrice implements Serializable {
     }
 
 
-    @Column(precision=10)
     public BigDecimal getCarryOver() {
         return this.carryOver;
     }
@@ -107,7 +115,7 @@ public class UtotePoolPrice implements Serializable {
     }
 
 
-    public boolean getHasPrices() {
+    public boolean hasPrices() {
         return this.hasPrices;
     }
     public void setHasPrices(boolean hasPrices) {
@@ -147,11 +155,7 @@ public class UtotePoolPrice implements Serializable {
     }
 
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
+    public String toString(boolean deep) {
         StringBuilder builder = new StringBuilder();
         builder.append("UtotePoolPrice [idUtotePoolPrice=").append(idUtotePoolPrice).append(", idParent=").append(idParent).append(", ");
         if (poolId != null) {
@@ -165,7 +169,7 @@ public class UtotePoolPrice implements Serializable {
             builder.append("carryOver=").append(carryOver).append(", ");
         }
         builder.append("hasPrices=").append(hasPrices).append(", ");
-        if (result != null) {
+        if (deep && (result != null)) {
             builder.append("result=").append(result).append(", ");
         }
         if (prices != null) {
@@ -173,6 +177,14 @@ public class UtotePoolPrice implements Serializable {
         }
         builder.append("]");
         return builder.toString();
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return toString(false);
     }
 
     /**

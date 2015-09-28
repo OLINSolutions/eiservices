@@ -20,7 +20,6 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name="utotePrices")
-@NamedQuery(name="UtotePrice.findAll", query="SELECT p FROM UtotePrice p")
 @NamedQueries({
     @NamedQuery(name="UtotePrice.findAll", query="SELECT p FROM UtotePrice p"),
     @NamedQuery(name="UtotePrice.findByParent", query="SELECT p FROM UtotePrice p WHERE p.idParent = :idParent")
@@ -29,15 +28,35 @@ public class UtotePrice implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="`idUtotePrice`", insertable=true, updatable=false, unique=true, nullable=false)
     private int idUtotePrice = 0;
+
+    @Column(name = "`idParent`", unique=true, nullable=false, insertable=true, updatable=true)
     private int idParent = 0;
+
+    @Column
     private boolean exchange = false;
+
+    @Column(nullable=false, length=80)
     private String finish = null;
+
     private boolean hold = false;
+
+    @Column(precision=10, scale=3)
     private BigDecimal payoff = null;
+
+    @Column(precision=10, scale=3)
     private BigDecimal priceAmount = null;
-    private int required = 0;
+
+    @Column(length=10)
+    private String required = null;
+
+    @Column(precision=10, scale=3)
     private BigDecimal wager = null;
+
+    @Column(precision=10, scale=3)
     private BigDecimal winnings = null;
 
     @Transient
@@ -46,9 +65,6 @@ public class UtotePrice implements Serializable {
     public UtotePrice() {
     }
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="`idUtotePrice`", insertable=true, updatable=false, unique=true, nullable=false)
     public int getIdUtotePrice() {
         return this.idUtotePrice;
     }
@@ -65,7 +81,6 @@ public class UtotePrice implements Serializable {
     }
 
 
-    @Column(nullable=false, length=80)
     public String getFinish() {
         return this.finish;
     }
@@ -82,7 +97,6 @@ public class UtotePrice implements Serializable {
     }
 
 
-    @Column(name = "`idParent`", unique=true, nullable=false, insertable=true, updatable=true)
     public int getIdParent() {
         return this.idParent;
     }
@@ -91,7 +105,6 @@ public class UtotePrice implements Serializable {
     }
 
 
-    @Column(precision=10)
     public BigDecimal getPayoff() {
         return this.payoff;
     }
@@ -100,7 +113,6 @@ public class UtotePrice implements Serializable {
     }
 
 
-    @Column(precision=10)
     public BigDecimal getPriceAmount() {
         return this.priceAmount;
     }
@@ -109,15 +121,14 @@ public class UtotePrice implements Serializable {
     }
 
 
-    public int getRequired() {
+    public String getRequired() {
         return this.required;
     }
-    public void setRequired(int required) {
+    public void setRequired(String required) {
         this.required = required;
     }
 
 
-    @Column(precision=10)
     public BigDecimal getWager() {
         return this.wager;
     }
@@ -126,13 +137,13 @@ public class UtotePrice implements Serializable {
     }
 
 
-    @Column(precision=10)
     public BigDecimal getWinnings() {
         return this.winnings;
     }
     public void setWinnings(BigDecimal winnings) {
         this.winnings = winnings;
     }
+
 
     /**
      * @return the poolPrice
@@ -146,6 +157,17 @@ public class UtotePrice implements Serializable {
      */
     public void setPoolPrice(UtotePoolPrice poolPrice) {
         this.poolPrice = poolPrice;
+    }
+
+    public boolean containsFinisher(int runnerId) {
+        String finishers[] = this.finish.split("/");
+        String runner = Integer.toString(runnerId);
+        for (String finisher : finishers) {
+            if (finisher.equalsIgnoreCase(runner)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /* (non-Javadoc)
@@ -166,19 +188,16 @@ public class UtotePrice implements Serializable {
         if (priceAmount != null) {
             builder.append("priceAmount=").append(priceAmount).append(", ");
         }
-        builder.append("required=").append(required).append(", ");
+        if (required != null) {
+            builder.append("required=").append(required).append(", ");
+        }
         if (wager != null) {
             builder.append("wager=").append(wager).append(", ");
         }
         if (winnings != null) {
-            builder.append("winnings=").append(winnings).append(", ");
-        }
-        if (poolPrice != null) {
-            builder.append("poolPrice=").append(poolPrice);
+            builder.append("winnings=").append(winnings);
         }
         builder.append("]");
         return builder.toString();
     }
-
-
 }

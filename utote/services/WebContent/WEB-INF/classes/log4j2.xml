@@ -32,10 +32,39 @@
     <Root level="DEBUG">
       <AppenderRef ref="STDOUT" level="INFO"/>
       <AppenderRef ref="RollingFileLogger" level="DEBUG"/>
+      <!-- AppenderRef ref="RollingFileLogger" level="TRACE"/ -->
     </Root>
   </Loggers>
 </Configuration>
     <!--
+    <Logger name="com.ei.eiservices.utote.ReqRespDumpFilter" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.client.processor.ConfigurationRequestProcessor" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.client.processor.ProgramRequestProcessor" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.client.processor.ResultRequestProcessor" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.client.processor.StatusRequestProcessor" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.client.programservice.ProgramServiceStub" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.service.totelinkupdate" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.service.totelinkupdate.ToteLinkUpdateServiceStub" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.service.handler.ToteLinkUpdateServiceHandler" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.service.handler.ToteLinkInitializationServiceHandler" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.jpa" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.model" level="DEBUG"/>
+
+    <Logger name="com.ei.eiservices.utote.ReqRespDumpFilter" level="TRACE"/>
+    <Logger name="com.ei.eiservices.utote.client.processor.ConfigurationRequestProcessor" level="TRACE"/>
+    <Logger name="com.ei.eiservices.utote.client.processor.ProgramRequestProcessor" level="TRACE"/>
+    <Logger name="com.ei.eiservices.utote.client.processor.ResultRequestProcessor" level="TRACE"/>
+    <Logger name="com.ei.eiservices.utote.client.processor.StatusRequestProcessor" level="TRACE"/>
+    <Logger name="com.ei.eiservices.utote.client.programservice.ProgramServiceStub" level="TRACE"/>
+    <Logger name="com.ei.eiservices.utote.service.totelinkupdate" level="TRACE"/>
+    <Logger name="com.ei.eiservices.utote.service.totelinkupdate.ToteLinkUpdateServiceStub" level="TRACE"/>
+    <Logger name="com.ei.eiservices.utote.service.handler.ToteLinkUpdateServiceHandler" level="TRACE"/>
+    <Logger name="com.ei.eiservices.utote.service.handler.ToteLinkInitializationServiceHandler" level="TRACE"/>
+    <Logger name="com.ei.eiservices.utote" level="TRACE"/>
+    <Logger name="com.ei.eiservices.utote.jpa" level="TRACE"/>
+    <Logger name="com.ei.eiservices.utote.model" level="TRACE"/>
+
     <Logger name="com.unitedtote.schema.totelink._2008._06.pubsub.StatusChangeE" level="DEBUG"/>
     <Logger name="com.unitedtote.schema.totelink._2008._06.pubsub.StatusChange" level="DEBUG"/>
     <Logger name="com.unitedtote.schema.totelink._2008._06.pubsub.UpdatesE" level="DEBUG"/>

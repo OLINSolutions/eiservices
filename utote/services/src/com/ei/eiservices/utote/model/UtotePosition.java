@@ -29,8 +29,16 @@ import javax.persistence.TypedQuery;
 public class UtotePosition implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="`idUtotePosition`", insertable=true, updatable=false, unique=true, nullable=false)
     private int idUtotePosition = 0;
+
+    @Column(name = "`idParent`", unique=true, nullable=false, insertable=true, updatable=true)
     private int idParent = 0;
+
+    @Column(nullable=false)
     private int positionId = 0;
 
     // @ManyToOne(optional = false, cascade = CascadeType.REFRESH)
@@ -46,9 +54,6 @@ public class UtotePosition implements Serializable {
     }
 
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="`idUtotePosition`", insertable=true, updatable=false, unique=true, nullable=false)
     public int getIdUtotePosition() {
         return this.idUtotePosition;
     }
@@ -57,7 +62,6 @@ public class UtotePosition implements Serializable {
     }
 
 
-    @Column(name = "`idParent`", unique=true, nullable=false, insertable=true, updatable=true)
     public int getIdParent() {
         return this.idParent;
     }
@@ -66,7 +70,6 @@ public class UtotePosition implements Serializable {
     }
 
 
-    @Column(nullable=false)
     public int getPositionId() {
         return this.positionId;
     }
@@ -104,15 +107,11 @@ public class UtotePosition implements Serializable {
     }
 
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
+    public String toString(boolean deep) {
         StringBuilder builder = new StringBuilder();
         builder.append("UtotePosition [idUtotePosition=").append(idUtotePosition).append(", idParent=").append(idParent).append(", positionId=")
         .append(positionId).append(", ");
-        if (result != null) {
+        if (deep && (result != null)) {
             builder.append("result=").append(result).append(", ");
         }
         if (finishers != null) {
@@ -120,6 +119,13 @@ public class UtotePosition implements Serializable {
         }
         builder.append("]");
         return builder.toString();
+    }
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return toString(false);
     }
 
     /**

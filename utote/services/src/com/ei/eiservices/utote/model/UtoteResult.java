@@ -32,15 +32,36 @@ public class UtoteResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="`idUtoteResult`", insertable=true, updatable=false, unique=true, nullable=false)
     private int idUtoteResult = 0;
+
+    @Column(nullable=false, length=3)
     private String eventId = null;
+
+    @Column(length=16)
     private String eventName = null;
+
+    @Column(nullable=false)
     private int raceId = 0;
+
+    @Column(nullable=false, length=3)
     private String currencyId = null;
+
+    @Column
     private boolean hasRaceResults = false;
+
+    @Column
     private boolean hasPoolPrices = false;
+
+    @Column
     private boolean hasPositions = false;
+
+    @Column(length=80)
     private String winners = null;
+
+    @Column(length=80)
     private String scratches = null;
 
     // @OneToMany(mappedBy="poolPrices", cascade = CascadeType.PERSIST)
@@ -55,9 +76,6 @@ public class UtoteResult implements Serializable {
     }
 
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="`idUtoteResult`", insertable=true, updatable=false, unique=true, nullable=false)
     public int getIdUtoteResult() {
         return this.idUtoteResult;
     }
@@ -66,7 +84,6 @@ public class UtoteResult implements Serializable {
     }
 
 
-    @Column(nullable=false, length=3)
     public String getEventId() {
         return this.eventId;
     }
@@ -75,7 +92,6 @@ public class UtoteResult implements Serializable {
     }
 
 
-    @Column(length=16)
     public String getEventName() {
         return this.eventName;
     }
@@ -84,7 +100,6 @@ public class UtoteResult implements Serializable {
     }
 
 
-    @Column(nullable=false)
     public int getRaceId() {
         return this.raceId;
     }
@@ -93,7 +108,6 @@ public class UtoteResult implements Serializable {
     }
 
 
-    @Column(nullable=false, length=3)
     public String getCurrencyId() {
         return this.currencyId;
     }
@@ -126,7 +140,6 @@ public class UtoteResult implements Serializable {
     }
 
 
-    @Column(length=80)
     public String getWinners() {
         return this.winners;
     }
@@ -135,7 +148,6 @@ public class UtoteResult implements Serializable {
     }
 
 
-    @Column(length=80)
     public String getScratches() {
         return this.scratches;
     }
