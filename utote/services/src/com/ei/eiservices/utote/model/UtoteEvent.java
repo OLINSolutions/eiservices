@@ -2,6 +2,9 @@ package com.ei.eiservices.utote.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Date;
 
@@ -212,14 +215,20 @@ public class UtoteEvent implements Serializable {
 
     public long getEventDate() {
         if (null == this.eventDate) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM uu HH:mm X");
+            LocalDateTime dateTime = LocalDateTime.parse(eventInfo + " 00:00 Z", formatter);
+            this.eventDate = dateTime.toEpochSecond(ZoneOffset.UTC);
+            /*
             long millisInDay = 60 * 60 * 24 * 1000;
             long currentTime = new Date().getTime();
             this.eventDate = (currentTime / millisInDay) * millisInDay;
             this.eventDate /= 1000l;
+             */
         }
         Date d = new Date();
         d.setTime(this.eventDate);
-        log4j.debug("getEventDate - this.eventDate={}/{}, this.eventTime.getTime()={}", this.eventDate, d.toString(), this.eventTime.getTime()/1000);
+        log4j.debug("getEventDate - this.eventDate={}/{}, this.eventInfo={}", this.eventDate, d.toString(), this.eventInfo);
+        //        log4j.debug("getEventDate - this.eventDate={}/{}, this.eventTime.getTime()={}", this.eventDate, d.toString(), this.eventTime.getTime()/1000);
         return this.eventDate;
     }
 
@@ -470,9 +479,7 @@ public class UtoteEvent implements Serializable {
         if (turfTrack != null) {
             builder.append("turfTrack=").append(turfTrack).append(", ");
         }
-        if (eventDate != null) {
-            builder.append("eventDate=").append(eventDate).append(", ");
-        }
+        builder.append("eventDate=").append(getEventDate()).append(", ");
         builder.append("rtwTracksid=").append(rtwTracksid).append(", ");
         if (rtwTracksuniquecode != null) {
             builder.append("rtwTracksuniquecode=").append(rtwTracksuniquecode).append(", ");

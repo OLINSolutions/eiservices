@@ -939,8 +939,8 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                         }
                     }
                 } else {
-                    log4j.error("{} - Did not find RTW Race matching eventId={}, eventName={} trackId={}, trackName={}, raceId={}, raceType={}, raceStatus={}", method,
-                            theRace.getEventId(), parentEvent.getEventName(), parentEvent.getTrackId(), parentEvent.getTrackName(), theRace.getRaceId(), theRace.getRacetype(), theRace.getRaceStatus());
+                    log4j.error("{} - Did not find RTW Race matching eventId={}, eventName={} EventDate={}, trackId={}, trackName={}, RtwTracksid={}, raceId={}, raceType={}, raceStatus={}", method,
+                            theRace.getEventId(), parentEvent.getEventName(), parentEvent.getEventDate(), parentEvent.getTrackId(), parentEvent.getTrackName(), parentEvent.getRtwTracksid(), theRace.getRaceId(), theRace.getRacetype(), theRace.getRaceStatus());
                 }
             } else {
                 log4j.debug("{} - Did not find RTW Track matching eventId={}, eventName={} trackId={}, trackName={}, RtwTracksUniquecode={}", method,
