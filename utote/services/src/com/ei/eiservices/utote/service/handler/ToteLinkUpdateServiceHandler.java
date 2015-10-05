@@ -327,35 +327,6 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
         return utoteRace;
     }
 
-    private Race getRTWRace(EntityManager em, int tracksid, long raceDate, int raceNumber) {
-        assert(0 == tracksid) : "Passed zero tracksid to getRTWRace";
-        assert(0 == raceDate) : "Passed zero raceDate to getRTWRace";
-        assert(0 == raceNumber) : "Passed zero raceNumber to getRTWRace";
-        Race r = null;
-        try {
-            TypedQuery<Race> q = em.createNamedQuery("Race.findSpecific", Race.class);
-            q.setParameter("idParent", tracksid);
-            q.setParameter("raceDate", raceDate);
-            q.setParameter("raceNumber", raceNumber);
-            try {
-                r = q.getSingleResult();
-            } catch (javax.persistence.NoResultException e) {
-                log4j.debug(
-                        "getRTWRace - NoResultException running query for RTW Race with tracksid={}, raceDate={}, raceNumber={}.\nException={}",
-                        tracksid, raceDate, raceNumber, e);
-            } catch (Exception e2) {
-                log4j.debug(
-                        "getRTWRace - Unexpected Exception running query for RTW Race with tracksid={}, raceDate={}, raceNumber={}.\nException={}",
-                        tracksid, raceDate, raceNumber, e2);
-            }
-        } catch (Exception e) {
-            log4j.error(
-                    "getRTWRace - Exception preparing query for RTW Race with tracksid={}, raceDate={}, raceNumber={}.\nException={}",
-                    tracksid, raceDate, raceNumber, e);
-        }
-        return r;
-    }
-
     private Collection<Horse> getRTWActiveRaceHorses(EntityManager em, int racesid) {
         assert(0 != racesid) : "Passed zero racesid to getRTWActiveRaceHorses";
         Collection<Horse> results = null;
@@ -377,32 +348,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
         return results;
     }
 
-    private Horse getRTWHorse(EntityManager em, Race theRace, UtoteRunner theRunner, UtoteEntry theEntry) {
-        assert(null != theRace) : "Passed null Race to getRTWHorse";
-        assert(null != theRunner) : "Passed null UtoteRunner to getRTWHorse";
-        assert(null != theEntry) : "Passed null UtoteEntry to getRTWHorse";
-        String programNumber = String.valueOf(theRunner.getRunnerId())
-                + (((null == theEntry) || (null == theEntry.getEntryId())) ? "" : theEntry.getEntryId());
-        Horse h = null;
-        try {
-            TypedQuery<Horse> q = em.createNamedQuery("Horse.findByRaceAndProgramNumber", Horse.class);
-            q.setParameter("racesid", theRace.getRacesid());
-            q.setParameter("horsesprogramnumber", programNumber);
-            try {
-                h = q.getSingleResult();
-            } catch (javax.persistence.NoResultException e) {
-                log4j.error(
-                        "getRTWHorse - NoResultException running query for RTW Horse with racesid={}, horsesprogramnumber={}.",
-                        theRace.getRacesid(), programNumber);
-            }
-        } catch (Exception e) {
-            log4j.error(
-                    "getRTWHorse - Exception preparing query for RTW Horse with racesid={}, horsesprogramnumber={}.\nException={}",
-                    theRace.getRacesid(), programNumber, e);
-        }
-        return h;
-    }
-
+    @SuppressWarnings("unused")
     private boolean hasRTWRaceResults(EntityManager em, int racesid) {
         assert(0 != racesid) : "Passed zero racesid to hasRTWRaceResults";
         boolean hasResults = false;
@@ -447,6 +393,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
         return results;
     }
 
+    @SuppressWarnings("unused")
     private boolean hasJDRaceResults(EntityManager em, int racesid) {
         assert(0 != racesid) : "Passed zero racesid to hasJDRaceResults";
         boolean hasResults = false;
@@ -521,10 +468,11 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
         res.setRacesid(r.getRacesid());
         res.setResultshorsesid(h.getHorsesid());
         //Format: FINALD + YYYYMMDD + _ + R# + TRK + _ + CTR, e.g. FINALD20150925_02GP_USA
-        LocalDateTime ldt = LocalDateTime.ofEpochSecond(parentEvent.getEventDate(), 0, ZoneOffset.UTC);
+        //Format: UTOTEFINAL_DG_ + YYYYMMDD + _ + R# + TRK + _ + CTR, e.g. UTOTEFINALDG_20150925_02GP_USA
+        LocalDateTime ldt = LocalDateTime.ofEpochSecond(parentEvent.getRtwEventDate(), 0, ZoneOffset.UTC);
         char country = parentEvent.getRtwTimezoneName().charAt(0);
         res.setResultsracetag(
-                "FINALD"
+                "UTOTEFINAL_DG_"
                         + ldt.format(DateTimeFormatter.BASIC_ISO_DATE)
                         + "_"
                         + String.format("%02d", r.getRacesnumber())
@@ -545,10 +493,11 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
         res.setHorsesid(h.getHorsesid());
         res.setJockeyid(h.getJockeyid());
         //Format: FINALD + YYYYMMDD + _ + R# + TRK + _ + CTR, e.g. FINALD20150925_02GP_USA
-        LocalDateTime ldt = LocalDateTime.ofEpochSecond(parentEvent.getEventDate(), 0, ZoneOffset.UTC);
+        //Format: UTOTEFINAL_JD_ + YYYYMMDD + _ + R# + TRK + _ + CTR, e.g. UTOTEFINAL_JD_20150925_02GP_USA
+        LocalDateTime ldt = LocalDateTime.ofEpochSecond(parentEvent.getRtwEventDate(), 0, ZoneOffset.UTC);
         char country = parentEvent.getRtwTimezoneName().charAt(0);
         res.setJockeysresultsracetag(
-                "FINALD"
+                "UTOTEFINALJD_"
                         + ldt.format(DateTimeFormatter.BASIC_ISO_DATE)
                         + "_"
                         + String.format("%02d", r.getRacesnumber())
@@ -563,16 +512,6 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
         return res;
     }
 
-    private class CommitFlag {
-        private boolean _needsCommit = false;
-        public void setTrue() {
-            this._needsCommit = true;
-        }
-        public boolean needsCommit() {
-            return this._needsCommit;
-        }
-    }
-
     private void processRTWRaceFinal(UtoteRace theRace) {
         String method = "processRTWRaceFinal";
         log4j.entry(method + " - eventId, raceId", theRace.getEventId(), theRace.getRaceId());
@@ -585,186 +524,139 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                 (parentEvent.getRtwTracksid() != 0)) {
 
             log4j.debug(
-                    "{} - Found RTW Event matching tracksid={}, trackId={}, parentEvent.getEventDate={} and eventId={}",
-                    method, parentEvent.getRtwTracksid(), parentEvent.getTrackId(), parentEvent.getEventDate(),
-                    theRace.getEventId());
+                    "{} - Found RTW Event matching eventId={}, tracksid={}, trackId={}",
+                    method, theRace.getEventId(), parentEvent.getRtwTracksid(), parentEvent.getTrackId());
 
             // Get Entity Managers
             final EntityManagerFactory rtwEmF = Configurator.getRTWEMF();
             final EntityManager rtwEm = rtwEmF.createEntityManager();
 
             // Find the matching race in our system
-            Race r = getRTWRace(rtwEm, parentEvent.getRtwTracksid(), parentEvent.getEventDate(),
-                    theRace.getRaceId());
+            Race r = theRace.loadRTWRace(rtwEm);
             if (null != r) {
 
                 log4j.debug(
-                        "{} - Found RTW Race matching trackId={}, tracksid={}, racesdate={}, racesid={}, and eventId={}",
+                        "{} - Found RTW Race matching eventId={}, trackId={}, Race={}",
+                        method, parentEvent.getEventId(), parentEvent.getTrackId(), r.toString());
+
+                // Open the transaction
+                rtwEm.getTransaction().begin();
+
+                // Update the flags for both RTW and JockeyDraft
+                // status to closed
+                r.setRacesresultstatus(true);
+                r.setRacesjdresultstatus(true);
+                log4j.debug(
+                        "{} - Updated racesresultstatus and racesjdresultstatus to true for RTW Race matching trackId={}, tracksid={}, racesdate={}, racesid={}, and eventId={}",
                         method, parentEvent.getTrackId(), r.getTracksid(), r.getRacesdate(), r.getRacesid(),
                         parentEvent.getEventId());
 
-                // Open the transaction
-                CommitFlag commitFlag = new CommitFlag();
-                rtwEm.getTransaction().begin();
+                // Get the final results for the race from the Tote provider
+                UtoteResult utoteResult = (new ResultRequestProcessor()).getResults(theRace.getEventId(), theRace.getRaceId());
+                log4j.debug("{} - Found Tote Results for eventId={}, raceId={}, utoteResult={}", method, theRace.getEventId(), theRace.getRaceId(), utoteResult.toString(true));
 
-                // See if the race object has already been updated
-                // and if not, update the flags for both RTW and JockeyDraft
-                // status to closed
-                if (!r.getRacesresultstatus()) {
-                    log4j.debug(
-                            "{} - Updated racesresultstatus to true for RTW Race matching trackId={}, tracksid={}, racesdate={}, racesid={}, and eventId={}",
-                            method, parentEvent.getTrackId(), r.getTracksid(), r.getRacesdate(), r.getRacesid(),
-                            parentEvent.getEventId());
-                    r.setRacesresultstatus(true);
-                    commitFlag.setTrue();
-                }
-                if (!r.getRacesjdresultstatus()) {
-                    r.setRacesjdresultstatus(true);
-                    commitFlag.setTrue();
-                    log4j.debug(
-                            "{} - Updated racesjdresultstatus to true for RTW Race matching trackId={}, tracksid={}, racesdate={}, racesid={}, and eventId={}",
-                            method, parentEvent.getTrackId(), r.getTracksid(), r.getRacesdate(), r.getRacesid(),
-                            parentEvent.getEventId());
-                }
+                // Get the RTW Horses related to this race
+                Collection<Horse> horses = getRTWActiveRaceHorses(rtwEm, r.getRacesid());
+                log4j.debug("{} - Found {} horses for eventId={}, raceId={}", method, horses.size(), theRace.getEventId(), theRace.getRaceId());
 
-                // Attempt to get RTW result rows for this race
-                // (Should return nulls)
-                boolean hasRtwResults = hasRTWRaceResults(rtwEm, r.getRacesid());
-                boolean hasJdResults = hasJDRaceResults(rtwEm, r.getRacesid());
-                log4j.debug("{} - RTW and JD Results Status for RTW Race matching trackId={}, tracksid={}, racesdate={}, racesid={}, and eventId={} - hasRtwResults={}, hasJdResults={}",
-                        method, parentEvent.getTrackId(), r.getTracksid(), r.getRacesdate(), r.getRacesid(),
-                        parentEvent.getEventId(), hasRtwResults, hasJdResults);
+                // Iterate through the RTW horses and create corresponding
+                // rows in the RTW results table based on the standings
+                // returned by the Tote provider
+                horses.stream()
+                .forEach(h -> {
 
-                // Check if the results have already been posted
-                // for this race to the RTW and/or JD results tables
-                if (!hasRtwResults || !hasJdResults) {
+                    // Look for a matching finisher in the Tote results
+                    log4j.debug("{} - About to iterate positions for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
+                    utoteResult.getPositions().stream()
+                    .forEach(p -> {
 
+                        //Get the finishers that ran at this position
+                        log4j.debug("{} - About to look for finishers at p.positionId={} for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, p.getPositionId(), theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
+                        p.getFinishers().stream()
+                        .filter(f -> (f.getRTWhorsesid() == h.getHorsesid()))
+                        .forEach(f -> {
+                            int step = 0;
+                            log4j.debug("{} - Matched a finisher for p.getPositionId={} eventId={}, raceId={}, f.name={}, f.runnerId={}, f.getRtwHorsesProgramNumber()={}, f.getRTWhorsesid()={}, h.getHorsesid()={}", method, p.getPositionId(), theRace.getEventId(), theRace.getRaceId(), f.getName(), f.getRunnerId(), f.getRtwHorsesProgramNumber(), f.getRTWhorsesid(), h.getHorsesid());
 
-                    // Get the final results for the race from the Tote provider
-                    UtoteResult utoteResult = (new ResultRequestProcessor()).getResults(theRace.getEventId(), theRace.getRaceId());
-                    log4j.debug("{} - Found Tote Results for eventId={}, raceId={}, utoteResult={}", method, theRace.getEventId(), theRace.getRaceId(), utoteResult.toString(true));
+                            Result res = null;
+                            try {
+                                // Create and initialize the result object for the current horse
+                                step = 1;
+                                res = newResult(parentEvent, r, h);
 
-                    // Get the RTW Horses related to this race
-                    Collection<Horse> horses = getRTWActiveRaceHorses(rtwEm, r.getRacesid());
-                    log4j.debug("{} - Found {} horses for eventId={}, raceId={}", method, horses.size(), theRace.getEventId(), theRace.getRaceId());
+                                // Put the Daily win/place/show values into the result object
+                                step = 2;
+                                res.setResultswinamount(f.getRtwWinAmount().floatValue());
+                                res.setResultsplaceamount(f.getRtwPlaceAmount().floatValue());
+                                res.setResultsshowamount(f.getRtwShowAmount().floatValue());
 
-                    // Iterate through the RTW horses and create corresponding
-                    // rows in the RTW results table based on the standings
-                    // returned by the Tote provider
-                    horses.stream()
-                    .forEach(h -> {
+                                // Display the RTW winning amounts for this finisher
+                                step = 3;
+                                log4j.debug("{} - Updated RTW Daily finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==res)?"NULL":res.toString());
 
-                        // Look for a matching finisher in the Tote results
-                        log4j.debug("{} - About to iterate positions for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
-                        utoteResult.getPositions().stream()
-                        .forEach(p -> {
+                                // Persist, and denote that a commit is required
+                                step = 4;
+                                rtwEm.persist(res);
 
-                            //Get the finishers that ran at this position
-                            log4j.debug("{} - About to look for finishers at p.positionId={} for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, p.getPositionId(), theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
-                            p.getFinishers().stream()
-                            .filter(f -> (f.getRtwHorsesProgramNumber().equalsIgnoreCase(h.getHorsesprogramnumber())))
-                            .forEach(f -> {
-                                int step = 0;
-                                log4j.debug("{} - Matched a finisher for p.getPositionId={} eventId={}, raceId={}, f.name={}, f.runnerId={}, f.getRtwHorsesProgramNumber()={}", method, p.getPositionId(), theRace.getEventId(), theRace.getRaceId(), f.getName(), f.getRunnerId(), f.getRtwHorsesProgramNumber());
+                                step = 5;
+                                log4j.debug("{} - Persisted and set commitFlag to true for RTW Daily finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==res)?"NULL":res.toString());
 
-                                if (!hasRtwResults) {
-                                    Result res = null;
-                                    try {
-                                        // Create and initialize the result object for the current horse
-                                        step = 1;
-                                        res = newResult(parentEvent, r, h);
+                            } catch (Exception e1) {
+                                log4j.error("{} -Could not process RTW Daily finisher results at step {} for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}, exceptionMsg={}, exception={}", method, step, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==res)?"NULL":res.toString(), e1.getMessage(), e1);
 
-                                        // Put the Daily win/place/show values into the result object
-                                        step = 2;
-                                        res.setResultswinamount(f.getRtwWinAmount().floatValue());
-                                        res.setResultsplaceamount(f.getRtwPlaceAmount().floatValue());
-                                        res.setResultsshowamount(f.getRtwShowAmount().floatValue());
+                            }
 
-                                        // Display the RTW winning amounts for this finisher
-                                        step = 3;
-                                        log4j.debug("{} - Updated RTW Daily finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==res)?"NULL":res.toString());
+                            Jockeysresult jres = null;
+                            try {
+                                // Create and initialize the result object for the current jockey
+                                step = 6;
+                                jres = newJockeysresult(parentEvent, r, h);
 
-                                        // Persist, and denote that a commit is required
-                                        step = 4;
-                                        rtwEm.persist(res);
-                                        step = 5;
-                                        commitFlag.setTrue();
-                                        step = 6;
-                                        log4j.debug("{} - Persisted and set commitFlag to true for RTW Daily finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==res)?"NULL":res.toString());
-                                    } catch (Exception e1) {
-                                        log4j.error("{} -Could not process RTW Daily finisher results at step {} for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}, exceptionMsg={}, exception={}", method, step, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==res)?"NULL":res.toString(), e1.getMessage(), e1);
+                                // Put the JockeyDriaft win/place/show values into the JD result object
+                                step = 7;
+                                jres.setJockeysresultswinamounts(f.getRtwWinAmount().floatValue());
+                                jres.setJockeysresultsplaceamounts(f.getRtwPlaceAmount().floatValue());
+                                jres.setJockeysresultsshowamounts(f.getRtwShowAmount().floatValue());
 
-                                    }
-                                }
+                                step = 8;
+                                jres.setJockeysresultstotalamounts(
+                                        (f.getRtwWinAmount()
+                                                .add(f.getRtwPlaceAmount()
+                                                        .add(f.getRtwShowAmount())))
+                                        .floatValue());
 
-                                if (!hasJdResults) {
-                                    Jockeysresult jres = null;
-                                    try {
-                                        // Create and initialize the result object for the current jockey
-                                        step = 7;
-                                        jres = newJockeysresult(parentEvent, r, h);
+                                // Display the JD winning amounts for this finisher
+                                step = 9;
+                                log4j.debug("{} - Updated JockeyDraft finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==jres)?"NULL":jres.toString());
 
-                                        // Put the JockeyDriaft win/place/show values into the JD result object
-                                        step = 8;
-                                        jres.setJockeysresultswinamounts(f.getRtwWinAmount().floatValue());
-                                        jres.setJockeysresultsplaceamounts(f.getRtwPlaceAmount().floatValue());
-                                        jres.setJockeysresultsshowamounts(f.getRtwShowAmount().floatValue());
-                                        step = 9;
-                                        jres.setJockeysresultstotalamounts(
-                                                (f.getRtwWinAmount()
-                                                        .add(f.getRtwPlaceAmount()
-                                                                .add(f.getRtwShowAmount())))
-                                                .floatValue());
+                                // Persist, and denote that a commit is required
+                                step = 10;
+                                rtwEm.persist(jres);
 
-                                        // Display the JD winning amounts for this finisher
-                                        step = 10;
-                                        log4j.debug("{} - Updated JockeyDraft finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==jres)?"NULL":jres.toString());
+                                step = 11;
+                                log4j.debug("{} - Persisted JockeyDraft and set commitFlag to true for JockeyDriaft finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, jres={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==jres)?"NULL":jres.toString());
 
-                                        // Persist, and denote that a commit is required
-                                        step = 11;
-                                        rtwEm.persist(jres);
-                                        step = 12;
-                                        commitFlag.setTrue();
-                                        step = 13;
-                                        log4j.debug("{} - Persisted JockeyDraft and set commitFlag to true for JockeyDriaft finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, jres={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==jres)?"NULL":jres.toString());
-                                    } catch (Exception e1) {
-                                        log4j.error("{} -Could not process JockeyDraft finisher results at step {} for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}, exceptionMsg={}, exception={}", method, step, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==jres)?"NULL":jres.toString(), e1.getMessage(), e1);
+                            } catch (Exception e1) {
+                                log4j.error("{} -Could not process JockeyDraft finisher results at step {} for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}, exceptionMsg={}, exception={}", method, step, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==jres)?"NULL":jres.toString(), e1.getMessage(), e1);
+                            }
 
-                                    }
-                                }
+                        }); // End of forEach Finisher
+                        log4j.debug("{} - Finished looking for finishers at p.positionId={} for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, p.getPositionId(), theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
 
-                            }); // End of forEach Finisher
-                            log4j.debug("{} - Finished looking for finishers at p.positionId={} for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, p.getPositionId(), theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
+                    }); // End of forEach Position
+                    log4j.debug("{} - Finished iterating positions for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
 
-                        }); // End of forEach Position
-                        log4j.debug("{} - Finished iterating positions for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
+                }); // End of forEach Horse
+                log4j.debug("{} - Finished looking through horses for eventId={}, raceId={}", method, horses.size(), theRace.getEventId(), theRace.getRaceId());
 
-                    }); // End of forEach Horse
-                    log4j.debug("{} - Finished looking through horses for eventId={}, raceId={}", method, horses.size(), theRace.getEventId(), theRace.getRaceId());
-
-                } else {
-                    log4j.warn("{} - RTW and JD Results already posted but not expected for RTW Race matching trackId={}, tracksid={}, racesdate={}, racesid={}, and eventId={}, hasRtwResults={}, hasJdResults={}",
-                            method, parentEvent.getTrackId(), r.getTracksid(), r.getRacesdate(), r.getRacesid(),
-                            parentEvent.getEventId(), hasRtwResults, hasJdResults);
-                }
-
-                // Commit the transaction, if required
-                if (commitFlag.needsCommit()) {
-                    try {
-                        log4j.debug("{} - Calling commit on Race, RTW and JD Result objects for Race with eventId={}, raceId={}, RTWRace={}", method, theRace.getEventId(), theRace.getRaceId(), r.toString());
-                        rtwEm.getTransaction().commit();
-                        log4j.debug("{} - Race, RTW and JD Results comitted for Race with eventId={}, raceId={}, RTWRace={}", method, theRace.getEventId(), theRace.getRaceId(), r.toString());
-                    } catch (Exception e) {
-                        log4j.error("{} - Exception while trying to commit Race, RTW, and JD Results for Race with eventId={}, raceId={}, RTWRace={}, exceptionMsg={}, exception={}", method, theRace.getEventId(), theRace.getRaceId(), r.toString(), e.getMessage(), e);
-                    } finally {
-                        if (rtwEm.getTransaction().isActive()) {
-                            rtwEm.getTransaction().rollback();
-                        }
-                    }
-
-                    // No changes, so rollback the transaction
-                } else {
-                    log4j.debug("{} - Not calling commit (needsCommit was false) on Race, RTW and JD Result objects for Race with eventId={}, raceId={}, RTWRace={}", method, theRace.getEventId(), theRace.getRaceId(), r.toString());
+                // Commit the transaction
+                try {
+                    log4j.debug("{} - Calling commit on Race, RTW and JD Result objects for Race with eventId={}, raceId={}, RTWRace={}", method, theRace.getEventId(), theRace.getRaceId(), r.toString());
+                    rtwEm.getTransaction().commit();
+                    log4j.debug("{} - Race, RTW and JD Results comitted for Race with eventId={}, raceId={}, RTWRace={}", method, theRace.getEventId(), theRace.getRaceId(), r.toString());
+                } catch (Exception e) {
+                    log4j.error("{} - Exception while trying to commit Race, RTW, and JD Results for Race with eventId={}, raceId={}, RTWRace={}, exceptionMsg={}, exception={}", method, theRace.getEventId(), theRace.getRaceId(), r.toString(), e.getMessage(), e);
+                } finally {
                     if (rtwEm.getTransaction().isActive()) {
                         rtwEm.getTransaction().rollback();
                     }
@@ -860,12 +752,11 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
             if (parentEvent.getRtwTracksid() != 0) {
                 log4j.debug(
                         "{} - Found RTW Event matching tracksid={}, trackId={}, parentEvent.getEventDate={} and eventId={}",
-                        method, parentEvent.getRtwTracksid(), parentEvent.getTrackId(), parentEvent.getEventDate(),
+                        method, parentEvent.getRtwTracksid(), parentEvent.getTrackId(), parentEvent.getRtwEventDate(),
                         theRace.getEventId());
 
                 // Find the matching race in our system
-                Race r = getRTWRace(rtwEm, parentEvent.getRtwTracksid(), parentEvent.getEventDate(),
-                        theRace.getRaceId());
+                Race r = theRace.loadRTWRace(rtwEm);
                 if (null != r) {
                     log4j.debug(
                             "{} - Found RTW Race matching trackId={}, tracksid={}, racesdate={}, racesid={}, and eventId={}",
@@ -940,7 +831,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                     }
                 } else {
                     log4j.error("{} - Did not find RTW Race matching eventId={}, eventName={} EventDate={}, trackId={}, trackName={}, RtwTracksid={}, raceId={}, raceType={}, raceStatus={}", method,
-                            theRace.getEventId(), parentEvent.getEventName(), parentEvent.getEventDate(), parentEvent.getTrackId(), parentEvent.getTrackName(), parentEvent.getRtwTracksid(), theRace.getRaceId(), theRace.getRacetype(), theRace.getRaceStatus());
+                            theRace.getEventId(), parentEvent.getEventName(), parentEvent.getRtwEventDate(), parentEvent.getTrackId(), parentEvent.getTrackName(), parentEvent.getRtwTracksid(), theRace.getRaceId(), theRace.getRacetype(), theRace.getRaceStatus());
                 }
             } else {
                 log4j.debug("{} - Did not find RTW Track matching eventId={}, eventName={} trackId={}, trackName={}, RtwTracksUniquecode={}", method,
@@ -983,12 +874,11 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
             if (parentEvent.getRtwTracksid() != 0) {
                 log4j.debug(
                         "{} - Found RTW Event matching tracksid={}, trackId={}, parentEvent.getEventDate={} and eventId={}",
-                        method, parentEvent.getRtwTracksid(), parentEvent.getTrackId(), parentEvent.getEventDate(),
+                        method, parentEvent.getRtwTracksid(), parentEvent.getTrackId(), parentEvent.getRtwEventDate(),
                         theRace.getEventId());
 
                 // Find the matching race in our system
-                Race r = getRTWRace(rtwEm, parentEvent.getRtwTracksid(), parentEvent.getEventDate(),
-                        theRace.getRaceId());
+                Race r = theRace.loadRTWRace(rtwEm);
                 if (null != r) {
                     log4j.debug(
                             "{} - Found RTW Race matching trackId={}, tracksid={}, racesdate={}, racesid={}, and eventId={}",
@@ -996,7 +886,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                             parentEvent.getEventId());
 
                     // Now find the matching runner (by number)
-                    Horse h = getRTWHorse(rtwEm, r, theRunner, theEntry);
+                    Horse h = theEntry.loadRTWHorse(rtwEm);
                     if (null != h) {
                         log4j.debug(
                                 "{} - Found RTW Horse matching horsesprogramnumber={} trackId={}, raceId={}, and eventId={}",
@@ -1078,12 +968,11 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
             if (parentEvent.getRtwTracksid() != 0) {
                 log4j.debug(
                         "{} - Found RTW Event matching tracksid={}, trackId={}, parentEvent.getEventDate={} and eventId={}",
-                        method, parentEvent.getRtwTracksid(), parentEvent.getTrackId(), parentEvent.getEventDate(),
+                        method, parentEvent.getRtwTracksid(), parentEvent.getTrackId(), parentEvent.getRtwEventDate(),
                         theRace.getEventId());
 
                 // Find the matching race in our system
-                Race r = getRTWRace(rtwEm, parentEvent.getRtwTracksid(), parentEvent.getEventDate(),
-                        theRace.getRaceId());
+                Race r = theRace.loadRTWRace(rtwEm);
                 if (null != r) {
                     log4j.debug(
                             "{} - Found RTW Race matching trackId={}, tracksid={}, racesdate={}, racesid={}, and eventId={}",
@@ -1091,7 +980,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                             parentEvent.getEventId());
 
                     // Now find the matching runner (by number)
-                    Horse h = getRTWHorse(rtwEm, r, theRunner, theEntry);
+                    Horse h = theEntry.loadRTWHorse(rtwEm);
                     if (null != h) {
                         log4j.debug("{} - Found RTW Race matching trackId={}, raceId={}, and eventId={}", method,
                                 parentEvent.getTrackId(), theRace.getRaceId(), theRace.getEventId());
@@ -1179,12 +1068,11 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
             if (parentEvent.getRtwTracksid() != 0) {
                 log4j.debug(
                         "{} - Found RTW Event matching tracksid={}, trackId={}, parentEvent.getEventDate={} and eventId={}",
-                        method, parentEvent.getRtwTracksid(), parentEvent.getTrackId(), parentEvent.getEventDate(),
+                        method, parentEvent.getRtwTracksid(), parentEvent.getTrackId(), parentEvent.getRtwEventDate(),
                         theRace.getEventId());
 
                 // Find the matching race in our system
-                Race r = getRTWRace(rtwEm, parentEvent.getRtwTracksid(), parentEvent.getEventDate(),
-                        theRace.getRaceId());
+                Race r = theRace.loadRTWRace(rtwEm);
                 if (null != r) {
                     log4j.debug(
                             "{} - Found RTW Race matching trackId={}, tracksid={}, racesdate={}, racesid={}, and eventId={}",
@@ -1192,7 +1080,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                             parentEvent.getEventId());
 
                     // Now find the matching runner (by number)
-                    Horse h = getRTWHorse(rtwEm, r, theRunner, theEntry);
+                    Horse h = theEntry.loadRTWHorse(rtwEm);
                     if (null != h) {
                         log4j.debug("{} - Found RTW Race matching trackId={}, raceId={}, and eventId={}", method,
                                 parentEvent.getTrackId(), theRace.getRaceId(), theRace.getEventId());

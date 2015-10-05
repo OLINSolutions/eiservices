@@ -22,6 +22,8 @@
     <Logger name="com.ei.eiservices.utote.client.processor.ResultRequestProcessor" level="DEBUG"/>
     <Logger name="com.ei.eiservices.utote.client.processor.StatusRequestProcessor" level="DEBUG"/>
     <Logger name="com.ei.eiservices.utote.client.programservice.ProgramServiceStub" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.client.resultservice.ResultServiceStub" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.client.totestatusservice.ToteStatusServiceStub" level="DEBUG"/>
     <Logger name="com.ei.eiservices.utote.service.totelinkupdate" level="DEBUG"/>
     <Logger name="com.ei.eiservices.utote.service.totelinkupdate.ToteLinkUpdateServiceStub" level="DEBUG"/>
     <Logger name="com.ei.eiservices.utote.service.handler.ToteLinkUpdateServiceHandler" level="DEBUG"/>

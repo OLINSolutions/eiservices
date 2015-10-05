@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
 	<persistence-unit name="UtoteServices" transaction-type="RESOURCE_LOCAL">
+        <class>com.ei.eiservices.utote.model.Category</class>
+        <class>com.ei.eiservices.utote.model.Coursetype</class>
+        <class>com.ei.eiservices.utote.model.Event</class>
+        <class>com.ei.eiservices.utote.model.Game</class>
+        <class>com.ei.eiservices.utote.model.Gamesdate</class>
+        <class>com.ei.eiservices.utote.model.Gamesracemap</class>
+        <class>com.ei.eiservices.utote.model.Horse</class>
+        <class>com.ei.eiservices.utote.model.Jockey</class>
+        <class>com.ei.eiservices.utote.model.Jockeyslineupmap</class>
+        <class>com.ei.eiservices.utote.model.Jockeysresult</class>
+        <class>com.ei.eiservices.utote.model.Lineupgamesmap</class>
+        <class>com.ei.eiservices.utote.model.Mypick</class>
+        <class>com.ei.eiservices.utote.model.Race</class>
+        <class>com.ei.eiservices.utote.model.Result</class>
+        <class>com.ei.eiservices.utote.model.Track</class>
+        <class>com.ei.eiservices.utote.model.User</class>
+        <class>com.ei.eiservices.utote.model.Usergame</class>
+        <class>com.ei.eiservices.utote.model.Usersemail</class>
+        <class>com.ei.eiservices.utote.model.Userslineupdetail</class>
+        <class>com.ei.eiservices.utote.model.Usersprofile</class>
+        <class>com.ei.eiservices.utote.model.Usersresult</class>
         <class>com.ei.eiservices.utote.model.UtoteConfiguration</class>
         <class>com.ei.eiservices.utote.model.UtoteEntry</class>
         <class>com.ei.eiservices.utote.model.UtoteEntryChange</class>
@@ -18,13 +39,6 @@
         <class>com.ei.eiservices.utote.model.UtoteRunner</class>
         <class>com.ei.eiservices.utote.model.UtoteStatusChange</class>
         <class>com.ei.eiservices.utote.model.UtoteUpdate</class>
-        <class>com.ei.eiservices.utote.model.Event</class>
-		<class>com.ei.eiservices.utote.model.Horse</class>
-        <class>com.ei.eiservices.utote.model.Jockey</class>
-        <class>com.ei.eiservices.utote.model.Jockeysresult</class>
-		<class>com.ei.eiservices.utote.model.Race</class>
-		<class>com.ei.eiservices.utote.model.Result</class>
-        <class>com.ei.eiservices.utote.model.Track</class>
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<shared-cache-mode>ALL</shared-cache-mode>
 		<properties>

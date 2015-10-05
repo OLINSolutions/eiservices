@@ -2,16 +2,12 @@ package com.ei.eiservices.utote.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -125,14 +121,14 @@ public class UtoteEvent implements Serializable {
     @Column(length=40)
     private String rtwTimezoneName = null;
 
+    @Column
+    private long rtwEventDate = 0l;
+
     @Transient
     private Event rtwEvent = null;
 
     @Transient
     boolean supportedTrackType = false;
-
-    @Transient
-    private Long eventDate = null;
 
     // @OneToMany(mappedBy="event", cascade = CascadeType.PERSIST)
     @Transient
@@ -211,25 +207,6 @@ public class UtoteEvent implements Serializable {
 
     public void setEventStatus(String eventStatus) {
         this.eventStatus = eventStatus;
-    }
-
-    public long getEventDate() {
-        if (null == this.eventDate) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM uu HH:mm X");
-            LocalDateTime dateTime = LocalDateTime.parse(eventInfo + " 00:00 Z", formatter);
-            this.eventDate = dateTime.toEpochSecond(ZoneOffset.UTC);
-            /*
-            long millisInDay = 60 * 60 * 24 * 1000;
-            long currentTime = new Date().getTime();
-            this.eventDate = (currentTime / millisInDay) * millisInDay;
-            this.eventDate /= 1000l;
-             */
-        }
-        Date d = new Date();
-        d.setTime(this.eventDate);
-        log4j.debug("getEventDate - this.eventDate={}/{}, this.eventInfo={}", this.eventDate, d.toString(), this.eventInfo);
-        //        log4j.debug("getEventDate - this.eventDate={}/{}, this.eventTime.getTime()={}", this.eventDate, d.toString(), this.eventTime.getTime()/1000);
-        return this.eventDate;
     }
 
     public Date getEventTime() {
@@ -341,42 +318,6 @@ public class UtoteEvent implements Serializable {
         this.rtwEvent = rtwEvent;
     }
 
-    public Event getRtwEvent() {
-        Event ev = this.rtwEvent;
-        if (null == ev) {
-
-            // Get Entity Managers
-            final EntityManagerFactory rtwEmF = Configurator.getRTWEMF();
-            final EntityManager rtwEm = rtwEmF.createEntityManager();
-
-            // Find the supporting RTW event object based on incoming CHRIMS code
-            TypedQuery<Event> qe = rtwEm.createNamedQuery("Event.findByCHRIMS", Event.class);
-            qe.setParameter("code",  this.eventId);
-            try { ev = qe.getSingleResult(); }
-            catch (javax.persistence.NoResultException e) {
-
-                // Could not find standard CHRIMS code, look again by CHRIMS2
-                if (2 == this.eventId.length()) {
-                    qe = rtwEm.createNamedQuery("Event.findByCHRIMS2", Event.class);
-                    qe.setParameter("code",  this.eventId);
-                    try { ev = qe.getSingleResult(); }
-                    catch (javax.persistence.NoResultException e2) {}
-                }
-            }
-
-            rtwEm.close();
-            rtwEmF.close();
-
-            // Was a corresponding RTW event object found
-            if (null == ev) {
-                log4j.error("getRtwEvent - Could not find corresponding RTW Event/Track by either CHRIMS or CHRIMS2.  UtoteEvent={}", this.toString(false));
-            } else {
-                this.rtwEvent = ev;
-            }
-        }
-        return ev;
-    }
-
     /**
      * @return the rtwTracksid
      */
@@ -417,13 +358,6 @@ public class UtoteEvent implements Serializable {
      */
     public void setRtwTimezone(String rtwTimezone) {
         this.rtwTimezone = rtwTimezone;
-    }
-
-    /**
-     * @param eventDate the eventDate to set
-     */
-    public void setEventDate(Long eventDate) {
-        this.eventDate = eventDate;
     }
 
     public String toString(boolean deep) {
@@ -479,7 +413,7 @@ public class UtoteEvent implements Serializable {
         if (turfTrack != null) {
             builder.append("turfTrack=").append(turfTrack).append(", ");
         }
-        builder.append("eventDate=").append(getEventDate()).append(", ");
+        builder.append("rtwEventDate=").append(getRtwEventDate()).append(", ");
         builder.append("rtwTracksid=").append(rtwTracksid).append(", ");
         if (rtwTracksuniquecode != null) {
             builder.append("rtwTracksuniquecode=").append(rtwTracksuniquecode).append(", ");
@@ -571,54 +505,6 @@ public class UtoteEvent implements Serializable {
     }
 
     /**
-     * Loads the RTW-related event information if not already done.
-     *
-     * @return true if the event is a supported type and the information was loaded
-     */
-    public boolean loadRTWEventInfo() {
-
-        boolean valid = false;
-
-        // Check if supported track/event type
-        this.supportedTrackType = Configurator.isSupportedTrackType(this.trackType);
-        if (this.supportedTrackType) {
-
-            // Get Entity Managers
-            Event ev = this.getRtwEvent();
-            // Was a corresponding RTW event object found
-            if (null == ev) {
-                log4j.error("loadRtwEvent - Could not find corresponding RTW Event/Track for a supported type.  UtoteEvent={}", this.toString(false));
-
-            } else {
-
-                // Fill in the required fields
-                this.rtwTracksid = ev.getTracksid();
-                if (null != ev.getEQBCode()) {
-                    this.rtwTracksuniquecode = ev.getEQBCode();
-                    log4j.debug("loadRtwEvent - Setting rtwTracksuniquecode to {} from EQBCode for RTW Event/Track type.  EventId={}, TrackType={}", this.rtwTracksuniquecode, this.eventId, this.trackType);
-                } else if (null != ev.getTMHCode()) {
-                    this.rtwTracksuniquecode = ev.getTMHCode();
-                    log4j.debug("loadRtwEvent - Setting rtwTracksuniquecode to {} from TMHCode for RTW Event/Track type.  EventId={}, TrackType={}", this.rtwTracksuniquecode, this.eventId, this.trackType);
-                } else if (null != ev.getEQBHCode()) {
-                    this.rtwTracksuniquecode = ev.getEQBHCode();
-                    log4j.debug("loadRtwEvent - Setting rtwTracksuniquecode to {} from EQBHCode for RTW Event/Track type.  EventId={}, TrackType={}", this.rtwTracksuniquecode, this.eventId, this.trackType);
-                } else {
-                    log4j.warn("loadRtwEvent - Could not find a value to put into rtwTracksuniquecode for RTW Event/Track type.  EventId={}, TrackType={}", this.rtwTracksuniquecode, this.eventId, this.trackType);
-                }
-                this.rtwTimezone = ev.getTimezone().substring(4, 10);
-                this.rtwTimezoneName = ev.getTimezoneName();
-                valid = true;
-
-            }
-
-        } else {
-            log4j.debug("loadRtwEvent - Non-supported RTW Event/Track type.  EventId={}, TrackType={}", this.eventId, this.trackType);
-        }
-
-        return valid;
-    }
-
-    /**
      * @return the supportedTrackType
      */
     public boolean isSupportedTrackType() {
@@ -650,6 +536,25 @@ public class UtoteEvent implements Serializable {
      */
     public void setRtwTimezoneName(String rtwTimezoneName) {
         this.rtwTimezoneName = rtwTimezoneName;
+    }
+
+    /**
+     * @return the rtwEventDate
+     */
+    public long getRtwEventDate() {
+        if (log4j.isDebugEnabled()) {
+            Date d = new Date();
+            d.setTime(this.rtwEventDate);
+            log4j.debug("getEventDate - this.eventDate={}/{}, this.eventInfo={}", this.rtwEventDate, d.toString(), this.eventInfo);
+        }
+        return rtwEventDate;
+    }
+
+    /**
+     * @param rtwEventDate the rtwEventDate to set
+     */
+    public void setRtwEventDate(long rtwEventDate) {
+        this.rtwEventDate = rtwEventDate;
     }
 
 }

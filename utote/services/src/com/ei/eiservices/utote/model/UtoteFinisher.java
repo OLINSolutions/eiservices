@@ -48,6 +48,9 @@ public class UtoteFinisher implements Serializable {
     @Column(length=25)
     private String jockey = null;
 
+    @Column
+    private int RTWhorsesid = 0;
+
     @Transient
     private UtotePosition position = null;
 
@@ -150,6 +153,7 @@ public class UtoteFinisher implements Serializable {
         if (jockey != null) {
             builder.append("jockey=").append(jockey).append(", ");
         }
+        builder.append("RTWHorsesid=").append(RTWhorsesid).append(", ");
         builder.append("getRtwHorsesProgramNumber()=").append(getRtwHorsesProgramNumber()).append(", ");
         builder.append("rtwWinAmount=").append(rtwWinAmount).append(", ");
         builder.append("rtwPlaceAmount=").append(rtwPlaceAmount).append(", ");
@@ -215,6 +219,22 @@ public class UtoteFinisher implements Serializable {
      */
     public void addToRtwShowAmount(BigDecimal rtwShowAmount) {
         this.rtwShowAmount = this.rtwShowAmount.add(rtwShowAmount);
+    }
+
+
+    /**
+     * @return the rTWhorsesid
+     */
+    public int getRTWhorsesid() {
+        return RTWhorsesid;
+    }
+
+
+    /**
+     * @param rTWhorsesid the rTWhorsesid to set
+     */
+    public void setRTWhorsesid(int rTWhorsesid) {
+        RTWhorsesid = rTWhorsesid;
     }
 
 }

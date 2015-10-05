@@ -64,6 +64,13 @@ public class UtoteResult implements Serializable {
     @Column(length=80)
     private String scratches = null;
 
+    @Column
+    private int RTWtracksid = 0;
+
+    @Column
+    private int RTWracesid = 0;
+
+
     // @OneToMany(mappedBy="poolPrices", cascade = CascadeType.PERSIST)
     @Transient
     private Collection<UtotePoolPrice> poolPrices = null;
@@ -209,6 +216,8 @@ public class UtoteResult implements Serializable {
         if (scratches != null) {
             builder.append("scratches=").append(scratches).append(", ");
         }
+        builder.append("RTWtracksid=").append(RTWtracksid).append(", ");
+        builder.append("RTWracesid=").append(RTWracesid).append(", ");
         if (deep && (poolPrices != null)) {
             builder.append("poolPrices=").append(poolPrices).append(", ");
         }
@@ -318,6 +327,38 @@ public class UtoteResult implements Serializable {
      */
     public void detach(EntityManager em) {
         detach(em, false);
+    }
+
+
+    /**
+     * @return the rTWtracksid
+     */
+    public int getRTWtracksid() {
+        return RTWtracksid;
+    }
+
+
+    /**
+     * @param rTWtracksid the rTWtracksid to set
+     */
+    public void setRTWtracksid(int rTWtracksid) {
+        RTWtracksid = rTWtracksid;
+    }
+
+
+    /**
+     * @return the rTWracesid
+     */
+    public int getRTWracesid() {
+        return RTWracesid;
+    }
+
+
+    /**
+     * @param rTWracesid the rTWracesid to set
+     */
+    public void setRTWracesid(int rTWracesid) {
+        RTWracesid = rTWracesid;
     }
 
 

@@ -801,7 +801,7 @@ public class ResultRequestProcessor {
 
     public UtoteResult getResults(String eventId, int raceId) {
 
-        String method = "getResults";
+        String method = "ResultRequestProcessor.getResults";
         log4j.entry(method + " - eventId, raceId", eventId, raceId);
 
         UtoteResult utoteResult = null;
@@ -809,43 +809,58 @@ public class ResultRequestProcessor {
         ResultServiceStub.ResultResponse resultResponse = null;
         int requestLogId = 0;
         int responseLogId = 0;
+        int tryAgain = 3;
 
-        // Make call to GetResult
-        try {
+        while (tryAgain > 0) {
+            // Make call to GetResult
+            try {
 
-            // Setup call
-            log4j.debug("{} - Settting up GetResult call for raceId={}", method, raceId);
-            ResultServiceStub stub = new ResultServiceStub();
-            ResultServiceStub.GetResult getResultInput = new ResultServiceStub.GetResult();
-            ResultServiceStub.ResultRequest rRequest = new ResultServiceStub.ResultRequest();
-            rRequest.setSource(getSource());
-            rRequest.setEventId(eventId);
-            rRequest.setRaceId(raceId);
-            getResultInput.setResultRequest(rRequest);
-            log4j.debug("{} - rRequest={}", method, rRequest.toString());
-            log4j.debug("{} - getResultInput={}", method, getResultInput.toString());
+                // Setup call
+                log4j.debug("{} - Settting up GetResult call for raceId={}", method, raceId);
+                ResultServiceStub stub = new ResultServiceStub();
+                ResultServiceStub.GetResult getResultInput = new ResultServiceStub.GetResult();
+                ResultServiceStub.ResultRequest rRequest = new ResultServiceStub.ResultRequest();
+                rRequest.setSource(getSource());
+                rRequest.setEventId(eventId);
+                rRequest.setRaceId(raceId);
+                getResultInput.setResultRequest(rRequest);
+                log4j.debug("{} - rRequest={}", method, rRequest.toString());
+                log4j.debug("{} - getResultInput={}", method, getResultInput.toString());
 
-            // Log the request
-            requestLogId = (new UtoteRequestResponseLogger()).saveGetResultRequest(getResultInput);
+                // Log the request
+                requestLogId = (new UtoteRequestResponseLogger()).saveGetResultRequest(getResultInput);
 
-            // Make the call
-            log4j.debug("{} - Making GetResult call for eventId={}, raceId={}", method, eventId, raceId);
-            rResponse = stub.getResult(getResultInput);
+                // Make the call
+                log4j.debug("{} - Making GetResult call for eventId={}, raceId={}", method, eventId, raceId);
+                rResponse = stub.getResult(getResultInput);
 
-            // Make sure we got a response
-            if (null == rResponse) {
-                log4j.error("{} - Null response returned from GetResult request for eventId={}, raceId={}.", method, eventId, raceId);
+                // Make sure we got a response
+                if (null == rResponse) {
+                    log4j.error("{} - Null response returned from GetResult request for eventId={}, raceId={}.", method, eventId, raceId);
+                }
+
+                tryAgain = 1;
+
+            } catch (Result_GetResult_ValidationFaultFault_FaultMessage e) {
+                log4j.error(method + " - Result_GetResult_ValidationFaultFault_FaultMessage getting race result - "+e.getMessage(), e);
+            } catch (Result_GetResult_ToteFaultFault_FaultMessage e) {
+                log4j.error(method + " - Result_GetResult_ToteFaultFault_FaultMessage getting race details - "+e.getMessage(), e);
+            } catch (AxisFault e) {
+                log4j.error(method + " - AxisFault getting race details - "+e.getMessage(),e);
+            } catch (Exception e) {
+                log4j.error(method + " - General exception getting race details - "+e.getMessage(),e);
             }
 
+            -- tryAgain;
+            if (0 != tryAgain) {
+                log4j.debug("{} - Could not get results, waiting 15 seconds and then trying {} more times", method, tryAgain);
+                try {
+                    Thread.sleep(15000);
+                } catch (InterruptedException e) {
+                    log4j.error(method + " - Received InterruptedException while waiting to retry getting race details - "+e.getMessage(),e);
+                }
+            }
 
-        } catch (Result_GetResult_ValidationFaultFault_FaultMessage e) {
-            log4j.error(method + " - Result_GetResult_ValidationFaultFault_FaultMessage getting race result - "+e.getMessage(), e);
-        } catch (Result_GetResult_ToteFaultFault_FaultMessage e) {
-            log4j.error(method + " - Result_GetResult_ToteFaultFault_FaultMessage getting race details - "+e.getMessage(), e);
-        } catch (AxisFault e) {
-            log4j.error(method + " - AxisFault getting race details - "+e.getMessage(),e);
-        } catch (Exception e) {
-            log4j.error(method + " - General exception getting race details - "+e.getMessage(),e);
         }
 
         if ((null != rResponse) && rResponse.isResultResponseSpecified()) {

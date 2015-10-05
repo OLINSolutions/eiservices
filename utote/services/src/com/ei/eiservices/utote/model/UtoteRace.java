@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,6 +17,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.ei.eiservices.utote.Configurator;
 
 
 /**
@@ -33,6 +39,8 @@ import javax.persistence.TypedQuery;
 })
 public class UtoteRace implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log4j = LogManager.getLogger(UtoteRace.class);
 
     public static final String RACE_STATUS_OPEN			= "Open";
     public static final String RACE_STATUS_CLOSED		= "Closed";
@@ -116,6 +124,9 @@ public class UtoteRace implements Serializable {
     @Column
     private boolean hasChanges = false;
 
+    @Column
+    private int RTWracesid = 0;
+
     @Embedded
     private UtoteRaceChange raceChange = null; // Opt - List of late changes to
 
@@ -132,6 +143,9 @@ public class UtoteRace implements Serializable {
     // @JoinColumn(name = "idParent", referencedColumnName = "`idUtoteEvent`", insertable=false, updatable=false)
     @Transient
     private UtoteEvent event = null;
+
+    @Transient
+    private Race RTWrace = null;
 
     public UtoteRace() {
     }
@@ -422,83 +436,6 @@ public class UtoteRace implements Serializable {
         this.hasChanges = hasChanges;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return this.toString(false);
-    }
-
-    public String toString(boolean deep) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("UtoteRace [idUtoteRace=").append(idUtoteRace).append(", ");
-        if (age != null) {
-            builder.append("age=").append(age).append(", ");
-        }
-        if (claim != null) {
-            builder.append("claim=").append(claim).append(", ");
-        }
-        if (conditions != null) {
-            builder.append("conditions=").append(conditions).append(", ");
-        }
-        builder.append("current=").append(current).append(", ");
-        if (distance != null) {
-            builder.append("distance=").append(distance).append(", ");
-        }
-        if (finish != null) {
-            builder.append("finish=").append(finish).append(", ");
-        }
-        builder.append("hasPools=").append(hasPools).append(", hasRunners=").append(hasRunners).append(", ");
-        if (idParent != null) {
-            builder.append("idParent=").append(idParent).append(", ");
-        }
-        if (live != null) {
-            builder.append("live=").append(live).append(", ");
-        }
-        builder.append("numberOfRunners=").append(numberOfRunners).append(", odds=").append(odds).append(", ");
-        if (poolList != null) {
-            builder.append("poolList=").append(poolList).append(", ");
-        }
-        if (postTime != null) {
-            builder.append("postTime=").append(postTime).append(", ");
-        }
-        builder.append("program=").append(program).append(", ");
-        if (purse != null) {
-            builder.append("purse=").append(purse).append(", ");
-        }
-        builder.append("raceId=").append(raceId).append(", ");
-        if (raceStatus != null) {
-            builder.append("raceStatus=").append(raceStatus).append(", ");
-        }
-        if (racetype != null) {
-            builder.append("racetype=").append(racetype).append(", ");
-        }
-        if (sex != null) {
-            builder.append("sex=").append(sex).append(", ");
-        }
-        if (surface != null) {
-            builder.append("surface=").append(surface).append(", ");
-        }
-        if (trackType != null) {
-            builder.append("trackType=").append(trackType).append(", ");
-        }
-        builder.append("hasChanges=").append(hasChanges).append(", ");
-        if (raceChange != null) {
-            builder.append("raceChange=").append(raceChange).append(", ");
-        }
-        if (deep && (pools != null)) {
-            builder.append("pools=").append(pools).append(", ");
-        }
-        if (deep && (runners != null)) {
-            builder.append("runners=").append(runners).append(", ");
-        }
-        if (deep && (event != null)) {
-            builder.append("event=").append(event);
-        }
-        builder.append("]");
-        return builder.toString();
-    }
 
     /**
      * Utility Methods
@@ -668,6 +605,167 @@ public class UtoteRace implements Serializable {
         clearPools();
         clearRunners();
         this.event = null;
+    }
+
+    public Race RTWRace() {
+        if (null == this.RTWrace) {
+            loadRTWRace();
+        }
+        return this.RTWrace;
+    }
+
+    public Race loadRTWRace() {
+
+        Race r = null;
+
+        // Get Entity Managers
+        final EntityManagerFactory rtwEmF = Configurator.getRTWEMF();
+        final EntityManager rtwEm = rtwEmF.createEntityManager();
+
+        r = loadRTWRace(rtwEm);
+
+        rtwEm.close();
+        rtwEmF.close();
+
+        return r;
+    }
+
+    public Race loadRTWRace(EntityManager rtwEm) {
+
+        Race r = null;
+
+        try {
+            r = rtwEm.find(Race.class, this.RTWracesid);
+            this.RTWrace = r;
+        } catch (javax.persistence.NoResultException e) {
+            log4j.debug(
+                    "loadRTWRace - NoResultException running query for RTW Race with RTWracesid={}.\nException={}",
+                    this.RTWracesid, e);
+        } catch (Exception e2) {
+            log4j.debug(
+                    "loadRTWRace - Unexpected Exception running query for RTW Race with RTWracesid={}.\nException={}",
+                    this.RTWracesid, e2);
+        }
+
+        // Was a corresponding RTW Race object found
+        if (null == r) {
+            log4j.error("loadRTWRace - Could not find RTW Race row with racesid={} for UtoteRace={}", this.RTWracesid, this.toString(false));
+        } else {
+            this.RTWrace = r;
+        }
+
+        return r;
+    }
+
+    /**
+     * @return the rTWracesid
+     */
+    public int getRTWracesid() {
+        return RTWracesid;
+    }
+
+    /**
+     * @param rTWracesid the rTWracesid to set
+     */
+    public void setRTWracesid(int rTWracesid) {
+        RTWracesid = rTWracesid;
+    }
+
+    /**
+     * @return the rTWrace
+     */
+    public Race getRTWrace() {
+        return RTWrace;
+    }
+
+    /**
+     * @param rTWrace the rTWrace to set
+     */
+    public void setRTWrace(Race rTWrace) {
+        RTWrace = rTWrace;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return this.toString(false);
+    }
+
+    public String toString(boolean deep) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("UtoteRace [idUtoteRace=").append(idUtoteRace).append(", ");
+        if (age != null) {
+            builder.append("age=").append(age).append(", ");
+        }
+        if (claim != null) {
+            builder.append("claim=").append(claim).append(", ");
+        }
+        if (conditions != null) {
+            builder.append("conditions=").append(conditions).append(", ");
+        }
+        builder.append("current=").append(current).append(", ");
+        if (distance != null) {
+            builder.append("distance=").append(distance).append(", ");
+        }
+        if (finish != null) {
+            builder.append("finish=").append(finish).append(", ");
+        }
+        builder.append("hasPools=").append(hasPools).append(", hasRunners=").append(hasRunners).append(", ");
+        if (idParent != null) {
+            builder.append("idParent=").append(idParent).append(", ");
+        }
+        if (live != null) {
+            builder.append("live=").append(live).append(", ");
+        }
+        builder.append("numberOfRunners=").append(numberOfRunners).append(", odds=").append(odds).append(", ");
+        if (poolList != null) {
+            builder.append("poolList=").append(poolList).append(", ");
+        }
+        if (postTime != null) {
+            builder.append("postTime=").append(postTime).append(", ");
+        }
+        builder.append("program=").append(program).append(", ");
+        if (purse != null) {
+            builder.append("purse=").append(purse).append(", ");
+        }
+        builder.append("raceId=").append(raceId).append(", ");
+        if (raceStatus != null) {
+            builder.append("raceStatus=").append(raceStatus).append(", ");
+        }
+        if (racetype != null) {
+            builder.append("racetype=").append(racetype).append(", ");
+        }
+        if (sex != null) {
+            builder.append("sex=").append(sex).append(", ");
+        }
+        if (surface != null) {
+            builder.append("surface=").append(surface).append(", ");
+        }
+        if (trackType != null) {
+            builder.append("trackType=").append(trackType).append(", ");
+        }
+        builder.append("hasChanges=").append(hasChanges).append(", ");
+        if (raceChange != null) {
+            builder.append("raceChange=").append(raceChange).append(", ");
+        }
+        builder.append("RTWracesid=").append(RTWracesid).append(",");
+        if (deep && (pools != null)) {
+            builder.append("pools=").append(pools).append(", ");
+        }
+        if (deep && (runners != null)) {
+            builder.append("runners=").append(runners).append(", ");
+        }
+        if (deep && (event != null)) {
+            builder.append("event=").append(event);
+        }
+        if (deep && (RTWrace != null)) {
+            builder.append("RTWrace=").append(RTWrace);
+        }
+
+        builder.append("]");
+        return builder.toString();
     }
 
 }
