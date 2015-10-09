@@ -4,12 +4,21 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.ei.eiservices.utote.Configurator;
 
 
 /**
@@ -18,180 +27,188 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="games")
-@NamedQuery(name="Game.findAll", query="SELECT g FROM Game g")
+@NamedQueries({
+    @NamedQuery(name="Game.findAll", query="SELECT g FROM Game g"),
+})
 public class Game implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log4j = LogManager.getLogger(Game.class);
+    public static int SPECIAL_GAMESID_HUDDIE1 = 17161;
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="`gamesid`", insertable=true, updatable=false, unique=true, nullable=false)
-    private int gamesid;
+    private int gamesid = 0;
 
     @Column
-    private int categoriesid;
+    private int categoriesid = 0;
 
     @Column(nullable=false, length=1)
-    private String gamesastest;
+    private String gamesastest = null;
 
     @Column(nullable=false)
-    private boolean gamesautomaticallyover;
+    private boolean gamesautomaticallyover = false;
 
     @Column(length=45)
-    private String gamescategoriestypeid;
+    private String gamescategoriestypeid = null;
 
     @Column
-    private int gamescosttoplay;
+    private int gamescosttoplay = 0;
 
     @Column
-    private int gamescreationdate;
+    private int gamescreationdate = 0;
 
     @Column(nullable=false)
-    private int gamescreationmode;
+    private int gamescreationmode = 0;
 
     @Column(nullable=false)
-    private int gamescsvpickreportstatus;
+    private int gamescsvpickreportstatus = 0;
 
     @Column
-    private int gamescurrententries;
+    private int gamescurrententries = 0;
 
     @Column(nullable=false)
-    private int gamescurrententrybypointseat;
+    private int gamescurrententrybypointseat = 0;
 
     @Lob
     @Column(nullable=false)
-    private String gamescustomprize;
+    private String gamescustomprize = null;
 
     @Column(nullable=false)
-    private int gamesdonationstatus;
+    private int gamesdonationstatus = 0;
 
     @Column
-    private int gamesentrypointfee;
+    private int gamesentrypointfee = 0;
 
     @Column(nullable=false)
-    private int gamesentrypointseatnumber;
+    private int gamesentrypointseatnumber = 0;
 
     @Column
-    private int gamesentrypointsforpointseat;
+    private int gamesentrypointsforpointseat = 0;
 
     @Column
-    private int gamesfeetypeid;
+    private int gamesfeetypeid = 0;
 
     @Column(nullable=false)
-    private boolean gamesisover;
+    private boolean gamesisover = false;
 
     @Column(nullable=false)
-    private int gamesispartnergame;
+    private int gamesispartnergame = 0;
 
     @Column
-    private int gamesjoiningtimefreepoints;
+    private int gamesjoiningtimefreepoints = 0;
 
     @Column(nullable=false)
-    private int gameslockdowntime;
+    private int gameslockdowntime = 0;
 
     @Column
-    private int gamesmaxentries;
+    private int gamesmaxentries = 0;
 
     @Column
-    private int gamesminentries;
+    private int gamesminentries = 0;
 
     @Column(nullable=false)
-    private int gamesmode;
+    private int gamesmode = 0;
 
     @Column(length=255)
-    private String gamesname;
+    private String gamesname = null;
 
     @Column(length=45)
-    private String gamesnumberofraces;
+    private String gamesnumberofraces = null;
 
     @Column(nullable=false, length=255)
-    private String gamespaymenttype;
+    private String gamespaymenttype = null;
 
     @Column(nullable=false)
-    private int gamespointentryavailablepos;
+    private int gamespointentryavailablepos = 0;
 
     @Column(nullable=false)
-    private int gamespointentryseatstatus;
+    private int gamespointentryseatstatus = 0;
 
     @Column(nullable=false)
-    private int gamesprivacymode;
+    private int gamesprivacymode = 0;
 
     @Column(length=255)
-    private String gamesprizeamount;
+    private String gamesprizeamount = null;
 
     @Lob
     @Column(nullable=false)
-    private String gamesprizedisplayforinfotab;
+    private String gamesprizedisplayforinfotab = null;
 
     @Column(nullable=false, length=255)
-    private String gamesprizedisplayforsite;
+    private String gamesprizedisplayforsite = null;
 
     @Column
-    private int gamesprizedistributionid;
+    private int gamesprizedistributionid = 0;
 
     @Column(nullable=false)
-    private int gamesprizedistributionusercreategame;
+    private int gamesprizedistributionusercreategame = 0;
 
     @Column
-    private int gamesprizetypeid;
+    private int gamesprizetypeid = 0;
 
     @Column(nullable=false)
-    private int gamespurchaseentry;
+    private int gamespurchaseentry = 0;
 
     @Column(nullable=false)
-    private boolean gamespurchaselifeline;
+    private boolean gamespurchaselifeline = false;
 
     @Column(nullable=false)
-    private int gamesrefundallusers;
+    private int gamesrefundallusers = 0;
 
     @Lob
     @Column(nullable=false)
-    private String gamesrules;
+    private String gamesrules = null;
 
     @Column(nullable=false)
-    private float gamessalary;
+    private float gamessalary = 0f;
 
     @Column(length=255)
-    private String gamesshowintab;
+    private String gamesshowintab = null;
 
     @Column
-    private int gamestakeout;
+    private int gamestakeout = 0;
 
     @Column(nullable=false)
-    private float gamestakeoutpercentage;
+    private float gamestakeoutpercentage = 0f;
 
     @Column(nullable=false)
-    private float gamestakeoutvalue;
+    private float gamestakeoutvalue = 0f;
 
     @Column(nullable=false)
-    private int gamestwitterfeedeviewstatus;
+    private int gamestwitterfeedeviewstatus = 0;
 
     @Lob
     @Column(nullable=false)
-    private String gamestypedescription;
+    private String gamestypedescription = null;
 
     @Column(nullable=false)
-    private byte gamestypeid;
+    private byte gamestypeid = 0;
 
     @Column(nullable=false, length=100)
-    private String gamestypeimage;
+    private String gamestypeimage = null;
 
     @Column(length=45)
-    private String gamesusermaxentries;
+    private String gamesusermaxentries = null;
 
     @Column(nullable=false)
-    private boolean gameswinnercalculationstatus;
+    private boolean gameswinnercalculationstatus = false;
 
     @Column(nullable=false, length=1)
-    private String gameswinnerpayby;
+    private String gameswinnerpayby = null;
 
     @Column(nullable=false)
-    private boolean gameswinnerstatus;
+    private boolean gameswinnerstatus = false;
 
     @Column
-    private int statusid;
+    private int statusid = 0;
 
     @Column(nullable=false)
-    private int usersid;
+    private int usersid = 0;
+
+    @Transient
+    private Category category;
 
     public Game() {
     }
@@ -636,6 +653,38 @@ public class Game implements Serializable {
         this.usersid = usersid;
     }
 
+    /**
+     * @return the category
+     */
+    public Category getCategory() {
+        if (null == this.category) {
+            // Get Entity Managers
+            final EntityManagerFactory rtwEmF = Configurator.getRTWEMF();
+            final EntityManager rtwEm = rtwEmF.createEntityManager();
+            try {
+                category = rtwEm.find(Category.class, this.categoriesid);
+            } catch (Exception e) {
+                log4j.error(
+                        "Game.getCategory - Exception attempting to find the Category with categoriesid={} for Game with gamesid={}.\nException={}",
+                        this.categoriesid, this.gamesid, e.getMessage(), e);
+            }
+            if (rtwEm.isOpen()) {
+                rtwEm.close();
+            }
+            if (rtwEmF.isOpen()) {
+                rtwEmF.close();
+            }
+        }
+        return category;
+    }
+
+    /**
+     * @param category the category to set
+     */
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -712,7 +761,11 @@ public class Game implements Serializable {
             builder.append("gameswinnerpayby=").append(gameswinnerpayby).append(", ");
         }
         builder.append("gameswinnerstatus=").append(gameswinnerstatus).append(", statusid=").append(statusid).append(", usersid=").append(usersid)
-        .append("]");
+        .append(", ");
+        if (category != null) {
+            builder.append("category=").append(category);
+        }
+        builder.append("]");
         return builder.toString();
     }
 

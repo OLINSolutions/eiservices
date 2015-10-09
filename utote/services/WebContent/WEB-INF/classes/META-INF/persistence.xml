@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
 	<persistence-unit name="UtoteServices" transaction-type="RESOURCE_LOCAL">
+        <class>com.ei.eiservices.utote.model.UtoteConfiguration</class>
+        <class>com.ei.eiservices.utote.model.UtoteEntry</class>
+        <class>com.ei.eiservices.utote.model.UtoteEntryChange</class>
+        <class>com.ei.eiservices.utote.model.UtoteEvent</class>
+        <class>com.ei.eiservices.utote.model.UtoteFinisher</class>
+        <class>com.ei.eiservices.utote.model.UtotePool</class>
+        <class>com.ei.eiservices.utote.model.UtotePoolPrice</class>
+        <class>com.ei.eiservices.utote.model.UtotePosition</class>
+        <class>com.ei.eiservices.utote.model.UtotePrice</class>
+        <class>com.ei.eiservices.utote.model.UtoteRace</class>
+        <class>com.ei.eiservices.utote.model.UtoteRaceChange</class>
+        <class>com.ei.eiservices.utote.model.UtoteRequestLog</class>
+        <class>com.ei.eiservices.utote.model.UtoteResponseLog</class>
+        <class>com.ei.eiservices.utote.model.UtoteResult</class>
+        <class>com.ei.eiservices.utote.model.UtoteRunner</class>
+        <class>com.ei.eiservices.utote.model.UtoteStatusChange</class>
+        <class>com.ei.eiservices.utote.model.UtoteUpdate</class>
         <class>com.ei.eiservices.utote.model.Category</class>
         <class>com.ei.eiservices.utote.model.Coursetype</class>
         <class>com.ei.eiservices.utote.model.Event</class>
@@ -22,23 +39,6 @@
         <class>com.ei.eiservices.utote.model.Userslineupdetail</class>
         <class>com.ei.eiservices.utote.model.Usersprofile</class>
         <class>com.ei.eiservices.utote.model.Usersresult</class>
-        <class>com.ei.eiservices.utote.model.UtoteConfiguration</class>
-        <class>com.ei.eiservices.utote.model.UtoteEntry</class>
-        <class>com.ei.eiservices.utote.model.UtoteEntryChange</class>
-        <class>com.ei.eiservices.utote.model.UtoteEvent</class>
-        <class>com.ei.eiservices.utote.model.UtoteFinisher</class>
-        <class>com.ei.eiservices.utote.model.UtotePool</class>
-        <class>com.ei.eiservices.utote.model.UtotePoolPrice</class>
-        <class>com.ei.eiservices.utote.model.UtotePosition</class>
-        <class>com.ei.eiservices.utote.model.UtotePrice</class>
-        <class>com.ei.eiservices.utote.model.UtoteRace</class>
-        <class>com.ei.eiservices.utote.model.UtoteRaceChange</class>
-		<class>com.ei.eiservices.utote.model.UtoteRequestLog</class>
-		<class>com.ei.eiservices.utote.model.UtoteResponseLog</class>
-        <class>com.ei.eiservices.utote.model.UtoteResult</class>
-        <class>com.ei.eiservices.utote.model.UtoteRunner</class>
-        <class>com.ei.eiservices.utote.model.UtoteStatusChange</class>
-        <class>com.ei.eiservices.utote.model.UtoteUpdate</class>
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<shared-cache-mode>ALL</shared-cache-mode>
 		<properties>

@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ei.eiservices.utote.Configurator;
+import com.ei.eiservices.utote.client.programservice.ProgramServiceStub;
 
 /**
  * The persistent class for the utoteEntries database table.
@@ -307,6 +308,9 @@ public class UtoteEntry implements Serializable {
      */
     @Override
     public String toString() {
+        return toString(false);
+    }
+    public String toString(boolean deep) {
         StringBuilder builder = new StringBuilder();
         builder.append("UtoteEntry [idUtoteEntry=").append(idUtoteEntry).append(", idParent=").append(idParent)
         .append(", ");
@@ -339,9 +343,6 @@ public class UtoteEntry implements Serializable {
         builder.append("hasChanges=").append(hasChanges).append(", ");
         if (entryChange != null) {
             builder.append("entryChange=").append(entryChange).append(", ");
-        }
-        if (runner != null) {
-            builder.append("runner=").append(runner);
         }
         builder.append("]");
         return builder.toString();
@@ -384,6 +385,81 @@ public class UtoteEntry implements Serializable {
         return h;
     }
 
+    public UtoteEntry(UtoteEntry source) {
+        super();
+        this.idParent = source.idParent;
+        this.entryId = source.entryId;
+        this.jockey = source.jockey;
+        this.medication = source.medication;
+        this.name = source.name;
+        this.owner = source.owner;
+        this.position = source.position;
+        this.scratch = source.scratch;
+        this.trainer = source.trainer;
+        this.weight = source.weight;
+        this.hasChanges = source.hasChanges;
+        this.RTWhorsesid = source.RTWhorsesid;
+        this.entryChange = source.entryChange;
+        this.runner = source.runner;
+        this.RTWhorse = source.RTWhorse;
+    }
+
+    public UtoteEntry(int idParent, ProgramServiceStub.Entry entry) {
+        super();
+        updateFromTote(idParent, entry);
+    }
+
+    public void updateFromTote(int idParent, ProgramServiceStub.Entry entry) {
+        this.setIdParent(idParent);
+        updateFromTote(entry);
+    }
+
+    public void updateFromTote(ProgramServiceStub.Entry entry) {
+        this.setEntryId(entry.getEntryId());
+        if (entry.isWeightSpecified()) {
+            this.setWeight(entry.getWeight());
+        }
+        if (entry.isTrainerSpecified()) {
+            this.setTrainer(entry.getTrainer());
+        }
+        if (entry.isScratchSpecified()) {
+            this.setScratch(entry.getScratch());
+        }
+        if (entry.isPositionSpecified()) {
+            this.setPosition(entry.getPosition());
+        }
+        if (entry.isOwnerSpecified()) {
+            this.setOwner(entry.getOwner());
+        }
+        if (entry.isNameSpecified()) {
+            this.setName(entry.getName());
+        }
+        if (entry.isMedicationSpecified()) {
+            this.setMedication(entry.getMedication());
+        }
+        if (entry.isJockeySpecified()) {
+            this.setJockey(entry.getJockey());
+        }
+
+        // Process Entry Change, if exists
+        if (entry.isEntryChangesSpecified()) {
+            this.setHasChanges(entry.getEntryChanges().isChangeSpecified());
+            if (this.hasChanges()) {
+                ProgramServiceStub.EntryChange eC = entry.getEntryChanges().getChange()[0];
+                UtoteEntryChange uEC = this.getEntryChange();
+                if (null == uEC) {
+                    uEC = new UtoteEntryChange();
+                    this.setEntryChange(uEC);
+                }
+                uEC.updateFromTote(this, eC);
+            }
+        } else {
+            this.setEntryChange(new UtoteEntryChange(this));
+        }
+
+    }
+
+
     public Horse loadRTWHorse(EntityManager rtwEm) {
 
         Horse h = null;
@@ -411,6 +487,122 @@ public class UtoteEntry implements Serializable {
         return h;
     }
 
+    public boolean isSameEntry(UtoteEntry newEntry) {
+        return ((null == newEntry.getEntryId()) &&
+                (null == this.getEntryId()))
+                ||
+                ((null != newEntry.getEntryId()) &&
+                        (null != this.getEntryId()) &&
+                        (newEntry.getEntryId().equalsIgnoreCase(this.getEntryId()))
+                        );
+    }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = (prime * result) + ((entryChange == null) ? 0 : entryChange.hashCode());
+        result = (prime * result) + ((entryId == null) ? 0 : entryId.hashCode());
+        result = (prime * result) + (hasChanges ? 1231 : 1237);
+        result = (prime * result) + ((jockey == null) ? 0 : jockey.hashCode());
+        result = (prime * result) + ((medication == null) ? 0 : medication.hashCode());
+        result = (prime * result) + ((name == null) ? 0 : name.hashCode());
+        result = (prime * result) + ((owner == null) ? 0 : owner.hashCode());
+        result = (prime * result) + ((position == null) ? 0 : position.hashCode());
+        result = (prime * result) + (scratch ? 1231 : 1237);
+        result = (prime * result) + ((trainer == null) ? 0 : trainer.hashCode());
+        result = (prime * result) + ((weight == null) ? 0 : weight.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        UtoteEntry other = (UtoteEntry) obj;
+        if (entryChange == null) {
+            if (other.entryChange != null) {
+                return false;
+            }
+        } else if (!entryChange.equals(other.entryChange)) {
+            return false;
+        }
+        if (entryId == null) {
+            if (other.entryId != null) {
+                return false;
+            }
+        } else if (!entryId.equals(other.entryId)) {
+            return false;
+        }
+        if (hasChanges != other.hasChanges) {
+            return false;
+        }
+        if (jockey == null) {
+            if (other.jockey != null) {
+                return false;
+            }
+        } else if (!jockey.equals(other.jockey)) {
+            return false;
+        }
+        if (medication == null) {
+            if (other.medication != null) {
+                return false;
+            }
+        } else if (!medication.equals(other.medication)) {
+            return false;
+        }
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (owner == null) {
+            if (other.owner != null) {
+                return false;
+            }
+        } else if (!owner.equals(other.owner)) {
+            return false;
+        }
+        if (position == null) {
+            if (other.position != null) {
+                return false;
+            }
+        } else if (!position.equals(other.position)) {
+            return false;
+        }
+        if (scratch != other.scratch) {
+            return false;
+        }
+        if (trainer == null) {
+            if (other.trainer != null) {
+                return false;
+            }
+        } else if (!trainer.equals(other.trainer)) {
+            return false;
+        }
+        if (weight == null) {
+            if (other.weight != null) {
+                return false;
+            }
+        } else if (!weight.equals(other.weight)) {
+            return false;
+        }
+        return true;
+    }
 
 }

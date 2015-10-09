@@ -1,6 +1,7 @@
 package com.ei.eiservices.utote.model;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -17,6 +18,9 @@ import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The persistent class for the races database table.
@@ -38,6 +42,14 @@ import javax.persistence.Transient;
 })
 public class Race implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log4j = LogManager.getLogger(Race.class);
+
+    public static final int RTW_RACE_STATUS_OPEN = 1;      // "Open", "Uncanceled"
+    public static final int RTW_RACE_STATUS_CLOSED = 3;    // "Closed", "Post", "Locked"
+    public static final int RTW_RACE_STATUS_CANCELLED = 4; // "Cancelled"
+    public static final int RTW_RACE_STATUS_OVER = 5;      // "Final"
+
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -466,5 +478,34 @@ public class Race implements Serializable {
         builder.append("]");
         return builder.toString();
     }
+
+    public void updateRaceTimesBasedOnStatus(String raceStatus) {
+        // Convert the time to string format for update
+        // Note: MySQL provides ambiguous results when creating an epoch value
+        switch (raceStatus) {
+        case UtoteRace.RACE_STATUS_CLOSED:
+        case UtoteRace.RACE_STATUS_POST:
+        case UtoteRace.RACE_STATUS_LOCKED:
+            long lTime = Instant.now().getEpochSecond();
+            log4j.debug(
+                    "Race.updateRaceTimesBasedOnStatus - Existing Raceshorseselectionlocktime={}, lTime(new Raceshorseselectionlocktime)={}",
+                    this.getRaceshorseselectionlocktime(), lTime);
+            this.setRaceshorseselectionlocktime(lTime);
+            break;
+        case UtoteRace.RACE_STATUS_CANCELED:
+            long cTime = Instant.now().getEpochSecond();
+            log4j.debug("Race.updateRaceTimesBasedOnStatus - Existing Race Canceled Racesendtime={}, eTime(new Racesendtime)={}",
+                    this.getRacesendtime(), cTime);
+            this.setRacesendtime(cTime);
+            break;
+        case UtoteRace.RACE_STATUS_FINAL:
+            long fTime = Instant.now().getEpochSecond();
+            log4j.debug("updateRaceTimesBasedOnStatus - Existing Race Final Racesendtime={}, eTime(new Racesendtime)={}",
+                    this.getRacesendtime(), fTime);
+            this.setRacesendtime(fTime);
+            break;
+        }
+    }
+
 
 }

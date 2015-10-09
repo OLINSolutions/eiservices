@@ -28,9 +28,17 @@
     <Logger name="com.ei.eiservices.utote.service.totelinkupdate.ToteLinkUpdateServiceStub" level="DEBUG"/>
     <Logger name="com.ei.eiservices.utote.service.handler.ToteLinkUpdateServiceHandler" level="DEBUG"/>
     <Logger name="com.ei.eiservices.utote.service.handler.ToteLinkInitializationServiceHandler" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.controller" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.controller.RaceController" level="DEBUG"/>
     <Logger name="com.ei.eiservices.utote" level="DEBUG"/>
     <Logger name="com.ei.eiservices.utote.jpa" level="DEBUG"/>
     <Logger name="com.ei.eiservices.utote.model" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.model.Horse" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.model.Mypick" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.model.Race" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.model.UtoteEntry" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.model.UtoteEvent" level="DEBUG"/>
+    <Logger name="com.ei.eiservices.utote.model.UtoteRace" level="DEBUG"/>
     <Root level="DEBUG">
       <AppenderRef ref="STDOUT" level="INFO"/>
       <AppenderRef ref="RollingFileLogger" level="DEBUG"/>

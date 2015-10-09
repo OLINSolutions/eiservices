@@ -7,7 +7,6 @@
  */
 package com.ei.eiservices.utote.client.processor;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -15,7 +14,6 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.axis2.AxisFault;
@@ -35,152 +33,73 @@ import com.ei.eiservices.utote.client.programservice.Program_GetEvents_Validatio
 import com.ei.eiservices.utote.client.programservice.Program_GetRace_ToteFaultFault_FaultMessage;
 import com.ei.eiservices.utote.client.programservice.Program_GetRace_ValidationFaultFault_FaultMessage;
 import com.ei.eiservices.utote.model.UtoteEntry;
-import com.ei.eiservices.utote.model.UtoteEntryChange;
 import com.ei.eiservices.utote.model.UtoteEvent;
 import com.ei.eiservices.utote.model.UtotePool;
 import com.ei.eiservices.utote.model.UtoteRace;
-import com.ei.eiservices.utote.model.UtoteRaceChange;
 import com.ei.eiservices.utote.model.UtoteRunner;
 
 /*
- *  ProgramServiceTest Junit test case
+ *  ProgramServiceTest
  */
 
 public class ProgramRequestProcessor {
 
     private static final Logger log4j = LogManager.getLogger(ProgramRequestProcessor.class.getName());
 
-    private ProgramServiceStub.Source getSource() {
+    private static ProgramServiceStub.Source getSource() {
         ProgramServiceStub.Source source = new ProgramServiceStub.Source();
         source.setSystemId(Configurator.getSystemId());
         source.setSourceId(Configurator.getSourceId());
         return source;
     }
 
-    private UtoteEntry findEntry(Collection<UtoteEntry> entries, String entryId) {
-        log4j.entry("findEntry - entries.size, runnerId", entries.size(), entryId);
-        for (UtoteEntry uEntry : entries) {
-            if (((null == entryId) && (null == uEntry.getEntryId())) ||
-                    ((null != entryId) && (null != uEntry.getEntryId()) && (uEntry.getEntryId().equalsIgnoreCase(entryId)))) {
-                log4j.exit("findEntry - Found entity for entryId="+entryId);
-                return uEntry;
-            }
-        }
-        log4j.exit("findEntry - Not Found.");
-        return null;
+    private static UtoteEntry findEntry(Collection<UtoteEntry> entries, String entryId) {
+        return (null == entries)?null:entries.stream()
+                .filter(uEntry -> (
+                        ((null == entryId) &&
+                                (null == uEntry.getEntryId())
+                                ) ||
+                        ((null != entryId) &&
+                                (null != uEntry.getEntryId()) &&
+                                (uEntry.getEntryId().equalsIgnoreCase(entryId)))
+                        )
+                        )
+                .findFirst().orElse(null);
     }
 
-    private Collection<UtoteEntry> cloneEntries(UtoteRunner parent, ProgramServiceStub.Entries entries, boolean newParent) {
+    private static Collection<UtoteEntry> cloneEntries(UtoteRunner parent, ProgramServiceStub.Entries entries, boolean newParent) {
         log4j.entry("cloneEntries - idParent(Race), runnerId", parent.getIdParent(), parent.getRunnerId());
         Collection<UtoteEntry> uEntries = null;
 
         // See if any runners were passed in
         if (entries.isEntrySpecified()) {
 
+            // Get the current Runners entity collection, if exists
+            uEntries = newParent?new ArrayList<UtoteEntry>():parent.getEntries();
+
             final EntityManagerFactory emF = Configurator.getRWEMF();
             final EntityManager em = emF.createEntityManager();
-
-            // Get the current Runners entity collection, if exists
-            uEntries = newParent?null:parent.getEntries();
-            if (null == uEntries) {
-                log4j.trace("cloneEntries - no Entries found in parent.  Creating and setting new array list");
-                uEntries = new ArrayList<UtoteEntry>();
-            }
-
-            // Open transaction
-            log4j.trace("cloneEntries - {} Entries are specified, about to process", entries.getEntry().length);
 
             // Iterate over the pools
             for (ProgramServiceStub.Entry entry : entries.getEntry()) {
 
-                boolean newEntity = false;
+                // Open transaction
+                log4j.trace("cloneEntries - {} Entries are specified, about to process", entries.getEntry().length);
                 em.getTransaction().begin();
 
-                // If this is new, create the container
+                // Try to find existing entry, If this is new, create the container
                 log4j.trace("cloneEntries - Searching for input entryId = {}", entry.getEntryId());
                 UtoteEntry uEntry = newParent?null:findEntry(uEntries, entry.getEntryId());
                 if (null == uEntry) {
                     log4j.trace("cloneEntries - Not found, creating new entity for input entryId={}", entry.getEntryId());
-                    uEntry = new UtoteEntry();
-                    uEntry.setIdParent(parent.getIdUtoteRunner());
-                    uEntry.setEntryId(entry.getEntryId());
-                    newEntity = true;
-                } else {
-                    log4j.trace("cloneEntries - Found entity for input entryId={}, idUtoteEntry={}", uEntry.getEntryId(), uEntry.getIdUtoteEntry());
-                }
-
-                log4j.trace("cloneEntries - Cloning fields for input entryId={}", uEntry.getEntryId());
-
-                // Set the values that have been specified
-                if (entry.isWeightSpecified()) {
-                    uEntry.setWeight(entry.getWeight());
-                }
-                if (entry.isTrainerSpecified()) {
-                    uEntry.setTrainer(entry.getTrainer());
-                }
-                if (entry.isScratchSpecified()) {
-                    uEntry.setScratch(entry.getScratch());
-                }
-                if (entry.isPositionSpecified()) {
-                    uEntry.setPosition(entry.getPosition());
-                }
-                if (entry.isOwnerSpecified()) {
-                    uEntry.setOwner(entry.getOwner());
-                }
-                if (entry.isNameSpecified()) {
-                    uEntry.setName(entry.getName());
-                }
-                if (entry.isMedicationSpecified()) {
-                    uEntry.setMedication(entry.getMedication());
-                }
-                if (entry.isJockeySpecified()) {
-                    uEntry.setJockey(entry.getJockey());
-                }
-
-                // Process Entry Change, if exists
-                if (entry.isEntryChangesSpecified()) {
-                    uEntry.setHasChanges(entry.getEntryChanges().isChangeSpecified());
-                    if (uEntry.hasChanges()) {
-                        ProgramServiceStub.EntryChange eC = entry.getEntryChanges().getChange()[0];
-                        UtoteEntryChange uEC = uEntry.getEntryChange();
-                        if (null == uEC) {
-                            uEC = new UtoteEntryChange();
-                            uEntry.setEntryChange(uEC);
-                        }
-                        if (eC.isWeightSpecified()) {
-                            uEC.setWeightChanged(eC.isWeightSpecified());
-                        }
-                        if (eC.isTrainerSpecified()) {
-                            uEC.setTrainerChanged(eC.getTrainer());
-                        }
-                        if (eC.isPositionSpecified()) {
-                            uEC.setPositionChanged(eC.getPosition());
-                        }
-                        if (eC.isOwnerSpecified()) {
-                            uEC.setOwnerChanged(eC.getOwner());
-                        }
-                        if (eC.isOtherSpecified()) {
-                            uEC.setOtherChange(eC.getOther());
-                        }
-                        if (eC.isMedicationSpecified()) {
-                            uEC.setMedicationChanged(eC.getMedication());
-                        }
-                        if (eC.isJockeySpecified()) {
-                            uEC.setJockeyChanged(eC.getJockey());
-                        }
-                        if (eC.isNameSpecified()) {
-                            uEC.setNameChanged(eC.getName());
-                        }
-                    }
-                } else {
-                    uEntry.setEntryChange(new UtoteEntryChange()	);
-                }
-
-                // Persist first before updating or adding any associations
-                if (newEntity) {
+                    uEntry = new UtoteEntry(parent.getIdUtoteRunner(), entry);
+                    // Persist first before updating or adding any associations
                     log4j.trace("cloneEntries - Entry is NEW, calling persist entryId={}, runnerId={}", uEntry.getEntryId(), parent.getRunnerId());
                     em.persist(uEntry);
                 } else {
+                    log4j.trace("cloneEntries - Found entity for input entryId={}, idUtoteEntry={}", uEntry.getEntryId(), uEntry.getIdUtoteEntry());
+                    uEntry.updateFromTote(entry);
+                    // Persist first before updating or adding any associations
                     log4j.trace("cloneEntries - Entry Entity is EXISTING, calling merge for entryId={}, runnerId={}", uEntry.getEntryId(), parent.getRunnerId());
                     UtoteEntry mergedEntry = em.merge(uEntry);
                     uEntries.remove(uEntry);
@@ -204,85 +123,62 @@ public class ProgramRequestProcessor {
                 uEntries.add(uEntry);
             }
 
-            em.close();
-            emF.close();
-
+            if (em.isOpen()) {
+                em.close();
+            }
+            if (emF.isOpen()) {
+                emF.close();
+            }
         }
 
         log4j.exit("cloneEntries uEntries.size = "+uEntries.size());
         return uEntries;
     }
 
-    private UtoteRunner findRunner(Collection<UtoteRunner> runners, int runnerId) {
-        log4j.entry("findRunner - runners.size, runnerId", runners.size(), runnerId);
-        for (UtoteRunner uRunner : runners) {
-            if (uRunner.getRunnerId() == runnerId) {
-                log4j.exit("findRunner - Found entity for runnerId="+runnerId);
-                return uRunner;
-            }
-        }
-        log4j.exit("findRunner - Not Found.");
-        return null;
+    private static UtoteRunner findRunner(Collection<UtoteRunner> runners, int runnerId) {
+        return (null == runners)?null:runners.stream()
+                .filter(uRunner -> (uRunner.getRunnerId() == runnerId))
+                .findFirst()
+                .orElse(null);
     }
 
-    private Collection<UtoteRunner> cloneRunners(UtoteRace parent, boolean newParent, ProgramServiceStub.Runners runners) {
+    private static Collection<UtoteRunner> cloneRunners(UtoteRace parent, boolean newParent, ProgramServiceStub.Runners runners) {
         log4j.entry("cloneRunners - raceId", parent.getRaceId());
         Collection<UtoteRunner> uRunners = null;
 
         // See if any runners were passed in
         if (runners.isRunnerSpecified()) {
 
+            // Get the current Runners entity collection, if exists
+            uRunners = newParent?new ArrayList<UtoteRunner>():parent.getRunners();
+
             final EntityManagerFactory emF = Configurator.getRWEMF();
             final EntityManager em = emF.createEntityManager();
-
-            // Get the current Runners entity collection, if exists
-            uRunners = newParent?null:parent.getRunners();
-            if (null == uRunners) {
-                log4j.debug("cloneRunners - no Runners found in parent.  Creating and setting new array list");
-                uRunners = new ArrayList<UtoteRunner>();
-            }
-
-            // Open transaction
-            log4j.debug("cloneRunners - {} Runners are specified, about to process", runners.getRunner().length);
 
             // Iterate over the pools
             for (ProgramServiceStub.Runner runner : runners.getRunner()) {
 
                 boolean newRunner = false;
+
+                // Open transaction
+                log4j.debug("cloneRunners - {} Runners are specified, about to process", runners.getRunner().length);
                 em.getTransaction().begin();
 
-                // If this is new, create the container
+                // Get existing Runner, If this is new, create the container
                 log4j.trace("cloneRunners - Searching for input runnerId = {}", runner.getRunnerId());
                 UtoteRunner uRunner = newParent?null:findRunner(uRunners, runner.getRunnerId());
+
                 if (null == uRunner) {
-                    log4j.trace("cloneRunners - Not found, creating new entity for input runnerId = {}", runner.getRunnerId());
-                    uRunner = new UtoteRunner();
-                    uRunner.setIdParent(parent.getIdUtoteRace());
-                    uRunner.setRunnerId(runner.getRunnerId());
                     newRunner = true;
-                } else {
-                    log4j.trace("cloneRunners - Found entity for input runnerId = {}, idUtoteRunner={}", uRunner.getRunnerId(), uRunner.getIdUtoteRunner());
-                }
-
-                log4j.trace("cloneRunners - Cloning fields for input runnerId = {}", runner.getRunnerId());
-
-                // Set the values that have been specified
-                if (runner.isScratchSpecified()) {
-                    uRunner.setScratch(runner.getScratch());
-                }
-                if (runner.isOddsSpecified()) {
-                    uRunner.setOdds(runner.getOdds());
-                }
-                if (runner.isEntriesSpecified()) {
-                    uRunner.setHasEntries(runner.getEntries().isEntrySpecified());
-                }
-
-                // Persist first before updating or adding any associations
-                if (newRunner) {
+                    log4j.trace("cloneRunners - Not found, creating new entity for input runnerId = {}", runner.getRunnerId());
+                    uRunner = new UtoteRunner(parent.getIdUtoteRace(), runner);
+                    // Persist first before updating or adding any associations
                     log4j.trace("cloneRunners - Runner is NEW, calling persist for raceId = {}", parent.getRaceId());
                     em.persist(uRunner);
                 } else {
-                    log4j.trace("cloneRunners - RUNNER Entity is EXISTING, calling merge for raceId = {}", parent.getRaceId());
+                    log4j.trace("cloneRunners - Found entity for input runnerId = {}, idUtoteRunner={}", uRunner.getRunnerId(), uRunner.getIdUtoteRunner());
+                    uRunner.updateFromTote(runner);
+                    // Persist first before updating or adding any associations
                     UtoteRunner mergedRunner = em.merge(uRunner);
                     uRunners.remove(uRunner);
                     uRunner = mergedRunner;
@@ -325,52 +221,45 @@ public class ProgramRequestProcessor {
 
             }
 
-            em.close();
-            emF.close();
+            if (em.isOpen()) {
+                em.close();
+            }
+            if (emF.isOpen()) {
+                emF.close();
+            }
+
         }
 
         log4j.exit("cloneRunners parent.getRunners.size = "+uRunners.size());
         return uRunners;
     }
 
-    private UtotePool findPool(Collection<UtotePool> pools, String poolId, int poolNumber) {
-        log4j.entry("findPool - ", poolId, poolNumber);
-        for (UtotePool uPool : pools) {
-            if (uPool.getPoolId().equals(poolId) && (uPool.getPoolNumber() == poolNumber)) {
-                log4j.trace("findPool - Found UtotePool object with poolId="+poolId+", poolNumber="+poolNumber);
-                return uPool;
-            }
-        }
-        log4j.exit("findPool - Not Found.");
-        return null;
+    private static UtotePool findPool(Collection<UtotePool> pools, String poolId, int poolNumber) {
+        return (null == pools)?null:pools.stream()
+                .filter(uPool -> (uPool.getPoolId().equals(poolId) && (uPool.getPoolNumber() == poolNumber)))
+                .findFirst().orElse(null);
     }
 
-    private Collection<UtotePool> clonePool(UtoteRace parent, boolean newParent, ProgramServiceStub.Pools pools) {
-        log4j.entry("clonePool - for RaceId", parent.getRaceId());
+    private static Collection<UtotePool> clonePool(UtoteRace parent, boolean newParent, ProgramServiceStub.Pools pools) {
+        String method = "ProgramRequestProcessor.clonePool";
+        log4j.entry(method + " - for RaceId="+parent.getRaceId());
 
         // Get the current Pool entity collection, if exists
-        Collection<UtotePool> uPools = newParent?null:parent.getPools();
-        if (null == uPools) {
-            log4j.debug("clonePools - no Pools found in parent.  Creating and setting new array list");
-            uPools = new ArrayList<UtotePool>();
-        }
+        Collection<UtotePool> uPools = newParent?new ArrayList<UtotePool>():parent.getPools();
 
         // See if any pools were passed in
         if (pools.isPoolSpecified()) {
 
-            log4j.debug("clonePools - {} Pools are specified, about to process", pools.getPool().length);
-
             final EntityManagerFactory emF = Configurator.getRWEMF();
             final EntityManager em = emF.createEntityManager();
 
-            // Open transaction
-            log4j.trace("clonePools - Opening Pools transaction for idUtoteRace={}, raceId={}", parent.getIdUtoteRace(), parent.getRaceId());
-
+            log4j.debug("clonePools - {} Pools are specified, about to process", pools.getPool().length);
 
             // Iterate over the pools
             for (ProgramServiceStub.Pool pool : pools.getPool()) {
 
-                boolean newEntity = false;
+                // Open transaction
+                log4j.trace("clonePools - Opening Pools transaction for idUtoteRace={}, raceId={}", parent.getIdUtoteRace(), parent.getRaceId());
                 em.getTransaction().begin();
 
                 // If this is new, create the container
@@ -378,106 +267,17 @@ public class ProgramRequestProcessor {
                 UtotePool uPool = newParent?null:findPool(uPools, pool.getPoolId(), pool.getPoolNumber());
                 if (null == uPool) {
                     log4j.trace("clonePools - Not found, creating new entity for poolId = {}, poolNumber = {}", pool.getPoolId(), pool.getPoolNumber());
-                    uPool = new UtotePool();
-                    uPool.setIdParent(parent.getIdUtoteRace());
-                    uPool.setPoolId(pool.getPoolId());
-                    uPool.setPoolNumber(pool.getPoolNumber());
-                    newEntity = true;
-                } else {
-                    log4j.trace("clonePools - FOUND EXISTING Pool with idUtotePool={}, poolId={}, poolNumber={}", uPool.getIdUtotePool(), uPool.getPoolId(), uPool.getPoolName());
-                }
-
-                log4j.trace("clonePools - Cloning fields for poolId={}, poolNumber={}", pool.getPoolId(), pool.getPoolNumber());
-
-                // Set the values that have been specified
-                if (pool.isPoolNameSpecified()) {
-                    uPool.setPoolName(pool.getPoolName());
-                }
-                if (pool.isPoolRacesSpecified()) {
-                    uPool.setPoolRaces(pool.getPoolRaces());
-                }
-                if (pool.isRaceListSpecified()) {
-                    uPool.setRaceList(pool.getRaceList().getCompressedList());
-                }
-                if (pool.isLegsSpecified()) {
-                    uPool.setLegs(pool.getLegs());
-                }
-                if (pool.isUnorderedSpecified()) {
-                    uPool.setUnordered(pool.getUnordered());
-                }
-                if (pool.isCombineSpecified()) {
-                    uPool.setCombine(pool.getCombine());
-                }
-                if (pool.isQuickSpecified()) {
-                    uPool.setQuick(pool.getQuick());
-                }
-                if (pool.isStringSpecified()) {
-                    uPool.setString(pool.getString());
-                }
-                if (pool.isStraightSpecified()) {
-                    uPool.setStraight(pool.getStraight());
-                }
-                if (pool.isWheelSpecified()) {
-                    uPool.setWheel(pool.getWheel());
-                }
-                if (pool.isBoxSpecified()) {
-                    uPool.setBox(pool.getBox());
-                }
-                if (pool.isPowerBoxSpecified()) {
-                    uPool.setPowerBox(pool.getPowerBox());
-                }
-                if (pool.isLeadingSpecified()) {
-                    uPool.setLeading(pool.getLeading());
-                }
-                if (pool.isMultipleSpecified()) {
-                    uPool.setMultiple(pool.getMultiple());
-                }
-                if (pool.isAutoSpecified()) {
-                    uPool.setAuto(pool.getAuto());
-                }
-                if (pool.isFractionalSpecified()) {
-                    uPool.setFractional(pool.getFractional());
-                }
-                if (pool.isSegmentedSpecified()) {
-                    uPool.setSegmented(pool.getSegmented());
-                }
-                if (pool.isKeyBoxSpecified()) {
-                    uPool.setKeyBox(pool.getKeyBox());
-                }
-                if (pool.isSingleBetMinimumSpecified()) {
-                    uPool.setSingleBetMinimum(pool.getSingleBetMinimum());
-                }
-                if (pool.isMultipleBetMinimumSpecified()) {
-                    uPool.setMultipleBetMinimum(pool.getMultipleBetMinimum());
-                }
-                if (pool.isWagerMinimumSpecified()) {
-                    uPool.setWagerMinimum(pool.getWagerMinimum());
-                }
-                if (pool.isMaximumSpecified()) {
-                    uPool.setMaximum(pool.getMaximum());
-                }
-                if (pool.isFractionalMinimumSpecified()) {
-                    uPool.setFractionalMinimum(pool.getFractionalMinimum());
-                }
-                if (pool.isWBMaximumSpecified()) {
-                    uPool.setWBMaximum(pool.getWBMaximum());
-                }
-                if (pool.isParlaySpecified()) {
-                    uPool.setParlay(pool.getParlay());
-                }
-                if (pool.isProbablesSpecified()) {
-                    uPool.setProbables(pool.getProbables());
-                }
-                if (pool.isExchangeSpecified()) {
-                    uPool.setExchange(pool.getExchange().getValue());
-                }
-
-                // Persist the element
-                if (newEntity) {
+                    // Create new entity
+                    uPool = new UtotePool(parent.getIdUtoteRace(), pool);
                     log4j.trace("clonePools - Pool Entity is NEW, calling persist for poolId={}, poolNumber={}", uPool.getPoolId(), uPool.getPoolName());
+                    // Persist the element
                     em.persist(uPool);
                 } else {
+                    log4j.trace("clonePools - FOUND EXISTING Pool with idUtotePool={}, poolId={}, poolNumber={}", uPool.getIdUtotePool(), uPool.getPoolId(), uPool.getPoolName());
+                    // Update the existing pool
+                    uPool.updateFromTote(pool);
                     log4j.trace("clonePools - Pool Entity EXISTS, calling persist for poolId={}, poolNumber={}", uPool.getPoolId(), uPool.getPoolName());
+                    // Persist the element
                     UtotePool mergedPool = em.merge(uPool);
                     uPools.remove(uPool);
                     uPool = mergedPool;
@@ -485,11 +285,8 @@ public class ProgramRequestProcessor {
 
                 // Commit the transaction
                 try {
-
-                    log4j.trace("clonePools - Calling commit transaction for idUtoteRace={}, raceId={}", parent.getIdUtoteRace(), parent.getRaceId());
                     em.getTransaction().commit();
-                    log4j.debug("clonePools - Pool Entity comitted for idUtoteRace={}, raceId={}", parent.getIdUtoteRace(), parent.getRaceId());
-
+                    log4j.trace("clonePools - Pool Entity comitted for idUtoteRace={}, raceId={}", parent.getIdUtoteRace(), parent.getRaceId());
                 } catch (Exception e) {
                     log4j.error("clonePools - Could not persist Pools for idUtoteRace="+parent.getIdUtoteRace()+", raceId = " + parent.getRaceId() + ", Exception = " + e.getMessage(),e);
                 } finally {
@@ -503,8 +300,12 @@ public class ProgramRequestProcessor {
 
             }
 
-            em.close();
-            emF.close();
+            if (em.isOpen()) {
+                em.close();
+            }
+            if (emF.isOpen()) {
+                emF.close();
+            }
 
         }
 
@@ -512,114 +313,12 @@ public class ProgramRequestProcessor {
         return uPools;
     }
 
-    private UtoteRace cloneRaceDetails(UtoteRace utoteRace, ProgramServiceStub.Race rRace, boolean newRace, boolean deep, boolean returnAssociations) {
+    private static UtoteRace cloneRaceDetails(UtoteRace utoteRace, ProgramServiceStub.Race rRace, boolean newRace, boolean deep, boolean returnAssociations) {
         String method = "cloneRaceDetails";
         log4j.entry(method);
 
         log4j.entry("{} - cloning fields for raceId = {}.", method, rRace.getRaceId());
-        if (rRace.isPoolsSpecified()) {
-            utoteRace.setHasPools(rRace.isPoolsSpecified());
-        }
-        if (rRace.isRunnersSpecified()) {
-            utoteRace.setHasRunners(rRace.isRunnersSpecified());
-        }
-        if (rRace.isRaceStatusSpecified()) {
-            utoteRace.setRaceStatus(rRace.getRaceStatus().getValue());
-        }
-        if (rRace.isTrackTypeSpecified()) {
-            utoteRace.setTrackType(rRace.getTrackType().getValue());
-        }
-        if (rRace.isCurrentSpecified()) {
-            utoteRace.setCurrent(rRace.getCurrent());
-        }
-        if (rRace.isPostTimeSpecified()) {
-            String postTimeStr = rRace.getPostTimeStr() + "Z";
-            Instant inst = Instant.parse(postTimeStr);
-            long lTime = inst.toEpochMilli();
-            log4j.debug("{} - postTimeStr={}, PostTime(cal.getTimeInMillis())={}, PostTime(cal.toString)={}", method, postTimeStr, lTime, inst.toString());
-            utoteRace.setPostTime(lTime);
-        }
-        if (rRace.isNumberOfRunnersSpecified()) {
-            utoteRace.setNumberOfRunners(rRace.getNumberOfRunners());
-        }
-        if (rRace.isFinishSpecified()) {
-            utoteRace.setFinish(rRace.getFinish());
-        }
-        if (rRace.isProgramSpecified()) {
-            utoteRace.setProgram(rRace.getProgram());
-        }
-        if (rRace.isOddsSpecified()) {
-            utoteRace.setOdds(rRace.getOdds());
-        }
-        if (rRace.isLiveSpecified()) {
-            utoteRace.setLive(rRace.getLive().getCompressedList());
-        }
-        if (rRace.isPoolListSpecified()) {
-            utoteRace.setPoolList(rRace.getPoolList());
-        }
-        if (rRace.isConditionsSpecified()) {
-            utoteRace.setConditions(rRace.getConditions());
-        }
-        if (rRace.isRaceTypeSpecified()) {
-            utoteRace.setRacetype(rRace.getRaceType());
-        }
-        if (rRace.isSurfaceSpecified()) {
-            utoteRace.setSurface(rRace.getSurface());
-        }
-        if (rRace.isDistanceSpecified()) {
-            utoteRace.setDistance(rRace.getDistance());
-        }
-        if (rRace.isPurseSpecified()) {
-            utoteRace.setPurse(rRace.getPurse().toString());
-        }
-        if (rRace.isSexSpecified()) {
-            utoteRace.setSex(rRace.getSex());
-        }
-        if (rRace.isAgeSpecified()) {
-            utoteRace.setAge(rRace.getAge());
-        }
-        if (rRace.isClaimSpecified()) {
-            utoteRace.setClaim(rRace.getClaim().toString());
-        }
-
-        if (rRace.isRaceChangesSpecified()) {
-            utoteRace.setHasChanges(rRace.getRaceChanges().isChangeSpecified());
-            if (utoteRace.isHasChanges()) {
-                ProgramServiceStub.RaceChange rChange = rRace.getRaceChanges().getChange()[0];
-                UtoteRaceChange raceChange = utoteRace.getRaceChange();
-                if (null == raceChange) {
-                    raceChange = new UtoteRaceChange();
-                    utoteRace.setRaceChange(raceChange);
-                }
-                if (rChange.isRaceTypeSpecified()) {
-                    raceChange.setRaceTypeChanged(rChange.getRaceType());
-                }
-                if (rChange.isDistanceSpecified()) {
-                    raceChange.setDistanceChanged(rChange.getDistance());
-                }
-                if (rChange.isSexSpecified()) {
-                    raceChange.setSexChanged(rChange.getSex());
-                }
-                if (rChange.isAgeSpecified()) {
-                    raceChange.setAgeChanged(rChange.getAge());
-                }
-                if (rChange.isPurseSpecified()) {
-                    raceChange.setPurseChanged(rChange.getPurse());
-                }
-                if (rChange.isClaimSpecified()) {
-                    raceChange.setClaimChanged(rChange.getClaim());
-                }
-                if (rChange.isBreedSpecified()) {
-                    raceChange.setBreedChanged(rChange.getBreed());
-                }
-                if (rChange.isSurfaceSpecified()) {
-                    raceChange.setSurfaceChanged(rChange.getSurface());
-                }
-            }
-        } else {
-            // Must have an empty (all false) Race Change
-            utoteRace.setRaceChange(new UtoteRaceChange());
-        }
+        utoteRace.updateFromTote(rRace);
 
         final EntityManagerFactory emF = Configurator.getRWEMF();
         final EntityManager em = emF.createEntityManager();
@@ -700,8 +399,12 @@ public class ProgramRequestProcessor {
             }
         }
 
-        em.close();
-        emF.close();
+        if (em.isOpen()) {
+            em.close();
+        }
+        if (emF.isOpen()) {
+            emF.close();
+        }
 
         log4j.debug("{} - finished.  utoteRace.idUtoteRace={}, utoteRace.raceId={}", method, utoteRace.getIdUtoteRace(), utoteRace.getRaceId());
         log4j.exit(method);
@@ -709,27 +412,17 @@ public class ProgramRequestProcessor {
         return utoteRace;
     }
 
-    private UtoteRace findRace(Collection<UtoteRace> races, int raceId) {
-        log4j.entry("findRace - ", raceId);
-        for (UtoteRace uRace : races) {
-            if (uRace.getRaceId() == raceId) {
-                log4j.debug("findRace - Found UtoteRace object with raceId="+raceId);
-                return uRace;
-            }
-        }
-        log4j.debug("findRace - UtoteRace object with raceId = "+raceId+" was not found");
-        return null;
+    private static UtoteRace findRace(Collection<UtoteRace> races, int raceId) {
+        return (null == races)?null:races.stream()
+                .filter(uRace -> (uRace.getRaceId() == raceId))
+                .findFirst().orElse(null);
     }
 
-    private Collection<UtoteRace> cloneRaces(UtoteEvent parent, boolean newParent, ProgramServiceStub.Races races) {
+    private static Collection<UtoteRace> cloneRaces(UtoteEvent parent, boolean newParent, ProgramServiceStub.Races races) {
         log4j.entry("cloneRaces - EventId", parent.getEventId());
 
         // Get the current Runners entity collection, if exists
-        Collection<UtoteRace> uRaces = newParent?null:parent.getRaces();
-        if (null == uRaces) {
-            log4j.debug("cloneRaces - no Races collection found in parent.  Creating and setting new array list");
-            uRaces = new ArrayList<UtoteRace>();
-        }
+        Collection<UtoteRace> uRaces = newParent?new ArrayList<UtoteRace>():(null == parent.getRaces())?new ArrayList<UtoteRace>():parent.getRaces();
 
         // See if any runners were passed in
         if (races.isRaceSpecified()) {
@@ -771,76 +464,40 @@ public class ProgramRequestProcessor {
         } else {
             log4j.debug("cloneRaces - No races are specified");
         }
+
         log4j.exit("cloneRaces exiting - parent.getRaces().size() = "+uRaces.size());
         return uRaces;
     }
 
-    private UtoteEvent cloneEvent(UtoteEvent utoteEvent, ProgramServiceStub.Event event, boolean newEvent, boolean deep) {
+    private static UtoteEvent findEvent(EntityManager em, String runId, String eventId, Date eventTime) {
+        log4j.entry("findEvent - runId, eventId, eventTime", runId, eventId, eventTime);
+        TypedQuery<UtoteEvent> q = em.createNamedQuery("UtoteEvent.findSpecific", UtoteEvent.class);
+        q.setParameter("runId", Integer.parseInt(runId));
+        q.setParameter("eventId", eventId);
+        q.setParameter("eventTime", eventTime);
+        UtoteEvent utoteEvent = null;
+        try {
+            utoteEvent = q.getSingleResult();
+            utoteEvent.setTransients();
+        } catch (javax.persistence.NoResultException nre) {
+            log4j.trace("findEvent - Received NoResultException looking for an event");
+        } catch (Exception e) {
+            log4j.error("findEvent - Received Exception looking for an event. Msg={}.\nException={}", e.getMessage(), e);
+        }
+        log4j.debug("findEvent - anEvent {}",(null == utoteEvent)?"IS NULL":"WAS FOUND");
+        if (null != utoteEvent) {
+            log4j.debug("findEvent - Found existing event.  idUtoteEvent={}, RunId={}, EventId={}, EventTime={}",utoteEvent.getRunId(),utoteEvent.getIdUtoteEvent(),eventId,eventTime);
+        }
+        log4j.exit("findEvent");
+        return utoteEvent;
+    }
+
+
+    private static UtoteEvent cloneEvent(UtoteEvent utoteEvent, ProgramServiceStub.Event event, boolean newEvent, boolean deep) {
         log4j.entry("cloneEvent - ", event.getRunId(), event.getEventId(), event.getEventTime().getTime().toString());
 
-        if (event.isBreakToSpecified()) {
-            utoteEvent.setBreakTo(event.getBreakTo());
-        }
-        if (event.isChannelSpecified()) {
-            utoteEvent.setChannel(event.getChannel());
-        }
-        if (event.isCurrencyIdSpecified()) {
-            utoteEvent.setCurrencyId(event.getCurrencyId());
-        }
-        if (event.isEventClassSpecified()) {
-            utoteEvent.setEventClass(event.getEventClass());
-        }
-        if (event.isEventInfoSpecified()) {
-            utoteEvent.setEventInfo(event.getEventInfo());
-            /*
-            // Now should be done from within the database during the insert
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM uu HH:mm X");
-            LocalDateTime dateTime = LocalDateTime.parse(event.getEventInfo() + " 00:00 Z", formatter);
-            utoteEvent.setRtwEventDate(dateTime.toEpochSecond(ZoneOffset.UTC));
-             */
-        }
-        if (event.isEventNameSpecified()) {
-            utoteEvent.setEventName(event.getEventName());
-        }
-        if (event.isEventStatusSpecified()) {
-            utoteEvent.setEventStatus(event.getEventStatus());
-        }
-        if (event.isEventTimeSpecified()) {
-            utoteEvent.setEventTime(event.getEventTime().getTime());
-        }
-        if (event.isEventTypeSpecified()) {
-            utoteEvent.setEventType(event.getEventType().getValue());
-        }
-        if (event.isParlaySpecified()) {
-            utoteEvent.setParlay(event.getParlay());
-        }
-        if (event.isRaceListSpecified()) {
-            utoteEvent.setRaceList(event.getRaceList().getCompressedList());
-        }
-        if (event.isTrackConditionSpecified()) {
-            utoteEvent.setTrackCondition(event.getTrackCondition());
-        }
-        if (event.isTrackIdSpecified()) {
-            utoteEvent.setTrackId(event.getTrackId());
-        }
-        if (event.isTrackNameSpecified()) {
-            utoteEvent.setTrackName(event.getTrackName());
-        }
-        if (event.isTrackTypeSpecified()) {
-            utoteEvent.setTrackType(event.getTrackType().getValue());
-        }
-        if (event.isTurfTrackSpecified()) {
-            utoteEvent.setTurfTrack(event.getTurfTrack());
-        }
-        if (event.isRacesSpecified() ||
-                (event.isRaceListSpecified() &&
-                        (null != event.getRaceList()) &&
-                        (null != event.getRaceList().getCompressedList()) &&
-                        (event.getRaceList().getCompressedList().length() >= 3)
-                        )
-                ) {
-            utoteEvent.setHasRaces(true);
-        }
+        // Copy the new values over
+        utoteEvent.updateFromTote(event);
 
         // Persist first before updating or adding any associations
         log4j.debug("cloneEvent - About to persist for {} eventId = {}",(newEvent?"NEW":"EXISTING"), utoteEvent.getEventId());
@@ -864,12 +521,10 @@ public class ProgramRequestProcessor {
             log4j.debug("cloneEvent - {} Event persisted for idUtoteEvent = {}, event={}", (newEvent?"NEW":"EXISTING"), utoteEvent.toString(false));
 
             // Now update/add Races if specified
-            if (deep && utoteEvent.getHasRaces()) {
+            if (deep && utoteEvent.hasRaces()) {
                 // If an existing Event, try to retrieve existing Races
                 if (!newEvent) {
-                    TypedQuery<UtoteRace> q = em.createNamedQuery("UtoteRace.findByParent", UtoteRace.class);
-                    q.setParameter("idParent", utoteEvent.getIdUtoteEvent());
-                    Collection<UtoteRace> raceList = q.getResultList();
+                    Collection<UtoteRace> raceList = UtoteRace.findByParent(em, utoteEvent.getIdUtoteEvent());
                     if ((null != raceList) && (raceList.size() > 0)) {
                         utoteEvent.setRaces(raceList);
                     } else {
@@ -883,13 +538,13 @@ public class ProgramRequestProcessor {
                 if (newEvent) {
                     if ((null == clonedRaces) || (clonedRaces.size() == 0)) {
                         utoteEvent.setRaces(null);
-                        if (utoteEvent.getHasRaces()) {
+                        if (utoteEvent.hasRaces()) {
                             utoteEvent.setHasRaces(false);
                             needsUpdate = true;
                         }
                     } else {
                         utoteEvent.setRaces(clonedRaces);
-                        if (!utoteEvent.getHasRaces()) {
+                        if (!utoteEvent.hasRaces()) {
                             utoteEvent.setHasRaces(true);
                             needsUpdate = true;
                         }
@@ -904,7 +559,7 @@ public class ProgramRequestProcessor {
                             }
                             utoteEvent.getRaces().clear();
                             utoteEvent.setRaces(null);
-                            if (utoteEvent.getHasRaces()) {
+                            if (utoteEvent.hasRaces()) {
                                 utoteEvent.setHasRaces(false);
                                 needsUpdate = true;
                             }
@@ -944,29 +599,9 @@ public class ProgramRequestProcessor {
         return utoteEvent;
     }
 
-    private UtoteEvent findEvent(EntityManager em, String runId, String eventId, Date eventTime) {
-        log4j.entry("findEvent - runId, eventId, eventTime", runId, eventId, eventTime);
-        TypedQuery<UtoteEvent> q = em.createNamedQuery("UtoteEvent.findSpecific", UtoteEvent.class);
-        q.setParameter("runId", Integer.parseInt(runId));
-        q.setParameter("eventId", eventId);
-        q.setParameter("eventTime", eventTime);
-        UtoteEvent utoteEvent = null;
-        try {
-            utoteEvent = q.getSingleResult();
-            utoteEvent.setTransients();
-        } catch (javax.persistence.NoResultException e) {
-            log4j.trace("findEvent - Received NoResultException looking for an event");
-        }
-        log4j.debug("findEvent - anEvent {}",(null == utoteEvent)?"IS NULL":"WAS FOUND");
-        if (null != utoteEvent) {
-            log4j.debug("findEvent - Found existing event.  idUtoteEvent={}, RunId={}, EventId={}, EventTime={}",utoteEvent.getRunId(),utoteEvent.getIdUtoteEvent(),eventId,eventTime);
-        }
-        log4j.exit("findEvent");
-        return utoteEvent;
-    }
-
-    public UtoteEvent persistEvent(ProgramServiceStub.Event event, boolean deep) {
-        log4j.entry("persistEvent - runId, eventId, eventTime",event.getRunId(), event.getEventId(), event.getEventTime().getTime().toString());
+    public static UtoteEvent persistEvent(ProgramServiceStub.Event event, boolean deep) {
+        String method = "persistEvent";
+        log4j.entry("{} - runId, eventId, eventTime", method, event.getRunId(), event.getEventId(), event.getEventTime().getTime().toString());
 
         // Get an Entity Manager
         final EntityManagerFactory emF = Configurator.getRWEMF();
@@ -975,12 +610,12 @@ public class ProgramRequestProcessor {
         // See if the entity already exists
         boolean newEvent = false;
         int idUtoteEvent = 0;
-        log4j.debug("persistEvent - Searching for existing UtoteEvent entity with runId={}, EventId={} and EventTime={}",
-                event.getRunId(), event.getEventId(), event.getEventTime().getTime());
+        log4j.debug("{} - Searching for existing UtoteEvent entity with runId={}, EventId={} and EventTime={}",
+                method, event.getRunId(), event.getEventId(), event.getEventTime().getTime());
         UtoteEvent utoteEvent =
                 findEvent(em, event.getRunId(), event.getEventId(), event.getEventTime().getTime());
         if (null == utoteEvent) {
-            log4j.debug("persistEvent - utoteEvent for runId={}, eventId={}, eventTime={} was not found", event.getRunId(), event.getEventId(), event.getEventTime().getTime());
+            log4j.debug("{} - utoteEvent for runId={}, eventId={}, eventTime={} was not found", method, event.getRunId(), event.getEventId(), event.getEventTime().getTime());
             utoteEvent = new UtoteEvent();
             utoteEvent.setRunId(Integer.parseInt(event.getRunId()));
             utoteEvent.setEventId(event.getEventId());
@@ -988,30 +623,30 @@ public class ProgramRequestProcessor {
             newEvent = true;
         } else {
             idUtoteEvent = utoteEvent.getIdUtoteEvent();
-            log4j.debug("persistEvent - FOUND UtoteEvent for idUtoteEvent={}, runId={}, eventId={}, eventTime={}", idUtoteEvent, utoteEvent.getRunId(), utoteEvent.getEventId(), utoteEvent.getEventTime());
+            log4j.debug("{} - FOUND UtoteEvent for idUtoteEvent={}, runId={}, eventId={}, eventTime={}", method, idUtoteEvent, utoteEvent.getRunId(), utoteEvent.getEventId(), utoteEvent.getEventTime());
         }
 
         // Update the information in the record with what was submitted
-        log4j.debug("persistEvent - About to clone event into UtoteEvent");
+        log4j.debug("{} - About to clone event into UtoteEvent", method);
         UtoteEvent clonedEvent = cloneEvent(utoteEvent, event, newEvent, deep);
         utoteEvent = clonedEvent;
 
         // Event should have been persisted
         idUtoteEvent = utoteEvent.getIdUtoteEvent();
-        log4j.debug("persistEvent - UtoteEvent persisted, runId={}, EventId={}, EventTime={}, and idUtoteEvent={}", utoteEvent.getRunId(), utoteEvent.getEventId(), utoteEvent.getEventTime().toString(), utoteEvent.getIdUtoteEvent());
+        log4j.debug("{} - UtoteEvent persisted, runId={}, EventId={}, EventTime={}, and idUtoteEvent={}", method, utoteEvent.getRunId(), utoteEvent.getEventId(), utoteEvent.getEventTime().toString(), utoteEvent.getIdUtoteEvent());
 
         // Read the existing UToteStatusChange entries and write to console
         if ((0 != idUtoteEvent) && log4j.isTraceEnabled()) {
-            log4j.debug("persistEvent - About to run through result set from returend object");
-            Query q = em.createQuery("SELECT e from UtoteEvent e where e.idUtoteEvent = :idEntity");
-            q.setParameter("idEntity", idUtoteEvent);
+            log4j.debug("{} - About to run through result set from returend object", method);
             UtoteEvent anEvent = null;
             try {
-                anEvent = (UtoteEvent)q.getSingleResult();
+                anEvent = em.find(UtoteEvent.class, idUtoteEvent);
             } catch (javax.persistence.NoResultException e) {
-                log4j.trace("persistEvent - Received NoResultException looking for a newly inserted event");
+                log4j.trace("{} - Received NoResultException looking for a newly inserted event", method);
+            } catch (Exception e2) {
+                log4j.trace("{} - Received Runtime Exception looking for a newly inserted event: {}\n{}", method, e2.getMessage(), e2);
             }
-            log4j.trace("persistEvent - Newly inserted event {} found", (null == anEvent)?"WAS NOT":"was");
+            log4j.trace("{} - Newly inserted event {} found", method, (null == anEvent)?"WAS NOT":"was");
         }
 
         // Close the connections
@@ -1019,15 +654,15 @@ public class ProgramRequestProcessor {
             em.close();
             emF.close();
         } catch (Exception e) {
-            log4j.error("persistEvent - Exception trying em.close(): "+e.getMessage(),e);
+            log4j.error("{} - Exception trying em.close(): {}\t{}", method, e.getMessage(), e);
         }
 
-        log4j.exit("persistEvent");
+        log4j.exit(method);
         return utoteEvent;
 
     }
 
-    public List<UtoteEvent> getEventList() {
+    public static List<UtoteEvent> getEventList() {
         log4j.entry("getEvents");
 
         List<UtoteEvent> utoteEvents = new ArrayList<UtoteEvent>();
@@ -1110,63 +745,80 @@ public class ProgramRequestProcessor {
         return utoteEvents;
     }
 
-    public UtoteEvent getEventDetails(String eventId) {
-        log4j.entry("getEventDetails - eventId",eventId);
+    public static UtoteEvent getEvent(String eventId) {
+        String method = "getEvent";
+        log4j.entry(method + " - eventId="+eventId);
 
         UtoteEvent utoteEvent = new UtoteEvent();
         GetEventDetailResponse eResponse = null;
         ProgramServiceStub.EventDetailResponse eventsResponse = null;
         int requestLogId = 0;
         int responseLogId = 0;
+        int tryAgain = 3;
 
-        // Make call to GetEvents
-        try {
+        while (tryAgain > 0) {
 
-            // Setup call
-            log4j.debug("getEventDetails - Settting up GetEventDetail call for eventId = {}", eventId);
-            ProgramServiceStub stub = new ProgramServiceStub();
-            ProgramServiceStub.GetEventDetail getEventDetailInput = new ProgramServiceStub.GetEventDetail();
-            ProgramServiceStub.EventDetailRequest eRequest = new ProgramServiceStub.EventDetailRequest();
-            eRequest.setSource(getSource());
-            eRequest.setEventId(eventId);
-            if (Configurator.getUtoteRacesData()) {
-                eRequest.setRaces(true);
+            // Make call to GetEvents
+            try {
+
+                // Setup call
+                log4j.debug("{} - Settting up GetEventDetail call for eventId = {}", method, eventId);
+                ProgramServiceStub stub = new ProgramServiceStub();
+                ProgramServiceStub.GetEventDetail getEventDetailInput = new ProgramServiceStub.GetEventDetail();
+                ProgramServiceStub.EventDetailRequest eRequest = new ProgramServiceStub.EventDetailRequest();
+                eRequest.setSource(getSource());
+                eRequest.setEventId(eventId);
+                if (Configurator.getUtoteRacesData()) {
+                    eRequest.setRaces(true);
+                }
+                if (Configurator.getUtoteProgramData()) {
+                    eRequest.setProgram(true);
+                }
+                if (Configurator.getUtotePoolData()) {
+                    eRequest.setPools(true);
+                }
+                if (Configurator.getUtoteRunnersData()) {
+                    eRequest.setRunners(true);
+                }
+                getEventDetailInput.setEventsRequest(eRequest);
+                log4j.trace("{} - eRequest={}", method, eRequest.toString());
+                log4j.trace("{} - getEventsInput={}", method, getEventDetailInput.toString());
+
+                // Log the request
+                log4j.debug("{} - Saving GetEventDetail request for eventId = {}", method, eventId);
+                requestLogId = (new UtoteRequestResponseLogger()).saveGetEventDetailRequest(getEventDetailInput);
+
+                // Make the call
+                log4j.debug("{} - Making GetEventDetail call for eventId = {}", method, eventId);
+                eResponse = stub.getEventDetail(getEventDetailInput);
+
+                // Make sure we got a response
+                if (null == eResponse) {
+                    log4j.error("{} - Null response returned from GetEventDetail request for eventId = {}.", method, eventId);
+                }
+
+                tryAgain = 1;
+
+            } catch (Program_GetEventDetail_ValidationFaultFault_FaultMessage e) {
+                log4j.error(method + " - Program_GetEventDetail_ValidationFaultFault_FaultMessage getting eventId = "+eventId+" - "+e.getMessage(),e);
+            } catch (Program_GetEventDetail_ToteFaultFault_FaultMessage e) {
+                log4j.error(method + " - Program_GetEventDetail_ToteFaultFault_FaultMessage getting eventId = "+eventId+" - "+e.getMessage(),e);
+            } catch (AxisFault e) {
+                log4j.error(method + " - AxisFault getting eventId = "+eventId+" - "+e.getMessage(),e);
+            } catch (Exception e) {
+                log4j.error(method + " - General exception getting eventId = "+eventId+" - "+e.getMessage(),e);
             }
-            if (Configurator.getUtoteProgramData()) {
-                eRequest.setProgram(true);
-            }
-            if (Configurator.getUtotePoolData()) {
-                eRequest.setPools(true);
-            }
-            if (Configurator.getUtoteRunnersData()) {
-                eRequest.setRunners(true);
-            }
-            getEventDetailInput.setEventsRequest(eRequest);
-            log4j.trace("getEventDetails - eRequest={}",eRequest.toString());
-            log4j.trace("getEventDetails - getEventsInput={}",getEventDetailInput.toString());
 
-            // Log the request
-            log4j.debug("getEventDetails - Saving GetEventDetail request for eventId = {}", eventId);
-            requestLogId = (new UtoteRequestResponseLogger()).saveGetEventDetailRequest(getEventDetailInput);
-
-            // Make the call
-            log4j.debug("getEventDetails - Making GetEventDetail call for eventId = {}", eventId);
-            eResponse = stub.getEventDetail(getEventDetailInput);
-
-            // Make sure we got a response
-            if (null == eResponse) {
-                log4j.error("getEventDetails - Null response returned from GetEventDetail request for eventId = {}.", eventId);
+            -- tryAgain;
+            if (0 != tryAgain) {
+                log4j.debug("{} - Could not get event, waiting 5 seconds and then trying {} more times", method, tryAgain);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    log4j.error(method + " - Received InterruptedException while waiting to retry getting event details - "+e.getMessage(),e);
+                }
             }
 
-
-        } catch (Program_GetEventDetail_ValidationFaultFault_FaultMessage e) {
-            log4j.error("getEventDetails - Program_GetEventDetail_ValidationFaultFault_FaultMessage getting eventId = "+eventId+" - "+e.getMessage(),e);
-        } catch (Program_GetEventDetail_ToteFaultFault_FaultMessage e) {
-            log4j.error("getEventDetails - Program_GetEventDetail_ToteFaultFault_FaultMessage getting eventId = "+eventId+" - "+e.getMessage(),e);
-        } catch (AxisFault e) {
-            log4j.error("getEventDetails - AxisFault getting eventId = "+eventId+" - "+e.getMessage(),e);
-        } catch (Exception e) {
-            log4j.error("getEventDetails - General exception getting eventId = "+eventId+" - "+e.getMessage(),e);
         }
 
         if ((null != eResponse) && eResponse.isEventsResponseSpecified()) {
@@ -1175,7 +827,7 @@ public class ProgramRequestProcessor {
             eventsResponse = eResponse.getEventsResponse();
 
             // Debug for the race response header
-            log4j.debug("getEventDetails eventId = "+eventId+"  - eventsResponse:");
+            log4j.debug("{} eventId = {}", method, eventId);
             log4j.debug("\tItems with an \"(*)\" are optional.");
             LogHelper.debugOut(log4j, "\tGroup Id(*): ", eventsResponse.isGroupIdSpecified(), eventsResponse.getGroupId());
             LogHelper.debugOut(log4j, "\tRun Id(*): ", eventsResponse.isRunIdSpecified(), eventsResponse.getRunId());
@@ -1183,29 +835,141 @@ public class ProgramRequestProcessor {
             LogHelper.debugOut(log4j, eventsResponse.isErrorSpecified(), "\t", eventsResponse.getError());
 
             // Persist each of the returned event details
-            log4j.debug("getEventDetails - About to persiste eventsResponse");
-            utoteEvent = persistEvent(eventsResponse.getEventDetail(), true /* Deep */);
-            log4j.debug("getEventDetails - Event persisted. eventId = {}", utoteEvent.getEventId());
+            log4j.debug("{} - About to persiste eventsResponse", method);
+            utoteEvent = persistEvent(eventsResponse.getEventDetail(), false /* Shallow */);
+            log4j.debug("{} - Event persisted. eventId = {}", method, utoteEvent.getEventId());
 
             // Log the response
             responseLogId = (new UtoteRequestResponseLogger()).saveGetEventDetailResponse(requestLogId, eResponse, utoteEvent.getIdUtoteEvent());
-            log4j.debug("getEventDetails - eventId = {}, responseLogId = {}, utoteEvent.idUtoteEvent = {}",eventId, responseLogId, utoteEvent.getIdUtoteEvent());
+            log4j.debug("{} - eventId = {}, responseLogId = {}, utoteEvent.idUtoteEvent = {}", method, eventId, responseLogId, utoteEvent.getIdUtoteEvent());
 
             // GetEventDetail returned, but was missing the RaceResposne
         } else if (null != eResponse) {
             responseLogId = (new UtoteRequestResponseLogger()).saveGetEventDetailResponse(requestLogId, eResponse, null);
-            log4j.debug("getEventDetails - eventId = {}, responseLogId = {}",eventId, responseLogId);
+            log4j.debug("{} - eventId = {}, responseLogId = {}", method, eventId, responseLogId);
 
             // Null response from GetRace call
         } else {
-            log4j.error("getEventDetails - No response from the GetEventDetail call for eventId = {}.", eventId);
+            log4j.error("{} - No response from the GetEventDetail call for eventId = {}.", method, eventId);
         }
 
-        log4j.exit("getEventDetails");
+        log4j.exit(method);
         return utoteEvent;
     }
 
-    public ProgramServiceStub.Event getEventDetailsRaw(String eventId) {
+    public static UtoteEvent getEventDetails(String eventId) {
+        String method = "getEventDetails";
+        log4j.entry(method + " - eventId="+eventId);
+
+        UtoteEvent utoteEvent = new UtoteEvent();
+        GetEventDetailResponse eResponse = null;
+        ProgramServiceStub.EventDetailResponse eventsResponse = null;
+        int requestLogId = 0;
+        int responseLogId = 0;
+        int tryAgain = 3;
+
+        while (tryAgain > 0) {
+
+            // Make call to GetEvents
+            try {
+
+                // Setup call
+                log4j.debug("{} - Settting up GetEventDetail call for eventId = {}", method, eventId);
+                ProgramServiceStub stub = new ProgramServiceStub();
+                ProgramServiceStub.GetEventDetail getEventDetailInput = new ProgramServiceStub.GetEventDetail();
+                ProgramServiceStub.EventDetailRequest eRequest = new ProgramServiceStub.EventDetailRequest();
+                eRequest.setSource(getSource());
+                eRequest.setEventId(eventId);
+                if (Configurator.getUtoteRacesData()) {
+                    eRequest.setRaces(true);
+                }
+                if (Configurator.getUtoteProgramData()) {
+                    eRequest.setProgram(true);
+                }
+                if (Configurator.getUtotePoolData()) {
+                    eRequest.setPools(true);
+                }
+                if (Configurator.getUtoteRunnersData()) {
+                    eRequest.setRunners(true);
+                }
+                getEventDetailInput.setEventsRequest(eRequest);
+                log4j.trace("{} - eRequest={}", method, eRequest.toString());
+                log4j.trace("{} - getEventsInput={}", method, getEventDetailInput.toString());
+
+                // Log the request
+                log4j.debug("{} - Saving GetEventDetail request for eventId = {}", method, eventId);
+                requestLogId = (new UtoteRequestResponseLogger()).saveGetEventDetailRequest(getEventDetailInput);
+
+                // Make the call
+                log4j.debug("{} - Making GetEventDetail call for eventId = {}", method, eventId);
+                eResponse = stub.getEventDetail(getEventDetailInput);
+
+                // Make sure we got a response
+                if (null == eResponse) {
+                    log4j.error("{} - Null response returned from GetEventDetail request for eventId = {}.", method, eventId);
+                }
+
+                tryAgain = 1;
+
+            } catch (Program_GetEventDetail_ValidationFaultFault_FaultMessage e) {
+                log4j.error(method + " - Program_GetEventDetail_ValidationFaultFault_FaultMessage getting eventId = "+eventId+" - "+e.getMessage(),e);
+            } catch (Program_GetEventDetail_ToteFaultFault_FaultMessage e) {
+                log4j.error(method + " - Program_GetEventDetail_ToteFaultFault_FaultMessage getting eventId = "+eventId+" - "+e.getMessage(),e);
+            } catch (AxisFault e) {
+                log4j.error(method + " - AxisFault getting eventId = "+eventId+" - "+e.getMessage(),e);
+            } catch (Exception e) {
+                log4j.error(method + " - General exception getting eventId = "+eventId+" - "+e.getMessage(),e);
+            }
+
+            -- tryAgain;
+            if (0 != tryAgain) {
+                log4j.debug("{} - Could not get event details, waiting 5 seconds and then trying {} more times", method, tryAgain);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    log4j.error(method + " - Received InterruptedException while waiting to retry getting event details - "+e.getMessage(),e);
+                }
+            }
+
+        }
+
+        if ((null != eResponse) && eResponse.isEventsResponseSpecified()) {
+
+            // Get the response
+            eventsResponse = eResponse.getEventsResponse();
+
+            // Debug for the race response header
+            log4j.debug("{} eventId = {}", method, eventId);
+            log4j.debug("\tItems with an \"(*)\" are optional.");
+            LogHelper.debugOut(log4j, "\tGroup Id(*): ", eventsResponse.isGroupIdSpecified(), eventsResponse.getGroupId());
+            LogHelper.debugOut(log4j, "\tRun Id(*): ", eventsResponse.isRunIdSpecified(), eventsResponse.getRunId());
+            log4j.debug("\tSource (Source Id/System Id): {}/{}", eventsResponse.getSource().getSourceId(), eventsResponse.getSource().getSystemId());
+            LogHelper.debugOut(log4j, eventsResponse.isErrorSpecified(), "\t", eventsResponse.getError());
+
+            // Persist each of the returned event details
+            log4j.debug("{} - About to persiste eventsResponse", method);
+            utoteEvent = persistEvent(eventsResponse.getEventDetail(), true /* Deep */);
+            log4j.debug("{} - Event persisted. eventId = {}", method, utoteEvent.getEventId());
+
+            // Log the response
+            responseLogId = (new UtoteRequestResponseLogger()).saveGetEventDetailResponse(requestLogId, eResponse, utoteEvent.getIdUtoteEvent());
+            log4j.debug("{} - eventId = {}, responseLogId = {}, utoteEvent.idUtoteEvent = {}", method, eventId, responseLogId, utoteEvent.getIdUtoteEvent());
+
+            // GetEventDetail returned, but was missing the RaceResposne
+        } else if (null != eResponse) {
+            responseLogId = (new UtoteRequestResponseLogger()).saveGetEventDetailResponse(requestLogId, eResponse, null);
+            log4j.debug("{} - eventId = {}, responseLogId = {}", method, eventId, responseLogId);
+
+            // Null response from GetRace call
+        } else {
+            log4j.error("{} - No response from the GetEventDetail call for eventId = {}.", method, eventId);
+        }
+
+        log4j.exit(method);
+        return utoteEvent;
+    }
+
+    public static ProgramServiceStub.Event getEventDetailsRaw(String eventId) {
         log4j.entry("getEventDetailsRaw - eventId",eventId);
 
         UtoteEvent utoteEvent = new UtoteEvent();
@@ -1300,7 +1064,7 @@ public class ProgramRequestProcessor {
         return eventsResponse.getEventDetail();
     }
 
-    public void testgetEvents() throws java.lang.Exception {
+    public static void testgetEvents() throws java.lang.Exception {
 
         ProgramServiceStub stub = new ProgramServiceStub();
 
@@ -1339,7 +1103,7 @@ public class ProgramRequestProcessor {
             ProgramServiceStub.GetEventDetail getEventDetail16 = new ProgramServiceStub.GetEventDetail();
 
             ProgramServiceStub.EventDetailRequest edRequest = new ProgramServiceStub.EventDetailRequest();
-            edRequest.setSource(this.getSource());
+            edRequest.setSource(getSource());
             edRequest.setEventId(e.getEventId());
             edRequest.setRaces(true);
             edRequest.setPools(false);
@@ -1410,7 +1174,7 @@ public class ProgramRequestProcessor {
     }
 
 
-    private UtoteRace findRace(EntityManager em, String eventId, int raceId) {
+    private static UtoteRace findRace(EntityManager em, String eventId, int raceId) {
         log4j.entry("findRace - eventId, raceId", eventId, raceId);
         UtoteRace utoteRace = null;
         TypedQuery<UtoteRace> q = em.createNamedQuery("UtoteRace.findSpecific", UtoteRace.class);
@@ -1428,7 +1192,7 @@ public class ProgramRequestProcessor {
         return utoteRace;
     }
 
-    private UtoteRace persistRace(String eventId, ProgramServiceStub.Race rRace, boolean deep, boolean returnAssociations) {
+    private static UtoteRace persistRace(String eventId, ProgramServiceStub.Race rRace, boolean deep, boolean returnAssociations) {
         log4j.entry("persistRace - eventId, raceId ", eventId, rRace.getRaceId());
         boolean newRace = false;
 
@@ -1487,7 +1251,7 @@ public class ProgramRequestProcessor {
 
     }
 
-    public UtoteRace getRace(String eventId, int raceId) {
+    public static UtoteRace getRace(String eventId, int raceId) {
         log4j.entry("getRace - eventId, raceId", eventId, raceId);
 
         UtoteRace utoteRace = new UtoteRace();
@@ -1585,60 +1349,77 @@ public class ProgramRequestProcessor {
         return utoteRace;
     }
 
-    public UtoteRace getRaceDetails(String eventId, int raceId) {
-        log4j.entry("getRaceDetails - eventId, raceId", eventId, raceId);
+    public static UtoteRace getRaceDetails(String eventId, int raceId) {
+        String method = "getRaceDetails";
+        log4j.entry(method + " - eventId, raceId", eventId, raceId);
 
         UtoteRace utoteRace = null;
         ProgramServiceStub.GetRaceResponse rResponse = null;
         ProgramServiceStub.RaceResponse raceResponse = null;
         int requestLogId = 0;
         int responseLogId = 0;
+        int tryAgain = 3;
 
-        // Make call to GetRace
-        try {
+        while (tryAgain > 0) {
 
-            // Setup call
-            log4j.debug("getRaceDetails - Settting up GetRace call for Race Id: " + raceId);
-            ProgramServiceStub stub = new ProgramServiceStub();
-            ProgramServiceStub.GetRace getRaceInput = new ProgramServiceStub.GetRace();
-            ProgramServiceStub.RaceRequest rRequest = new ProgramServiceStub.RaceRequest();
-            rRequest.setSource(getSource());
-            rRequest.setEventId(eventId);
-            rRequest.setRaceId(raceId);
-            if (Configurator.getUtoteProgramData()) {
-                rRequest.setProgram(true);
+            // Make call to GetRace
+            try {
+
+                // Setup call
+                log4j.debug("{} - Settting up GetRace call for Race Id={}", method, raceId);
+                ProgramServiceStub stub = new ProgramServiceStub();
+                ProgramServiceStub.GetRace getRaceInput = new ProgramServiceStub.GetRace();
+                ProgramServiceStub.RaceRequest rRequest = new ProgramServiceStub.RaceRequest();
+                rRequest.setSource(getSource());
+                rRequest.setEventId(eventId);
+                rRequest.setRaceId(raceId);
+                if (Configurator.getUtoteProgramData()) {
+                    rRequest.setProgram(true);
+                }
+                if (Configurator.getUtotePoolData()) {
+                    rRequest.setPools(true);
+                }
+                if (Configurator.getUtoteRunnersData()) {
+                    rRequest.setRunners(true);
+                }
+                getRaceInput.setRaceRequest(rRequest);
+                log4j.trace("{} - rRequest={}", method, rRequest.toString());
+                log4j.trace("{} - getRace={}", method, getRaceInput.toString());
+
+                // Log the request
+                requestLogId = (new UtoteRequestResponseLogger()).saveGetRaceRequest(getRaceInput);
+
+                // Make the call
+                log4j.debug("{} - Making GetRace call for raceId={}", method, raceId);
+                rResponse = stub.getRace(getRaceInput);
+
+                // Make sure we got a response
+                if (null == rResponse) {
+                    log4j.error("{} - Null response returned from GetRace request.", method);
+                }
+
+                tryAgain = 1;
+
+            } catch (Program_GetRace_ValidationFaultFault_FaultMessage e) {
+                log4j.error(method + " - Program_GetRace_ValidationFaultFault_FaultMessage getting race details - "+e.getMessage(),e);
+            } catch (Program_GetRace_ToteFaultFault_FaultMessage e) {
+                log4j.error(method + " - Program_GetRace_ToteFaultFault_FaultMessage getting race details - "+e.getMessage(),e);
+            } catch (AxisFault e) {
+                log4j.error(method + " - AxisFault getting race details - "+e.getMessage(),e);
+            } catch (Exception e) {
+                log4j.error(method + " - General exception getting race details - "+e.getMessage(),e);
             }
-            if (Configurator.getUtotePoolData()) {
-                rRequest.setPools(true);
-            }
-            if (Configurator.getUtoteRunnersData()) {
-                rRequest.setRunners(true);
-            }
-            getRaceInput.setRaceRequest(rRequest);
-            log4j.trace("getRaceDetails - rRequest={}",rRequest.toString());
-            log4j.trace("getRaceDetails - getRace={}",getRaceInput.toString());
 
-            // Log the request
-            requestLogId = (new UtoteRequestResponseLogger()).saveGetRaceRequest(getRaceInput);
-
-            // Make the call
-            log4j.debug("getRaceDetails - Making GetRace call for Race Id: " + raceId);
-            rResponse = stub.getRace(getRaceInput);
-
-            // Make sure we got a response
-            if (null == rResponse) {
-                log4j.error("Null response returned from GetRace request.");
+            -- tryAgain;
+            if (0 != tryAgain) {
+                log4j.debug("{} - Could not get race details, waiting 5 seconds and then trying {} more times", method, tryAgain);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    log4j.error(method + " - Received InterruptedException while waiting to retry getting race details - "+e.getMessage(),e);
+                }
             }
 
-
-        } catch (Program_GetRace_ValidationFaultFault_FaultMessage e) {
-            log4j.error("getRaceDetails - Program_GetRace_ValidationFaultFault_FaultMessage getting race details - "+e.getMessage(),e);
-        } catch (Program_GetRace_ToteFaultFault_FaultMessage e) {
-            log4j.error("getRaceDetails - Program_GetRace_ToteFaultFault_FaultMessage getting race details - "+e.getMessage(),e);
-        } catch (AxisFault e) {
-            log4j.error("getRaceDetails - AxisFault getting race details - "+e.getMessage(),e);
-        } catch (Exception e) {
-            log4j.error("getRaceDetails - General exception getting race details - "+e.getMessage(),e);
         }
 
         if ((null != rResponse) && rResponse.isRaceResponseSpecified()) {
@@ -1647,7 +1428,7 @@ public class ProgramRequestProcessor {
             raceResponse = rResponse.getRaceResponse();
 
             // Debug for the race response header
-            log4j.debug("getRaceDetails - raceResponse:");
+            log4j.debug("{} - raceResponse:", method);
             log4j.debug("\tItems with an \"(*)\" are optional.");
             LogHelper.debugOut(log4j, "\tGroup Id(*): ", raceResponse.isGroupIdSpecified(), raceResponse.getGroupId());
             LogHelper.debugOut(log4j, "\tRun Id(*): ", raceResponse.isRunIdSpecified(), raceResponse.getRunId());
@@ -1667,10 +1448,10 @@ public class ProgramRequestProcessor {
                 log4j.debug("\tProgramServiceStub.Race rRace.raceId = {}",rRace.getRaceId());
 
                 utoteRace = persistRace(eventId, rRace, true /* deep */, true /* return associated objects */);
-                log4j.debug("getRaceDetails - After persistRace().  utoteRace.idUtoteRace = {}",utoteRace.getIdUtoteRace());
+                log4j.debug("{} - After persistRace().  utoteRace.idUtoteRace = {}", method, utoteRace.getIdUtoteRace());
 
             } else {
-                log4j.error("GetRaceDetails - Race Detail: <Not Specified>");
+                log4j.error("{} - Race Detail: <Not Specified>", method);
             }
 
             // Log the response
@@ -1679,14 +1460,14 @@ public class ProgramRequestProcessor {
             // GetRace returned, but was missing the RaceResposne
         } else if (null != rResponse) {
             responseLogId = (new UtoteRequestResponseLogger()).saveGetRaceResponse(requestLogId, rResponse, null);
-            log4j.error("getRaceDetails - Received a result, but No race response was returned, responseLogId = {}",responseLogId);
+            log4j.error("{} - Received a result, but No race response was returned, responseLogId = {}", method, responseLogId);
 
             // Null response from GetRace call
         } else {
-            log4j.error("getRaceDetails - No race response was returned for Event Id={} and Race Id={}", eventId, raceId);
+            log4j.error("{} - No race response was returned for Event Id={} and Race Id={}", method, eventId, raceId);
         }
 
-        log4j.exit("getRaceDetails");
+        log4j.exit(method);
         return utoteRace;
     }
 

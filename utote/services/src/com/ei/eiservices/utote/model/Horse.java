@@ -1,9 +1,13 @@
 package com.ei.eiservices.utote.model;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Collection;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +16,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.TypedQuery;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -31,6 +39,8 @@ import javax.persistence.Transient;
 })
 public class Horse implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log4j = LogManager.getLogger(Horse.class);
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -103,10 +113,10 @@ public class Horse implements Serializable {
     private String horsestrainerchangedescription;
 
     @Column(nullable=false)
-    private int horsestrainerchangetime;
+    private long horsestrainerchangetime;
 
     @Column(nullable=false)
-    private int horsesupdatedscratchdescriptiontime;
+    private long horsesupdatedscratchdescriptiontime;
 
     private int horsesweight;
 
@@ -123,6 +133,9 @@ public class Horse implements Serializable {
 
     @Transient
     private Race race = null;
+
+    @Transient
+    private int horsesprogramnumberValue = 0;
 
     public Horse() {
     }
@@ -311,19 +324,19 @@ public class Horse implements Serializable {
         this.horsestrainerchangedescription = horsestrainerchangedescription;
     }
 
-    public int getHorsestrainerchangetime() {
+    public long getHorsestrainerchangetime() {
         return this.horsestrainerchangetime;
     }
 
-    public void setHorsestrainerchangetime(int horsestrainerchangetime) {
+    public void setHorsestrainerchangetime(long horsestrainerchangetime) {
         this.horsestrainerchangetime = horsestrainerchangetime;
     }
 
-    public int getHorsesupdatedscratchdescriptiontime() {
+    public long getHorsesupdatedscratchdescriptiontime() {
         return this.horsesupdatedscratchdescriptiontime;
     }
 
-    public void setHorsesupdatedscratchdescriptiontime(int horsesupdatedscratchdescriptiontime) {
+    public void setHorsesupdatedscratchdescriptiontime(long horsesupdatedscratchdescriptiontime) {
         this.horsesupdatedscratchdescriptiontime = horsesupdatedscratchdescriptiontime;
     }
 
@@ -463,4 +476,59 @@ public class Horse implements Serializable {
         return builder.toString();
     }
 
+    public static Collection<Horse> getActiveRaceHorses(EntityManager em, int racesid) {
+        assert(0 != racesid) : "Passed zero racesid to getRTWActiveRaceHorses";
+        Collection<Horse> results = null;
+        try {
+            TypedQuery<Horse> q = em.createNamedQuery("Horse.findByRaceAndNotScratched", Horse.class);
+            q.setParameter("racesid", racesid);
+            try {
+                results = q.getResultList();
+            } catch (javax.persistence.NoResultException e) {
+                log4j.error(
+                        "getRTWActiveRaceHorses - NoResultException running query for RTW Horses with racesid={}",
+                        racesid);
+            }
+        } catch (Exception e) {
+            log4j.error(
+                    "getRTWActiveRaceHorses - Exception preparing query for RTW Horses with racesid={}.\nException={}",
+                    racesid, e);
+        }
+        return results;
+    }
+
+    public static Horse findByRaceAndProgramNumber(EntityManager em, int racesid, String programNumber) {
+        assert(0 != racesid) : "Passed zero racesid to findByRaceAndProgramNumber";
+        assert(null != programNumber) : "Passed null programNumber to findByRaceAndProgramNumber";
+        assert(!programNumber.isEmpty()) : "Passed empty programNumber to findByRaceAndProgramNumber";
+
+        Horse results = null;
+        try {
+            TypedQuery<Horse> q = em.createNamedQuery("Horse.findByRaceAndProgramNumber", Horse.class);
+            q.setParameter("racesid", racesid);
+            q.setParameter("horsesprogramnumber", programNumber);
+            try {
+                results = q.getSingleResult();
+            } catch (javax.persistence.NoResultException e) {
+                log4j.error(
+                        "findByRaceAndProgramNumber - NoResultException running query for RTW Horses with racesid={}, programNumber={}",
+                        racesid, programNumber);
+            }
+        } catch (Exception e) {
+            log4j.error(
+                    "findByRaceAndProgramNumber - Exception preparing query for RTW Horses with racesid={}, programNumber={}.\nException={}",
+                    racesid, programNumber, e);
+        }
+        return results;
+    }
+
+    public int getHorsesprogramnumberValue() {
+        if (0 == this.horsesprogramnumberValue) {
+            try {
+                this.horsesprogramnumberValue = NumberFormat.getIntegerInstance().parse(this.horsesprogramnumber).intValue();
+            } catch (ParseException e) {
+            }
+        }
+        return this.horsesprogramnumberValue;
+    }
 }

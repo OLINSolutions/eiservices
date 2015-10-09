@@ -809,7 +809,8 @@ public class ResultRequestProcessor {
         ResultServiceStub.ResultResponse resultResponse = null;
         int requestLogId = 0;
         int responseLogId = 0;
-        int tryAgain = 3;
+        int delayDuration = 5000;
+        int tryAgain = 11;
 
         while (tryAgain > 0) {
             // Make call to GetResult
@@ -844,7 +845,7 @@ public class ResultRequestProcessor {
             } catch (Result_GetResult_ValidationFaultFault_FaultMessage e) {
                 log4j.error(method + " - Result_GetResult_ValidationFaultFault_FaultMessage getting race result - "+e.getMessage(), e);
             } catch (Result_GetResult_ToteFaultFault_FaultMessage e) {
-                log4j.error(method + " - Result_GetResult_ToteFaultFault_FaultMessage getting race details - "+e.getMessage(), e);
+                log4j.error(method + " - Result_GetResult_ToteFaultFault_FaultMessage getting race results - "+e.getMessage(), e);
             } catch (AxisFault e) {
                 log4j.error(method + " - AxisFault getting race details - "+e.getMessage(),e);
             } catch (Exception e) {
@@ -853,9 +854,9 @@ public class ResultRequestProcessor {
 
             -- tryAgain;
             if (0 != tryAgain) {
-                log4j.debug("{} - Could not get results, waiting 15 seconds and then trying {} more times", method, tryAgain);
+                log4j.debug("{} - Could not get results, waiting {} seconds and then trying {} more times", method, delayDuration, tryAgain);
                 try {
-                    Thread.sleep(15000);
+                    Thread.sleep(delayDuration);
                 } catch (InterruptedException e) {
                     log4j.error(method + " - Received InterruptedException while waiting to retry getting race details - "+e.getMessage(),e);
                 }

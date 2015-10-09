@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,7 +15,10 @@ import javax.persistence.NamedStoredProcedureQueries;
 import javax.persistence.NamedStoredProcedureQuery;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureParameter;
+import javax.persistence.StoredProcedureQuery;
 import javax.persistence.Table;
+
+import com.ei.eiservices.utote.Configurator;
 
 
 /**
@@ -188,4 +193,28 @@ public class Usersemail implements Serializable {
         return builder.toString();
     }
 
+    public static void notifyUsersOfChange(int tracksId, int racesid, int racesdate, int racesno, String emailMsg, String smsMsg) {
+        // Get Entity Managers
+        final EntityManagerFactory rtwEmF = Configurator.getRTWEMF();
+        final EntityManager rtwEm = rtwEmF.createEntityManager();
+
+        try {
+            rtwEm.getTransaction().begin();
+            StoredProcedureQuery q = rtwEm.createNamedStoredProcedureQuery("NotifyUserOfChange");
+            q.setParameter("pTracksId", tracksId);
+            q.setParameter("pRacesDate", racesdate);
+            q.setParameter("pRacesId", racesid);
+            q.setParameter("pRacesNo", racesno);
+            q.setParameter("pEmailMsg", emailMsg);
+            q.setParameter("pSmsMsg", smsMsg);
+            q.execute();
+            rtwEm.getTransaction().commit();
+        } catch (Exception e) {
+        }
+
+        // Close down the persistence connections
+        rtwEm.close();
+        rtwEmF.close();
+
+    }
 }

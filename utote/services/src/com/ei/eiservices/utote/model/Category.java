@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,6 +21,8 @@ import javax.persistence.Table;
 @NamedQuery(name="Category.findAll", query="SELECT c FROM Category c")
 public class Category implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    public static String FESTIVUS_SHORT_NAME = "festivus";
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -161,5 +164,9 @@ public class Category implements Serializable {
         return builder.toString();
     }
 
+    public static String getCategoriesShortNameById(EntityManager em, int categoriesId) {
+        String shortName = null;
+        return shortName;
+    }
 
 }

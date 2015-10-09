@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 
+import com.ei.eiservices.utote.client.programservice.ProgramServiceStub;
+
 
 /**
  * The persistent class for the utoteRunners database table.
@@ -61,6 +63,35 @@ public class UtoteRunner implements Serializable {
     public UtoteRunner() {
     }
 
+    public UtoteRunner(ProgramServiceStub.Runner runner) {
+        super();
+        updateFromTote(runner);
+    }
+
+    public UtoteRunner(int idParent, ProgramServiceStub.Runner runner) {
+        super();
+        updateFromTote(idParent, runner);
+    }
+
+    public void updateFromTote(int idParent, ProgramServiceStub.Runner runner) {
+        this.idParent = idParent;
+        updateFromTote(runner);
+    }
+
+    public void updateFromTote(ProgramServiceStub.Runner runner) {
+        this.setRunnerId(runner.getRunnerId());
+        if (runner.isScratchSpecified()) {
+            this.setScratch(runner.getScratch());
+        }
+        if (runner.isOddsSpecified()) {
+            this.setOdds(runner.getOdds());
+        }
+        if (runner.isEntriesSpecified()) {
+            this.setHasEntries(runner.getEntries().isEntrySpecified());
+        }
+
+    }
+
     public int getIdUtoteRunner() {
         return this.idUtoteRunner;
     }
@@ -81,6 +112,19 @@ public class UtoteRunner implements Serializable {
         return this.odds;
     }
 
+    public float getOddsValue() {
+        if (null != this.odds) {
+            return Float.MAX_VALUE;
+        } else {
+            String[] oddParts = this.odds.split("/");
+            if (oddParts.length == 1) {
+                return Float.parseFloat(this.odds);
+            } else {
+                return Float.parseFloat(oddParts[0]) / Float.parseFloat(oddParts[1]);
+            }
+        }
+    }
+
     public void setOdds(String odds) {
         this.odds = odds;
     }
@@ -93,7 +137,7 @@ public class UtoteRunner implements Serializable {
         this.runnerId = runnerId;
     }
 
-    public boolean getScratch() {
+    public boolean isScratched() {
         return this.scratch;
     }
 
@@ -155,9 +199,6 @@ public class UtoteRunner implements Serializable {
             builder.append("odds=").append(odds).append(", ");
         }
         builder.append("runnerId=").append(runnerId).append(", scratch=").append(scratch).append(", ");
-        if (race != null) {
-            builder.append("race=").append(race).append(", ");
-        }
         if (entries != null) {
             builder.append("entries=").append(entries);
         }
@@ -222,6 +263,54 @@ public class UtoteRunner implements Serializable {
     public void detach(EntityManager em) {
         detachEntries(em);
         em.detach(this);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = (prime * result) + (hasEntries ? 1231 : 1237);
+        result = (prime * result) + ((odds == null) ? 0 : odds.hashCode());
+        result = (prime * result) + runnerId;
+        result = (prime * result) + (scratch ? 1231 : 1237);
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        UtoteRunner other = (UtoteRunner) obj;
+        if (hasEntries != other.hasEntries) {
+            return false;
+        }
+        if (odds == null) {
+            if (other.odds != null) {
+                return false;
+            }
+        } else if (!odds.equals(other.odds)) {
+            return false;
+        }
+        if (runnerId != other.runnerId) {
+            return false;
+        }
+        if (scratch != other.scratch) {
+            return false;
+        }
+        return true;
     }
 
 }

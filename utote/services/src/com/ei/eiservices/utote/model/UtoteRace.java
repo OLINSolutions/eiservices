@@ -1,6 +1,7 @@
 package com.ei.eiservices.utote.model;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -22,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ei.eiservices.utote.Configurator;
+import com.ei.eiservices.utote.client.programservice.ProgramServiceStub;
 
 
 /**
@@ -32,12 +34,13 @@ import com.ei.eiservices.utote.Configurator;
 @Table(name="utoteRaces")
 @NamedQueries({
     @NamedQuery(name="UtoteRace.findAll", query="SELECT u FROM UtoteRace u"),
-    @NamedQuery(name="UtoteRace.findSpecific", query="SELECT c from UtoteRace c where c.idParent = (SELECT e.idUtoteEvent from UtoteEvent e where e.eventId = :eventId) and c.raceId = :raceId"),
-    @NamedQuery(name="UtoteRace.findSpecificWithValidTrackType", query="SELECT c from UtoteRace c where c.trackType IN :validTrackTypes and c.idParent = (SELECT e.idUtoteEvent from UtoteEvent e where e.eventId = :eventId) and c.raceId = :raceId"),
     @NamedQuery(name="UtoteRace.findByParent", query="SELECT r FROM UtoteRace r WHERE r.idParent = :idParent"),
-    @NamedQuery(name="UtoteRace.findFinal", query="SELECT r FROM UtoteRace r WHERE r.raceStatus = 'Final'")
+    @NamedQuery(name="UtoteRace.findSpecific", query="SELECT c from UtoteRace c where c.idParent = (SELECT e.idUtoteEvent from UtoteEvent e where e.eventId = :eventId) and c.raceId = :raceId"),
+    @NamedQuery(name="UtoteRace.findFinal", query="SELECT r FROM UtoteRace r WHERE r.raceStatus = 'Final'"),
+    @NamedQuery(name="UtoteRace.findSpecificWithValidTrackType", query="SELECT c from UtoteRace c where c.trackType IN :validTrackTypes and c.idParent = (SELECT e.idUtoteEvent from UtoteEvent e where e.eventId = :eventId) and c.raceId = :raceId")
 })
 public class UtoteRace implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     private static final Logger log4j = LogManager.getLogger(UtoteRace.class);
@@ -147,7 +150,191 @@ public class UtoteRace implements Serializable {
     @Transient
     private Race RTWrace = null;
 
+    @Transient
+    boolean weSet = false;
+
     public UtoteRace() {
+    }
+
+    public UtoteRace(UtoteRace source) {
+        super();
+        this.age = source.age;
+        this.claim = source.claim;
+        this.conditions = source.conditions;
+        this.current = source.current;
+        this.distance = source.distance;
+        this.finish = source.finish;
+        this.hasPools = source.hasPools;
+        this.hasRunners = source.hasRunners;
+        this.idParent = source.idParent;
+        this.live = source.live;
+        this.numberOfRunners = source.numberOfRunners;
+        this.odds = source.odds;
+        this.poolList = source.poolList;
+        this.postTime = source.postTime;
+        this.program = source.program;
+        this.purse = source.purse;
+        this.raceId = source.raceId;
+        this.raceStatus = source.raceStatus;
+        this.racetype = source.racetype;
+        this.sex = source.sex;
+        this.surface = source.surface;
+        this.trackType = source.trackType;
+        this.hasChanges = source.hasChanges;
+        this.RTWracesid = source.RTWracesid;
+        this.raceChange = source.raceChange;
+        this.pools = source.pools;
+        this.runners = source.runners;
+        this.event = source.event;
+        this.RTWrace = source.RTWrace;
+    }
+
+    public UtoteRace(ProgramServiceStub.Race rRace) {
+        super();
+        updateFromTote(rRace);
+    }
+
+    public UtoteRace(int idParent, ProgramServiceStub.Race rRace) {
+        super();
+        updateFromTote(idParent, rRace);
+    }
+
+    public void updateFromTote(int idParent, ProgramServiceStub.Race rRace) {
+        this.idParent = idParent;
+        updateFromTote(rRace);
+    }
+
+    public void updateFromTote(ProgramServiceStub.Race rRace) {
+
+        if (rRace.isPoolsSpecified()) {
+            this.setHasPools(rRace.isPoolsSpecified());
+        }
+        if (rRace.isRunnersSpecified()) {
+            this.setHasRunners(rRace.isRunnersSpecified());
+        }
+        if (rRace.isRaceStatusSpecified()) {
+            this.setRaceStatus(rRace.getRaceStatus().getValue());
+        }
+        if (rRace.isTrackTypeSpecified()) {
+            this.setTrackType(rRace.getTrackType().getValue());
+        }
+        if (rRace.isCurrentSpecified()) {
+            this.setCurrent(rRace.getCurrent());
+        }
+        if (rRace.isPostTimeSpecified()) {
+            String postTimeStr = rRace.getPostTimeStr() + "Z";
+            Instant inst = Instant.parse(postTimeStr);
+            long lTime = inst.toEpochMilli();
+            log4j.debug("{} - postTimeStr={}, PostTime(cal.getTimeInMillis())={}, PostTime(cal.toString)={}", "UtoteRace.updateFromTote", postTimeStr, lTime, inst.toString());
+            this.setPostTime(lTime);
+        }
+        if (rRace.isNumberOfRunnersSpecified()) {
+            this.setNumberOfRunners(rRace.getNumberOfRunners());
+        }
+        if (rRace.isFinishSpecified()) {
+            this.setFinish(rRace.getFinish());
+        }
+        if (rRace.isProgramSpecified()) {
+            this.setProgram(rRace.getProgram());
+        }
+        if (rRace.isOddsSpecified()) {
+            this.setOdds(rRace.getOdds());
+        }
+        if (rRace.isLiveSpecified()) {
+            this.setLive(rRace.getLive().getCompressedList());
+        }
+        if (rRace.isPoolListSpecified()) {
+            this.setPoolList(rRace.getPoolList());
+        }
+        if (rRace.isConditionsSpecified()) {
+            this.setConditions(rRace.getConditions());
+        }
+        if (rRace.isRaceTypeSpecified()) {
+            this.setRacetype(rRace.getRaceType());
+        }
+        if (rRace.isSurfaceSpecified()) {
+            this.setSurface(rRace.getSurface());
+        }
+        if (rRace.isDistanceSpecified()) {
+            this.setDistance(rRace.getDistance());
+        }
+        if (rRace.isPurseSpecified()) {
+            this.setPurse(rRace.getPurse().toString());
+        }
+        if (rRace.isSexSpecified()) {
+            this.setSex(rRace.getSex());
+        }
+        if (rRace.isAgeSpecified()) {
+            this.setAge(rRace.getAge());
+        }
+        if (rRace.isClaimSpecified()) {
+            this.setClaim(rRace.getClaim().toString());
+        }
+
+        if (rRace.isRaceChangesSpecified()) {
+            this.setHasChanges(rRace.getRaceChanges().isChangeSpecified());
+            if (this.hasChanges()) {
+                ProgramServiceStub.RaceChange rChange = rRace.getRaceChanges().getChange()[0];
+                if (null == raceChange) {
+                    this.raceChange = new UtoteRaceChange(rChange);
+                } else {
+                    this.raceChange.updateFromTote(rChange);
+                }
+
+            }
+        } else {
+            // Must have an empty (all false) Race Change
+            this.setRaceChange(new UtoteRaceChange());
+        }
+
+    }
+
+    public static Collection<UtoteRace> findByParent(EntityManager em, int idParent) {
+        String method = "UtoteRace.findByParent";
+        log4j.entry(method);
+
+        Collection<UtoteRace> raceList = null;
+        try {
+            TypedQuery<UtoteRace> q = em.createNamedQuery("UtoteRace.findByParent", UtoteRace.class);
+            q.setParameter("idParent", idParent);
+            raceList = q.getResultList();
+        } catch (javax.persistence.NoResultException nre) {
+            log4j.debug("{} - Received NoResultException looking for races with parentId(idUtoteEvent)={}",
+                    method, idParent);
+        } catch (Exception e) {
+            log4j.debug("{} - Received Exception looking for races with parentId(idUtoteEvent)={}, ExceptionMsg={}, Exception={}",
+                    method, idParent, e.getMessage(), e);
+        }
+        log4j.exit(method+" - " + ((null == raceList) ? "NOT FOUND" : "FOUND"));
+        return raceList;
+    }
+
+    // Find and deeply retrieve the requested race, but detach it from
+    // the associated EM.
+    public static UtoteRace findSpecific(EntityManager em, String eventId, int raceId) {
+        String method = "UtoteRace.findSpecific";
+        log4j.entry(method);
+        UtoteRace utoteRace = null;
+        TypedQuery<UtoteRace> q = em.createNamedQuery("UtoteRace.findSpecific", UtoteRace.class);
+        q.setParameter("eventId", eventId);
+        q.setParameter("raceId", raceId);
+        try {
+            utoteRace = q.getSingleResult();
+            utoteRace.loadParent(em);
+            utoteRace.load(em, null);
+            utoteRace.detach(em);
+            assert(null != utoteRace.getEvent()) : method + " - curRace.getEvent() returned null after call to curRace.loadParent.";
+            log4j.debug("{} - Loaded parent for newRace is new for eventId={}, raceId={}, utoteRace.idUtoteRace={}",
+                    method, eventId, raceId, utoteRace.getIdUtoteRace());
+        } catch (javax.persistence.NoResultException e) {
+            log4j.debug("{} - Received NoResultException looking for race with eventId={} and raceId={}",
+                    method, eventId, raceId);
+        } catch (Exception e) {
+            log4j.debug("{} - Received Exception looking for race with eventId={} and raceId={}, ExceptionMsg={}, Exception={}",
+                    method, eventId, raceId, e.getMessage(), e);
+        }
+        log4j.exit(method+" - " + ((null == utoteRace) ? "NOT FOUND" : "FOUND"));
+        return utoteRace;
     }
 
     public int getIdUtoteRace() {
@@ -425,7 +612,7 @@ public class UtoteRace implements Serializable {
     /**
      * @return the hasChanges
      */
-    public boolean isHasChanges() {
+    public boolean hasChanges() {
         return hasChanges;
     }
 
@@ -560,8 +747,41 @@ public class UtoteRace implements Serializable {
             Collection<UtoteRace> races = new ArrayList<UtoteRace>();
             races.add(this);
             this.event.setRaces(races);
+        } else {
+            log4j.debug("UtoteRace.loadParent - Could not find parent UtoteEvent for this UtoteRace entity with idParent={}", this.idParent);
         }
         return this.event;
+    }
+
+    public UtoteEvent getOrLoadParent(String callingMethod) {
+        String method = "ToteLinkUpdateServiceHandler.getParentEvent on behalf of " + callingMethod;
+        // If the provided UtoteRace's event is empty, load it
+        UtoteEvent parentEvent = this.getEvent();
+        if (null == parentEvent) {
+            // Get Entity Managers
+            final EntityManagerFactory roEmF = Configurator.getROEMF();
+            final EntityManager roEm = roEmF.createEntityManager();
+            try {
+                log4j.debug(
+                        "{} - Parent UtoteEvent was not loaded, attempting to load for Race matching raceId={}, and eventId={}",
+                        method, this.getRaceId(), this.getEventId());
+                parentEvent = this.loadParent(roEm);
+                if (null != parentEvent) {
+                    roEm.detach(parentEvent);
+                } else {
+                    log4j.error("{} - Parent UtoteEvent not found for Race matching raceId={}, and eventId={}", method,
+                            this.getRaceId(), this.getEventId());
+                }
+            } catch (Exception e) {
+                log4j.error(
+                        "{} - Error trying to retrieve parent UtoteEvent for Race matching raceId={}, and eventId={}\nException={}",
+                        method, this.getRaceId(), this.getEventId(), e);
+            } finally {
+                roEm.close();
+                roEmF.close();
+            }
+        }
+        return parentEvent;
     }
 
     /**
@@ -569,8 +789,6 @@ public class UtoteRace implements Serializable {
      *
      * @param em The EntityManager to load from
      */
-    @Transient
-    boolean weSet = false;
     public void load(EntityManager em, UtoteEvent parent) {
         if (null != parent) {
             this.setEvent(parent);
@@ -592,7 +810,7 @@ public class UtoteRace implements Serializable {
         detachPools(em);
         detachRunners(em);
         if ((null != this.event) && weSet) {
-            this.event.detach(em, false /* just the event, not races */);
+            this.event.detach(em);
         }
         em.detach(this);
     }
@@ -607,14 +825,14 @@ public class UtoteRace implements Serializable {
         this.event = null;
     }
 
-    public Race RTWRace() {
+    public Race getRTWrace() {
         if (null == this.RTWrace) {
-            loadRTWRace();
+            loadRTWrace();
         }
         return this.RTWrace;
     }
 
-    public Race loadRTWRace() {
+    public Race loadRTWrace() {
 
         Race r = null;
 
@@ -622,7 +840,7 @@ public class UtoteRace implements Serializable {
         final EntityManagerFactory rtwEmF = Configurator.getRTWEMF();
         final EntityManager rtwEm = rtwEmF.createEntityManager();
 
-        r = loadRTWRace(rtwEm);
+        r = loadRTWrace(rtwEm);
 
         rtwEm.close();
         rtwEmF.close();
@@ -630,7 +848,7 @@ public class UtoteRace implements Serializable {
         return r;
     }
 
-    public Race loadRTWRace(EntityManager rtwEm) {
+    public Race loadRTWrace(EntityManager rtwEm) {
 
         Race r = null;
 
@@ -649,7 +867,7 @@ public class UtoteRace implements Serializable {
 
         // Was a corresponding RTW Race object found
         if (null == r) {
-            log4j.error("loadRTWRace - Could not find RTW Race row with racesid={} for UtoteRace={}", this.RTWracesid, this.toString(false));
+            log4j.debug("loadRTWRace - Could not find RTW Race row with racesid={} for UtoteRace={}", this.RTWracesid, this.toString(false));
         } else {
             this.RTWrace = r;
         }
@@ -669,13 +887,6 @@ public class UtoteRace implements Serializable {
      */
     public void setRTWracesid(int rTWracesid) {
         RTWracesid = rTWracesid;
-    }
-
-    /**
-     * @return the rTWrace
-     */
-    public Race getRTWrace() {
-        return RTWrace;
     }
 
     /**
@@ -757,15 +968,200 @@ public class UtoteRace implements Serializable {
         if (deep && (runners != null)) {
             builder.append("runners=").append(runners).append(", ");
         }
-        if (deep && (event != null)) {
-            builder.append("event=").append(event);
-        }
         if (deep && (RTWrace != null)) {
             builder.append("RTWrace=").append(RTWrace);
         }
 
         builder.append("]");
         return builder.toString();
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = (prime * result) + ((age == null) ? 0 : age.hashCode());
+        result = (prime * result) + ((claim == null) ? 0 : claim.hashCode());
+        result = (prime * result) + ((conditions == null) ? 0 : conditions.hashCode());
+        result = (prime * result) + (current ? 1231 : 1237);
+        result = (prime * result) + ((distance == null) ? 0 : distance.hashCode());
+        result = (prime * result) + ((event == null) ? 0 : event.hashCode());
+        result = (prime * result) + ((finish == null) ? 0 : finish.hashCode());
+        result = (prime * result) + (hasChanges ? 1231 : 1237);
+        result = (prime * result) + (hasPools ? 1231 : 1237);
+        result = (prime * result) + (hasRunners ? 1231 : 1237);
+        result = (prime * result) + ((live == null) ? 0 : live.hashCode());
+        result = (prime * result) + numberOfRunners;
+        result = (prime * result) + (odds ? 1231 : 1237);
+        result = (prime * result) + ((poolList == null) ? 0 : poolList.hashCode());
+        result = (prime * result) + ((postTime == null) ? 0 : postTime.hashCode());
+        result = (prime * result) + (program ? 1231 : 1237);
+        result = (prime * result) + ((purse == null) ? 0 : purse.hashCode());
+        result = (prime * result) + ((raceChange == null) ? 0 : raceChange.hashCode());
+        result = (prime * result) + raceId;
+        result = (prime * result) + ((raceStatus == null) ? 0 : raceStatus.hashCode());
+        result = (prime * result) + ((racetype == null) ? 0 : racetype.hashCode());
+        result = (prime * result) + ((sex == null) ? 0 : sex.hashCode());
+        result = (prime * result) + ((surface == null) ? 0 : surface.hashCode());
+        result = (prime * result) + ((trackType == null) ? 0 : trackType.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        UtoteRace other = (UtoteRace) obj;
+        if (age == null) {
+            if (other.age != null) {
+                return false;
+            }
+        } else if (!age.equals(other.age)) {
+            return false;
+        }
+        if (claim == null) {
+            if (other.claim != null) {
+                return false;
+            }
+        } else if (!claim.equals(other.claim)) {
+            return false;
+        }
+        if (conditions == null) {
+            if (other.conditions != null) {
+                return false;
+            }
+        } else if (!conditions.equals(other.conditions)) {
+            return false;
+        }
+        if (current != other.current) {
+            return false;
+        }
+        if (distance == null) {
+            if (other.distance != null) {
+                return false;
+            }
+        } else if (!distance.equals(other.distance)) {
+            return false;
+        }
+        if (event == null) {
+            if (other.event != null) {
+                return false;
+            }
+        } else if (!event.equals(other.event)) {
+            return false;
+        }
+        if (finish == null) {
+            if (other.finish != null) {
+                return false;
+            }
+        } else if (!finish.equals(other.finish)) {
+            return false;
+        }
+        if (hasChanges != other.hasChanges) {
+            return false;
+        }
+        if (hasPools != other.hasPools) {
+            return false;
+        }
+        if (hasRunners != other.hasRunners) {
+            return false;
+        }
+        if (live == null) {
+            if (other.live != null) {
+                return false;
+            }
+        } else if (!live.equals(other.live)) {
+            return false;
+        }
+        if (numberOfRunners != other.numberOfRunners) {
+            return false;
+        }
+        if (odds != other.odds) {
+            return false;
+        }
+        if (poolList == null) {
+            if (other.poolList != null) {
+                return false;
+            }
+        } else if (!poolList.equals(other.poolList)) {
+            return false;
+        }
+        if (postTime == null) {
+            if (other.postTime != null) {
+                return false;
+            }
+        } else if (!postTime.equals(other.postTime)) {
+            return false;
+        }
+        if (program != other.program) {
+            return false;
+        }
+        if (purse == null) {
+            if (other.purse != null) {
+                return false;
+            }
+        } else if (!purse.equals(other.purse)) {
+            return false;
+        }
+        if (raceChange == null) {
+            if (other.raceChange != null) {
+                return false;
+            }
+        } else if (!raceChange.equals(other.raceChange)) {
+            return false;
+        }
+        if (raceId != other.raceId) {
+            return false;
+        }
+        if (raceStatus == null) {
+            if (other.raceStatus != null) {
+                return false;
+            }
+        } else if (!raceStatus.equals(other.raceStatus)) {
+            return false;
+        }
+        if (racetype == null) {
+            if (other.racetype != null) {
+                return false;
+            }
+        } else if (!racetype.equals(other.racetype)) {
+            return false;
+        }
+        if (sex == null) {
+            if (other.sex != null) {
+                return false;
+            }
+        } else if (!sex.equals(other.sex)) {
+            return false;
+        }
+        if (surface == null) {
+            if (other.surface != null) {
+                return false;
+            }
+        } else if (!surface.equals(other.surface)) {
+            return false;
+        }
+        if (trackType == null) {
+            if (other.trackType != null) {
+                return false;
+            }
+        } else if (!trackType.equals(other.trackType)) {
+            return false;
+        }
+        return true;
     }
 
 }
