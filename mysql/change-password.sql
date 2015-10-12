@@ -1,0 +1,1 @@
+UPDATE racetrackwarriors.users SET userspassword=md5('claire') WHERE usersid=879;
