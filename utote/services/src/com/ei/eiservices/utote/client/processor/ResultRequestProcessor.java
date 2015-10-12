@@ -22,7 +22,6 @@ import org.apache.logging.log4j.Logger;
 import com.ei.eiservices.utote.Configurator;
 import com.ei.eiservices.utote.UtoteRequestResponseLogger;
 import com.ei.eiservices.utote.client.resultservice.ResultServiceStub;
-import com.ei.eiservices.utote.client.resultservice.ResultServiceStub.ResultEntity;
 import com.ei.eiservices.utote.client.resultservice.Result_GetResult_ToteFaultFault_FaultMessage;
 import com.ei.eiservices.utote.client.resultservice.Result_GetResult_ValidationFaultFault_FaultMessage;
 import com.ei.eiservices.utote.model.UtoteFinisher;
@@ -47,14 +46,14 @@ public class ResultRequestProcessor {
 
     public static final BigDecimal RTW_WAGER = new BigDecimal(2);
 
-    private ResultServiceStub.Source getSource() {
+    private static ResultServiceStub.Source getSource() {
         ResultServiceStub.Source source = new ResultServiceStub.Source();
         source.setSystemId(Configurator.getSystemId());
         source.setSourceId(Configurator.getSourceId());
         return source;
     }
 
-    private void calculateRTWWinnings(UtoteFinisher f) {
+    private static void calculateRTWWinnings(UtoteFinisher f) {
         String method = "calculateRTWWinnings";
         log4j.entry(method);
 
@@ -100,19 +99,11 @@ public class ResultRequestProcessor {
         log4j.exit(method);
     }
 
-    private UtoteFinisher findFinisher(Collection<UtoteFinisher> finishers, int runnerId) {
-        log4j.entry("findFinisher - finishers.size, runnerId", finishers.size(), runnerId);
-        for (UtoteFinisher uFinisher : finishers) {
-            if (uFinisher.getRunnerId() == runnerId) {
-                log4j.exit("findFinisher - Found Finisher for runnerId="+runnerId);
-                return uFinisher;
-            }
-        }
-        log4j.exit("findFinisher - Not Found.");
-        return null;
+    private static UtoteFinisher findFinisher(Collection<UtoteFinisher> finishers, int runnerId) {
+        return finishers.stream().filter(uFinisher -> (uFinisher.getRunnerId() == runnerId)).findFirst().orElse(null);
     }
 
-    private Collection<UtoteFinisher> cloneFinishers(UtotePosition parent, ResultServiceStub.Finishers finishers, boolean newParent) {
+    private static Collection<UtoteFinisher> cloneFinishers(UtotePosition parent, ResultServiceStub.Finishers finishers, boolean newParent) {
         String method = "cloneFinishers";
         log4j.entry(method + " - idParent(Position), positionId", parent.getIdUtotePosition(), parent.getPositionId());
         Collection<UtoteFinisher> uFinishers = null;
@@ -124,53 +115,33 @@ public class ResultRequestProcessor {
             final EntityManager em = emF.createEntityManager();
 
             // Get the current Runners entity collection, if exists
-            uFinishers = newParent?null:parent.getFinishers();
-            if (null == uFinishers) {
-                log4j.trace("{} - no Finishers found in parent.  Creating and setting new array list", method);
-                uFinishers = new ArrayList<UtoteFinisher>();
-            }
-
-            // Open transaction
-            log4j.trace("{} - {} Finishers are specified, about to process", method, finishers.getFinisher().length);
+            uFinishers = (newParent || (null == parent.getFinishers()))?new ArrayList<UtoteFinisher>():parent.getFinishers();
 
             // Iterate over the prices
             for (ResultServiceStub.Finisher finisher : finishers.getFinisher()) {
 
                 boolean newEntity = false;
+                // Open transaction
                 em.getTransaction().begin();
 
                 // If this is new, create the container
-                log4j.trace("{} - Searching for input runnerId={}", method, finisher.getRunnerId());
                 UtoteFinisher uFinisher = newParent?null:findFinisher(uFinishers, finisher.getRunnerId());
                 if (null == uFinisher) {
-                    log4j.trace("{} - Not found, creating new entity for input runnerId={}", method, finisher.getRunnerId());
                     uFinisher = new UtoteFinisher();
                     uFinisher.setIdParent(parent.getIdUtotePosition());
-                    uFinisher.setRunnerId(finisher.getRunnerId());
                     newEntity = true;
                 } else {
-                    log4j.trace("{} - Found Finisher for input runnerId={}, idUtoteFinisher={}", method, uFinisher.getRunnerId(), uFinisher.getIdUtoteFinisher());
+                    log4j.debug("{} - Found Finisher for input runnerId={}, idUtoteFinisher={}", method, uFinisher.getRunnerId(), uFinisher.getIdUtoteFinisher());
                 }
-
-                log4j.trace("{} - Cloning fields for input runnerId={}", method, uFinisher.getRunnerId());
 
                 // Set the values that have been specified
-                if (finisher.isEntryIdSpecified()) {
-                    uFinisher.setEntryId(finisher.getEntryId());
-                }
-                if (finisher.isJockeySpecified()) {
-                    uFinisher.setJockey(finisher.getJockey());
-                }
-                if (finisher.isNameSpecified()) {
-                    uFinisher.setName(finisher.getName());
-                }
+                log4j.debug("{} - Cloning fields for input runnerId={}", method, uFinisher.getRunnerId());
+                uFinisher.updateFromTote(finisher);
 
                 // Persist first before updating or adding any associations
                 if (newEntity) {
-                    log4j.trace("{} - Entry is NEW, calling persist runnerId={}", method, uFinisher.getRunnerId());
                     em.persist(uFinisher);
                 } else {
-                    log4j.trace("{} - Entry Entity is EXISTING, calling merge for runnerId={}", method, uFinisher.getRunnerId());
                     UtoteFinisher mergedEntry = em.merge(uFinisher);
                     uFinishers.remove(uFinisher);
                     uFinisher = mergedEntry;
@@ -178,16 +149,19 @@ public class ResultRequestProcessor {
 
                 // Commit the transaction
                 try {
-                    log4j.trace("{} - Calling commit Finisher transaction for runnerId={}", method, uFinisher.getRunnerId());
                     em.getTransaction().commit();
-                    log4j.trace("{} - Finisher Entity comitted for idUtoteFinisher={}, runnerId={}", method, uFinisher.getIdUtoteFinisher(), uFinisher.getRunnerId());
+                    log4j.debug("{} - Finisher Entity comitted for idUtoteFinisher={}, runnerId={}", method, uFinisher.getIdUtoteFinisher(), uFinisher.getRunnerId());
                 } catch (Exception e) {
-                    log4j.error("{} - Could not persist Price for runnerId={}, exceptionMsg={}, exception={}", method, uFinisher.getRunnerId(), e.getMessage(), e);
+                    log4j.error("{} - Could not persist Finisher for runnerId={}, exceptionMsg={}, exception={}", method, uFinisher.getRunnerId(), e.getMessage(), e);
                 } finally {
                     if (em.getTransaction().isActive()) {
                         em.getTransaction().rollback();
                     }
                 }
+
+                // Refresh the finisher and display it's contents
+                em.refresh(uFinisher);
+                log4j.debug("{} - Persisted finisher={}", method, uFinisher.toString());
 
                 // Calculate winnings (win/place/show) values for RTW usage
                 uFinisher.setPosition(parent);
@@ -197,8 +171,12 @@ public class ResultRequestProcessor {
                 uFinishers.add(uFinisher);
             }
 
-            em.close();
-            emF.close();
+            if (em.isOpen()) {
+                em.close();
+            }
+            if (emF.isOpen()) {
+                emF.close();
+            }
 
         }
 
@@ -206,68 +184,43 @@ public class ResultRequestProcessor {
         return uFinishers;
     }
 
-    private UtotePosition findPosition(Collection<UtotePosition> positions, int positionId) {
-        log4j.entry("findPosition - ", positionId);
-        for (UtotePosition uPosition : positions) {
-            if (uPosition.getPositionId() == positionId) {
-                log4j.trace("findPosition - Found UtotePosition object with positionId="+positionId);
-                return uPosition;
-            }
-        }
-        log4j.exit("findPosition - Not Found.");
-        return null;
+    private static UtotePosition findPosition(Collection<UtotePosition> positions, int positionId) {
+        return positions.stream().filter(uPosition -> (uPosition.getPositionId() == positionId)).findFirst().orElse(null);
     }
 
-    private Collection<UtotePosition> clonePositions(UtoteResult parent, boolean newParent, ResultServiceStub.Positions positions) {
+    private static Collection<UtotePosition> clonePositions(UtoteResult parent, boolean newParent, ResultServiceStub.Positions positions) {
         String method = "clonePosition";
         log4j.entry(method + " - for EventId, RaceId", parent.getEventId(), parent.getRaceId());
 
         // Get the current Position entity collection, if exists
-        Collection<UtotePosition> uPositions = newParent?null:parent.getPositions();
-        if (null == uPositions) {
-            log4j.debug("{} - no Positions found in parent.  Creating and setting new array list", method);
-            uPositions = new ArrayList<UtotePosition>();
-        }
+        Collection<UtotePosition> uPositions = (newParent || (null == parent.getPositions()))?new ArrayList<UtotePosition>():parent.getPositions();
 
         // See if any pools were passed in
         if (positions.isPositionSpecified()) {
 
-            log4j.debug("{} - {} Positions are specified, about to process", method, positions.getPosition().length);
-
             final EntityManagerFactory emF = Configurator.getRWEMF();
             final EntityManager em = emF.createEntityManager();
-
-            // Open transaction
-            log4j.trace("{} - Opening Positions transaction for idUtoteResult={}, eventId={}, raceId={}", method, parent.getIdUtoteResult(), parent.getEventId(), parent.getRaceId());
-
 
             // Iterate over the pools
             for (ResultServiceStub.Position position : positions.getPosition()) {
 
                 boolean newEntity = false;
+                // Open transaction
                 em.getTransaction().begin();
 
                 // If this is new, create the container
-                log4j.trace("{} - Searching for input positionId={}", method, position.getPositionId());
                 UtotePosition uPosition = newParent?null:findPosition(uPositions, position.getPositionId());
                 if (null == uPosition) {
-                    log4j.trace("{} - Not found, creating new entity for positionId={}", method, position.getPositionId());
                     uPosition = new UtotePosition();
                     uPosition.setIdParent(parent.getIdUtoteResult());
                     uPosition.setPositionId(position.getPositionId());
                     newEntity = true;
-                } else {
-                    log4j.trace("{} - FOUND EXISTING Position with idUtotePoolPrice={}, positionId={}", method, uPosition.getIdUtotePosition(), uPosition.getPositionId());
                 }
-
-                log4j.trace("{} - Cloning fields for positionId={}", method, position.getPositionId());
 
                 // Persist the element
                 if (newEntity) {
-                    log4j.trace("{} - Position Entity is NEW, calling persist for positionId={}", method, uPosition.getPositionId());
                     em.persist(uPosition);
                 } else {
-                    log4j.trace("{} - Position Entity EXISTS, calling persist for positionId={}", method, uPosition.getPositionId());
                     UtotePosition mergedPosition = em.merge(uPosition);
                     uPositions.remove(uPosition);
                     uPosition = mergedPosition;
@@ -275,11 +228,7 @@ public class ResultRequestProcessor {
 
                 // Commit the transaction
                 try {
-
-                    log4j.trace("{} - Calling commit transaction for idUtoteResult={}, eventId={}, raceId={}", method, parent.getIdUtoteResult(), parent.getEventId(), parent.getRaceId());
                     em.getTransaction().commit();
-                    log4j.debug("{} - PoolPrice Entity comitted for idUtoteResult={}, eventId={}, raceId={}", method, parent.getIdUtoteResult(), parent.getEventId(), parent.getRaceId());
-
                 } catch (Exception e) {
                     log4j.error(method + " - Could not persist Position for idUtoteResult="+parent.getIdUtoteResult()+", eventId="+parent.getEventId()+", raceId=" + parent.getRaceId() + ", Exception = " + e.getMessage(),e);
                 } finally {
@@ -299,18 +248,20 @@ public class ResultRequestProcessor {
                     }
                 }
                 uPosition.setResult(parent);
-                log4j.trace("{} - Cloning Finishers for Posiiton with positionId={}", method, uPosition.getPositionId());
                 Collection<UtoteFinisher> finisherList = cloneFinishers(uPosition, position.getFinishers(), newParent);
                 uPosition.setFinishers(finisherList);
-                log4j.trace("{} - After adding Finishers for Number of finishers={} positionId={}, idUtotePosition={}", method, uPosition.getFinishers().size(), uPosition.getPositionId(), uPosition.getIdUtotePosition());
 
                 // Put it into the holding array
                 uPositions.add(uPosition);
 
             }
 
-            em.close();
-            emF.close();
+            if (em.isOpen()) {
+                em.close();
+            }
+            if (emF.isOpen()) {
+                emF.close();
+            }
 
         }
 
@@ -318,19 +269,11 @@ public class ResultRequestProcessor {
         return uPositions;
     }
 
-    private UtotePrice findPrice(Collection<UtotePrice> prices, String finish) {
-        log4j.entry("findPrice - entries.size, runnerId", prices.size(), finish);
-        for (UtotePrice uPrice : prices) {
-            if (uPrice.getFinish().equalsIgnoreCase(finish)) {
-                log4j.exit("findPrice - Found price for finish="+finish);
-                return uPrice;
-            }
-        }
-        log4j.exit("findPrice - Not Found.");
-        return null;
+    private static UtotePrice findPrice(Collection<UtotePrice> prices, String finish) {
+        return prices.stream().filter(uPrice -> (uPrice.getFinish().equalsIgnoreCase(finish))).findFirst().orElse(null);
     }
 
-    private Collection<UtotePrice> clonePrices(UtotePoolPrice parent, ResultServiceStub.Prices prices, boolean newParent) {
+    private static Collection<UtotePrice> clonePrices(UtotePoolPrice parent, ResultServiceStub.Prices prices, boolean newParent) {
         String method = "clonePrices";
         log4j.entry(method + " - idParent(PoolPrice), poolId, poolName", parent.getIdUtotePoolPrice(), parent.getPoolId(), parent.getPoolName());
         Collection<UtotePrice> uPrices = null;
@@ -342,29 +285,20 @@ public class ResultRequestProcessor {
             final EntityManager em = emF.createEntityManager();
 
             // Get the current Runners entity collection, if exists
-            uPrices = newParent?null:parent.getPrices();
-            if (null == uPrices) {
-                log4j.trace("{} - no Prices found in parent.  Creating and setting new array list", method);
-                uPrices = new ArrayList<UtotePrice>();
-            }
-
-            // Open transaction
-            log4j.trace("{} - {} Prices are specified, about to process", method, prices.getPrice().length);
+            uPrices = (newParent || (null == parent.getPrices()))?new ArrayList<UtotePrice>():parent.getPrices();
 
             // Iterate over the prices
             for (ResultServiceStub.PriceEntity price : prices.getPrice()) {
 
                 boolean newEntity = false;
+                // Open transaction
                 em.getTransaction().begin();
 
                 // If this is new, create the container
-                log4j.trace("{} - Searching for input finish={}", method, price.getFinish());
                 UtotePrice uPrice = newParent?null:findPrice(uPrices, price.getFinish());
                 if (null == uPrice) {
-                    log4j.trace("{} - Not found, creating new entity for input finish={}", method, price.getFinish());
                     uPrice = new UtotePrice();
                     uPrice.setIdParent(parent.getIdUtotePoolPrice());
-                    uPrice.setFinish(price.getFinish());
                     newEntity = true;
                 } else {
                     log4j.trace("{} - Found Price for input finish={}, idUtotePrice={}", method, uPrice.getFinish(), uPrice.getIdUtotePrice());
@@ -373,34 +307,12 @@ public class ResultRequestProcessor {
                 log4j.trace("{} - Cloning fields for input finish={}", method, uPrice.getFinish());
 
                 // Set the values that have been specified
-                if (price.isExchangeSpecified()) {
-                    uPrice.setExchange(price.getExchange());
-                }
-                if (price.isHoldSpecified()) {
-                    uPrice.setHold(price.getHold());
-                }
-                if (price.isPayoffSpecified()) {
-                    uPrice.setPayoff(price.getPayoff());
-                }
-                if (price.isPriceAmountSpecified()) {
-                    uPrice.setPriceAmount(price.getPriceAmount());
-                }
-                if (price.isRequiredSpecified()) {
-                    uPrice.setRequired(price.getRequired());
-                }
-                if (price.isWagerSpecified()) {
-                    uPrice.setWager(price.getWager());
-                }
-                if (price.isWinningsSpecified()) {
-                    uPrice.setWinnings(price.getWinnings());
-                }
+                uPrice.updateFromTote(price);
 
                 // Persist first before updating or adding any associations
                 if (newEntity) {
-                    log4j.trace("{} - Entry is NEW, calling persist finish={}, PoolId={}", method, uPrice.getFinish(), parent.getPoolId());
                     em.persist(uPrice);
                 } else {
-                    log4j.trace("{} - Entry Entity is EXISTING, calling merge for finish={}, PoolId={}", method, uPrice.getFinish(), parent.getPoolId());
                     UtotePrice mergedEntry = em.merge(uPrice);
                     uPrices.remove(uPrice);
                     uPrice = mergedEntry;
@@ -408,9 +320,7 @@ public class ResultRequestProcessor {
 
                 // Commit the transaction
                 try {
-                    log4j.trace("{} - Calling commit Price transaction for finsh={}, PoolId={}", method, uPrice.getFinish(), parent.getPoolId());
                     em.getTransaction().commit();
-                    log4j.trace("{} - Price Entity comitted for idUtotePrice={}, finsh={}, PoolId={}", method, uPrice.getIdUtotePrice(), uPrice.getFinish(), parent.getPoolId());
                 } catch (Exception e) {
                     log4j.error("{} - Could not persist Price for finish={}, PoolId={}, exceptionMsg={}, exception={}", method, uPrice.getFinish(), parent.getPoolId(), e.getMessage(), e);
                 } finally {
@@ -424,8 +334,12 @@ public class ResultRequestProcessor {
                 uPrices.add(uPrice);
             }
 
-            em.close();
-            emF.close();
+            if (em.isOpen()) {
+                em.close();
+            }
+            if (emF.isOpen()) {
+                emF.close();
+            }
 
         }
 
@@ -433,56 +347,35 @@ public class ResultRequestProcessor {
         return uPrices;
     }
 
-    private UtotePoolPrice findPoolPrice(Collection<UtotePoolPrice> poolPrices, String poolId, String poolName) {
-        log4j.entry("findPoolPrice - ", poolId, poolName);
-        for (UtotePoolPrice uPoolPrice : poolPrices) {
-            if (uPoolPrice.getPoolId().equals(poolId) && uPoolPrice.getPoolName().equals(poolName)) {
-                log4j.trace("findPoolPrice - Found UtotePoolPrice object with poolId="+poolId+", poolName="+poolName);
-                return uPoolPrice;
-            }
-        }
-        log4j.exit("findPoolPrice - Not Found.");
-        return null;
+    private static UtotePoolPrice findPoolPrice(Collection<UtotePoolPrice> poolPrices, String poolId, String poolName) {
+        return poolPrices.stream().filter(uPoolPrice -> (uPoolPrice.getPoolId().equals(poolId) && uPoolPrice.getPoolName().equals(poolName))).findFirst().orElse(null);
     }
 
-    private Collection<UtotePoolPrice> clonePoolPrice(UtoteResult parent, boolean newParent, ResultServiceStub.PoolPrices poolPrices) {
+    private static Collection<UtotePoolPrice> clonePoolPrice(UtoteResult parent, boolean newParent, ResultServiceStub.PoolPrices poolPrices) {
         String method = "clonePoolPrice";
         log4j.entry(method + " - for EventId, RaceId", parent.getEventId(), parent.getRaceId());
 
         // Get the current Pool entity collection, if exists
-        Collection<UtotePoolPrice> uPoolPrices = newParent?null:parent.getPoolPrices();
-        if (null == uPoolPrices) {
-            log4j.debug("{} - no Pools found in parent.  Creating and setting new array list", method);
-            uPoolPrices = new ArrayList<UtotePoolPrice>();
-        }
+        Collection<UtotePoolPrice> uPoolPrices = (newParent || (null == parent.getPoolPrices()))?new ArrayList<UtotePoolPrice>():parent.getPoolPrices();
 
         // See if any pools were passed in
         if (poolPrices.isPoolPriceSpecified()) {
 
-            log4j.debug("{} - {} PoolPrices are specified, about to process", method, poolPrices.getPoolPrice().length);
-
             final EntityManagerFactory emF = Configurator.getRWEMF();
             final EntityManager em = emF.createEntityManager();
-
-            // Open transaction
-            log4j.trace("{} - Opening PoolPrices transaction for idUtoteResult={}, eventId={}, raceId={}", method, parent.getIdUtoteResult(), parent.getEventId(), parent.getRaceId());
-
 
             // Iterate over the pools
             for (ResultServiceStub.PoolPrice poolPrice : poolPrices.getPoolPrice()) {
 
                 boolean newEntity = false;
+                // Open transaction
                 em.getTransaction().begin();
 
                 // If this is new, create the container
-                log4j.trace("{} - Searching for input poolId = {}, poolName = {}", method, poolPrice.getPoolId(), poolPrice.getPoolName());
                 UtotePoolPrice uPoolPrice = newParent?null:findPoolPrice(uPoolPrices, poolPrice.getPoolId(), poolPrice.getPoolName());
                 if (null == uPoolPrice) {
-                    log4j.trace("{} - Not found, creating new entity for poolId={}, poolName={}", method, poolPrice.getPoolId(), poolPrice.getPoolName());
                     uPoolPrice = new UtotePoolPrice();
                     uPoolPrice.setIdParent(parent.getIdUtoteResult());
-                    uPoolPrice.setPoolId(poolPrice.getPoolId());
-                    uPoolPrice.setPoolName(poolPrice.getPoolName());
                     newEntity = true;
                 } else {
                     log4j.trace("{} - FOUND EXISTING PoolPrice with idUtotePoolPrice={}, poolId={}, poolName={}", method, uPoolPrice.getIdUtotePoolPrice(), uPoolPrice.getPoolId(), uPoolPrice.getPoolName());
@@ -491,22 +384,12 @@ public class ResultRequestProcessor {
                 log4j.trace("{} - Cloning fields for poolId={}, poolName={}", method, poolPrice.getPoolId(), poolPrice.getPoolName());
 
                 // Set the values that have been specified
-                if (poolPrice.isPoolNameSpecified()) {
-                    uPoolPrice.setPoolName(poolPrice.getPoolName());
-                }
-                if (poolPrice.isCarryOverSpecified()) {
-                    uPoolPrice.setCarryOver(poolPrice.getCarryOver());
-                }
-                if (poolPrice.isRefundSpecified()) {
-                    uPoolPrice.setRefund(poolPrice.getRefund());
-                }
+                uPoolPrice.updateFromTote(poolPrice);
 
                 // Persist the element
                 if (newEntity) {
-                    log4j.trace("{} - PoolPrice Entity is NEW, calling persist for poolId={}, poolName={}", method, uPoolPrice.getPoolId(), uPoolPrice.getPoolName());
                     em.persist(uPoolPrice);
                 } else {
-                    log4j.trace("{} - PoolPrice Entity EXISTS, calling persist for poolId={}, poolName={}", method, uPoolPrice.getPoolId(), uPoolPrice.getPoolName());
                     UtotePoolPrice mergedPoolPrice = em.merge(uPoolPrice);
                     uPoolPrices.remove(uPoolPrice);
                     uPoolPrice = mergedPoolPrice;
@@ -514,11 +397,7 @@ public class ResultRequestProcessor {
 
                 // Commit the transaction
                 try {
-
-                    log4j.trace("{} - Calling commit transaction for idUtoteResult={}, eventId={}, raceId={}", method, parent.getIdUtoteResult(), parent.getEventId(), parent.getRaceId());
                     em.getTransaction().commit();
-                    log4j.debug("{} - PoolPrice Entity comitted for idUtoteResult={}, eventId={}, raceId={}", method, parent.getIdUtoteResult(), parent.getEventId(), parent.getRaceId());
-
                 } catch (Exception e) {
                     log4j.error(method + " - Could not persist PoolPrice for idUtoteResult="+parent.getIdUtoteResult()+", eventId="+parent.getEventId()+", raceId=" + parent.getRaceId() + ", Exception = " + e.getMessage(),e);
                 } finally {
@@ -542,7 +421,6 @@ public class ResultRequestProcessor {
                             log4j.warn("{} - Did not find any existing entries for an existing Prices for PoolPrice with poolId={}, poolName={}", method, uPoolPrice.getPoolId(), uPoolPrice.getPoolName());
                         }
                     }
-                    log4j.trace("{} - Cloning Prices for PoolPrice with poolId={}, poolName={}", method, uPoolPrice.getPoolId(), uPoolPrice.getPoolName());
                     Collection<UtotePrice> priceList = clonePrices(uPoolPrice, poolPrice.getPrices(), newParent);
                     uPoolPrice.setPrices(priceList);
                     uPoolPrice.setHasPrices(true);
@@ -554,47 +432,19 @@ public class ResultRequestProcessor {
 
             }
 
-            em.close();
-            emF.close();
+            if (em.isOpen()) {
+                em.close();
+            }
+            if (emF.isOpen()) {
+                emF.close();
+            }
 
         }
 
-        log4j.debug("{} - finished.  parent.getPoolPrices().size() = {}", method, uPoolPrices.size());
         return uPoolPrices;
     }
 
-    private UtoteResult cloneResult(UtoteResult utoteResult, ResultServiceStub.ResultResponse result) {
-        log4j.entry("cloneResult - ", result.getRunId(), result.getEventId(), result.getRaceId());
-
-        utoteResult.setEventId(result.getEventId());
-        utoteResult.setRaceId(result.getRaceId());
-        if (result.isCurrencyIdSpecified()) {
-            utoteResult.setCurrencyId(result.getCurrencyId());
-        }
-        if (result.isEventNameSpecified()) {
-            utoteResult.setEventName(result.getEventName());
-        }
-        utoteResult.setHasPoolPrices(result.isPoolPricesSpecified());
-        if (result.isRaceResultsSpecified()) {
-            utoteResult.setHasRaceResults(true);
-            ResultEntity raceResults = result.getRaceResults();
-            if (raceResults.isPositionsSpecified()) {
-                utoteResult.setHasPositions(true);
-            }
-            if (raceResults.isScratchesSpecified()) {
-                utoteResult.setScratches(raceResults.getScratches());
-            }
-            if (raceResults.isWinnersSpecified()) {
-                utoteResult.setWinners(raceResults.getWinners());
-            }
-        }
-
-
-        log4j.exit("cloneResult");
-        return utoteResult;
-    }
-
-    private UtoteResult findResults(EntityManager em, String eventId, int raceId) {
+    private static UtoteResult findResults(EntityManager em, String eventId, int raceId) {
         log4j.entry("findResults - eventId, raceId", eventId, raceId);
         UtoteResult utoteResult = null;
         TypedQuery<UtoteResult> q = em.createNamedQuery("UtoteResult.findSpecific", UtoteResult.class);
@@ -605,14 +455,14 @@ public class ResultRequestProcessor {
         } catch (javax.persistence.NoResultException e) {
             log4j.trace("findResults - Received NoResultException looking for a Race");
         }
-        if (null != utoteResult) {
-            log4j.debug("Found existing result. idUtoteResult={}, EventId={}, RaceId={}", utoteResult.getIdUtoteResult(), utoteResult.getEventId(), utoteResult.getRaceId());
+        if (null == utoteResult) {
+            log4j.debug("findResults - Existing result NOT FOUND. EventId={}, RaceId={}", eventId, raceId);
         }
         log4j.exit("findResults");
         return utoteResult;
     }
 
-    private UtoteResult persistResult(String eventId, int raceId, ResultServiceStub.ResultResponse result, boolean deep, boolean returnAssociations) {
+    private static UtoteResult persistResult(String eventId, int raceId, ResultServiceStub.ResultResponse result, boolean deep, boolean returnAssociations) {
         String method = "persistResult";
         log4j.entry("persistResult - eventId, raceId ", eventId, raceId);
         boolean newResults = false;
@@ -634,27 +484,18 @@ public class ResultRequestProcessor {
         }
 
         // Update the information in the record with what was submitted
-        log4j.debug("{} - About to cloneResults for eventId={}, raceId={}", method, eventId, raceId);
-        UtoteResult clonedResult = cloneResult(utoteResult, result);
-        utoteResult = clonedResult;
+        utoteResult.updateFromTote(result);
 
         // Persist first before updating or adding any associations
-        log4j.debug("{} - About to persist {} Result for eventId={}, raceId={}", method, (newResults?"NEW":"EXISTING"), utoteResult.getEventId(), utoteResult.getRaceId());
-
         try {
-
-            log4j.trace("{} - Opening transaction for {} Result with runId={}, eventId={}, raceId={}", method, (newResults?"NEW":"EXISTING"), result.getRunId(), utoteResult.getEventId(), utoteResult.getRaceId());
             em.getTransaction().begin();
-            log4j.trace("{} - Calling persist for {} Result with runId={}, eventId={}, raceId={}", method, (newResults?"NEW":"EXISTING"), result.getRunId(), utoteResult.getEventId(), utoteResult.getRaceId());
             if (newResults) {
                 em.persist(utoteResult);
             } else {
                 UtoteResult mergedResult = em.merge(utoteResult);
                 utoteResult = mergedResult;
             }
-            log4j.trace("{} - Calling commit transaction for {} Result with runId={}, eventId={}, raceId={}", method, (newResults?"NEW":"EXISTING"), result.getRunId(), utoteResult.getEventId(), utoteResult.getRaceId());
             em.getTransaction().commit();
-            log4j.debug("{} - {} Results persisted for idUtoteResult = {}, runId={}, eventId={}, raceId={}", method, (newResults?"NEW":"EXISTING"), utoteResult.getIdUtoteResult(), result.getRunId(), utoteResult.getEventId(), utoteResult.getRaceId());
             boolean needsUpdate = false;
 
             // Now update/add Pool Prices if specified
@@ -673,7 +514,6 @@ public class ResultRequestProcessor {
                 }
 
                 // Clone the PoolPrices (e.g. insert or update)
-                log4j.debug("{} - Has PoolPrices, about to call clonePoolPrices for runId={}, eventId={}, raceId={}", method, result.getRunId(), utoteResult.getEventId(), utoteResult.getRaceId());
                 Collection<UtotePoolPrice> clonedPoolPrices = clonePoolPrice(utoteResult, newResults, result.getPoolPrices());
                 if (newResults) {
                     if ((null == clonedPoolPrices) || (clonedPoolPrices.size() == 0)) {
@@ -727,7 +567,6 @@ public class ResultRequestProcessor {
                 }
 
                 // Clone the Positions (e.g. insert or update)
-                log4j.debug("{} - Has Positions, about to call clonePositions for runId={}, eventId={}, raceId={}", method, result.getRunId(), utoteResult.getEventId(), utoteResult.getRaceId());
                 Collection<UtotePosition> clonedPositions = clonePositions(utoteResult, newResults, result.getRaceResults().getPositions());
                 if (newResults) {
                     if ((null == clonedPositions) || (clonedPositions.size() == 0)) {
@@ -767,19 +606,16 @@ public class ResultRequestProcessor {
 
             // If the state of the Result for this Event and Race changed, do a final update
             if (needsUpdate) {
-                log4j.trace("{} - Opening transaction for existing runId={}, eventId={}, raceId={}", method, result.getRunId(), utoteResult.getEventId(), utoteResult.getRaceId());
                 em.getTransaction().begin();
-                log4j.trace("{} - Calling merge for existing runId={}, eventId={}, raceId={}", method, result.getRunId(), utoteResult.getEventId(), utoteResult.getRaceId());
                 UtoteResult mergedResult = em.merge(utoteResult);
                 utoteResult = mergedResult;
-                log4j.trace("{} - Calling commit transaction for existing runId={}, eventId={}, raceId={}", method, result.getRunId(), utoteResult.getEventId(), utoteResult.getRaceId());
                 em.getTransaction().commit();
-                log4j.debug("{} - Existing entity persisted for idUtoteResult={} runId={}, eventId={}, raceId={}", method, utoteResult.getIdUtoteResult(), result.getRunId(), utoteResult.getEventId(), utoteResult.getRaceId());
             }
 
+            log4j.debug("{} - Results processed for idUtoteResult={} runId={}, eventId={}, raceId={}", method, utoteResult.getIdUtoteResult(), result.getRunId(), utoteResult.getEventId(), utoteResult.getRaceId());
+
         } catch (Exception e) {
-            log4j.debug("{} - Could not persist Result for eventId={}, raceId={}", method, utoteResult.getEventId(), utoteResult.getRaceId());
-            log4j.error(method + " - Could not persist eventId=" + utoteResult.getEventId() + ", raceId=" + utoteResult.getRaceId() + ", Exception = " + e.getMessage(),e);
+            log4j.error(method + " - Could not persist eventId={}, raceId={}, Exception={}\n{}", method, utoteResult.getEventId(), utoteResult.getRaceId(), e.getMessage(), e);
         } finally {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
@@ -788,8 +624,12 @@ public class ResultRequestProcessor {
 
         // Close the connections
         try {
-            em.close();
-            emF.close();
+            if (em.isOpen()) {
+                em.close();
+            }
+            if (emF.isOpen()) {
+                emF.close();
+            }
         } catch (Exception e) {
             log4j.error(method+" - Exception trying em.close(): "+e.getMessage(),e);
         }
@@ -799,7 +639,7 @@ public class ResultRequestProcessor {
 
     }
 
-    public UtoteResult getResults(String eventId, int raceId) {
+    public static UtoteResult getResults(String eventId, int raceId) {
 
         String method = "ResultRequestProcessor.getResults";
         log4j.entry(method + " - eventId, raceId", eventId, raceId);
@@ -817,7 +657,6 @@ public class ResultRequestProcessor {
             try {
 
                 // Setup call
-                log4j.debug("{} - Settting up GetResult call for raceId={}", method, raceId);
                 ResultServiceStub stub = new ResultServiceStub();
                 ResultServiceStub.GetResult getResultInput = new ResultServiceStub.GetResult();
                 ResultServiceStub.ResultRequest rRequest = new ResultServiceStub.ResultRequest();
@@ -825,14 +664,11 @@ public class ResultRequestProcessor {
                 rRequest.setEventId(eventId);
                 rRequest.setRaceId(raceId);
                 getResultInput.setResultRequest(rRequest);
-                log4j.debug("{} - rRequest={}", method, rRequest.toString());
-                log4j.debug("{} - getResultInput={}", method, getResultInput.toString());
 
                 // Log the request
-                requestLogId = (new UtoteRequestResponseLogger()).saveGetResultRequest(getResultInput);
+                requestLogId = UtoteRequestResponseLogger.saveGetResultRequest(getResultInput);
 
                 // Make the call
-                log4j.debug("{} - Making GetResult call for eventId={}, raceId={}", method, eventId, raceId);
                 rResponse = stub.getResult(getResultInput);
 
                 // Make sure we got a response
@@ -869,27 +705,33 @@ public class ResultRequestProcessor {
             // Get the response
             resultResponse = rResponse.getResultResponse();
 
-            // Debug for the Result response header
-            log4j.debug("{} - Result:", method);
-            log4j.debug("\tItems with an \"(*)\" are optional.");
-            log4j.debug("\t\tGroup Id(*): {}", resultResponse.isGroupIdSpecified()?resultResponse.getGroupId():"N/A");
-            log4j.debug("\t\tRun Id(*): {}", resultResponse.isRunIdSpecified()?resultResponse.getRunId():"N/A");
-            log4j.debug("\t\tSource (Source Id/System Id): {}/{}", resultResponse.getSource().getSourceId(), resultResponse.getSource().getSystemId());
-            if (resultResponse.isErrorSpecified()) {
-                log4j.debug("\t\tError(*): {}/{}/{}", resultResponse.getError().getNumber(), resultResponse.getError().getMessage(), resultResponse.getError().getParams().toString());
+            // Debug the response header
+            if (log4j.isDebugEnabled()) {
+                String errMsg = null;
+                if (resultResponse.isErrorSpecified()) {
+                    errMsg = ", Error (Number/Message/Params): ";
+                    errMsg += (resultResponse.getError().isNumberSpecified()?resultResponse.getError().getNumber():"<N/A>") + "/";
+                    errMsg += (resultResponse.getError().isMessageSpecified()?resultResponse.getError().getMessage():"<N/A>") + "/";
+                    errMsg += (resultResponse.getError().isParamsSpecified()?resultResponse.getError().getParams().toString():"<N/A>");
+                }
+                log4j.debug("getEventDetailsRaw GroupId={}, RunId={}, SourceId/SystemId={}/{}{}",
+                        resultResponse.isGroupIdSpecified()?resultResponse.getGroupId():"N/A",
+                                resultResponse.isRunIdSpecified()?resultResponse.getRunId():"N/A",
+                                        resultResponse.getSource().getSourceId(), resultResponse.getSource().getSystemId(),
+                                        (null == errMsg)?"":errMsg);
             }
 
             // Persist the result
-            log4j.debug("{} - About to persist Results for eventId={}, raceId={}", method, eventId, raceId);
             utoteResult = persistResult(eventId, raceId, resultResponse, true /* deep */, true /* return associated objects */);
-            log4j.debug("{} - After persistResult(), utoteResult.idUtoteResult={}, eventId={}, raceId={}", method, utoteResult.getIdUtoteResult(), eventId, raceId);
 
             // Log the response
-            responseLogId = (new UtoteRequestResponseLogger()).saveGetResultResponse(requestLogId, rResponse, Integer.valueOf(utoteResult.getIdUtoteResult()));
+            responseLogId = UtoteRequestResponseLogger.saveGetResultResponse(requestLogId, rResponse, Integer.valueOf(utoteResult.getIdUtoteResult()));
+
+            log4j.debug("{} - Finished getting results for utoteResult.idUtoteResult={}, eventId={}, raceId={}", method, utoteResult.getIdUtoteResult(), eventId, raceId);
 
             // GetRace returned, but was missing the RaceResposne
         } else if (null != rResponse) {
-            responseLogId = (new UtoteRequestResponseLogger()).saveGetResultResponse(requestLogId, rResponse, null);
+            responseLogId = UtoteRequestResponseLogger.saveGetResultResponse(requestLogId, rResponse, null);
             log4j.error("{} - Received a result, but No race response was returned, responseLogId = {}", method, responseLogId);
 
             // Null response from GetRace call
@@ -927,7 +769,7 @@ public class ResultRequestProcessor {
     /**
      * Test the getResults function based on current races that are final.
      */
-    private void test(boolean finalOnly) {
+    private static void test(boolean finalOnly) {
         String method = "ResultRequestProcessor.test";
         log4j.entry(method +  "- finalOnly=" + (finalOnly?"true":"false"));
 
@@ -980,11 +822,11 @@ public class ResultRequestProcessor {
         log4j.exit(method);
     }
 
-    public void testAllRaces() {
+    public static void testAllRaces() {
         test(false);
     }
 
-    public void testFinalRaces() {
+    public static void testFinalRaces() {
         test(true);
     }
 }

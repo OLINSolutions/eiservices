@@ -15,6 +15,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 
+import com.ei.eiservices.utote.client.resultservice.ResultServiceStub;
+import com.ei.eiservices.utote.client.resultservice.ResultServiceStub.ResultEntity;
+
 
 /**
  * The persistent class for the utoteResults database table.
@@ -82,6 +85,31 @@ public class UtoteResult implements Serializable {
     public UtoteResult() {
     }
 
+    public void updateFromTote(ResultServiceStub.ResultResponse result) {
+        this.setEventId(result.getEventId());
+        this.setRaceId(result.getRaceId());
+        if (result.isCurrencyIdSpecified()) {
+            this.setCurrencyId(result.getCurrencyId());
+        }
+        if (result.isEventNameSpecified()) {
+            this.setEventName(result.getEventName());
+        }
+        this.setHasPoolPrices(result.isPoolPricesSpecified());
+        if (result.isRaceResultsSpecified()) {
+            this.setHasRaceResults(true);
+            ResultEntity raceResults = result.getRaceResults();
+            if (raceResults.isPositionsSpecified()) {
+                this.setHasPositions(true);
+            }
+            if (raceResults.isScratchesSpecified()) {
+                this.setScratches(raceResults.getScratches());
+            }
+            if (raceResults.isWinnersSpecified()) {
+                this.setWinners(raceResults.getWinners());
+            }
+        }
+
+    }
 
     public int getIdUtoteResult() {
         return this.idUtoteResult;

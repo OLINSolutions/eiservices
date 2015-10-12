@@ -194,9 +194,19 @@ public class UtoteRace implements Serializable {
         updateFromTote(rRace);
     }
 
+    public UtoteRace(UtoteEvent anEvent, ProgramServiceStub.Race rRace) {
+        super();
+        updateFromTote(anEvent, rRace);
+    }
+
     public UtoteRace(int idParent, ProgramServiceStub.Race rRace) {
         super();
         updateFromTote(idParent, rRace);
+    }
+
+    public UtoteRace(int idParent, UtoteEvent anEvent, ProgramServiceStub.Race rRace) {
+        super();
+        updateFromTote(idParent, anEvent, rRace);
     }
 
     public void updateFromTote(int idParent, ProgramServiceStub.Race rRace) {
@@ -204,8 +214,22 @@ public class UtoteRace implements Serializable {
         updateFromTote(rRace);
     }
 
-    public void updateFromTote(ProgramServiceStub.Race rRace) {
+    public void updateFromTote(int idParent, UtoteEvent anEvent, ProgramServiceStub.Race rRace) {
+        this.idParent = idParent;
+        updateFromTote(anEvent, rRace);
+    }
 
+    public void updateFromTote(ProgramServiceStub.Race rRace) {
+        updateFromTote(null, rRace);
+    }
+
+    public void updateFromTote(UtoteEvent anEvent, ProgramServiceStub.Race rRace) {
+
+        this.raceId = rRace.getRaceId();
+
+        if (null != anEvent) {
+            this.setEvent(anEvent);
+        }
         if (rRace.isPoolsSpecified()) {
             this.setHasPools(rRace.isPoolsSpecified());
         }
@@ -1015,153 +1039,159 @@ public class UtoteRace implements Serializable {
      */
     @Override
     public boolean equals(Object obj) {
+        int equ = equalsInt(obj);
+        log4j.debug("UtoteRace.equals - {}", (0==equ)?"IS EQUAL":"equalsInt failed at "+equ);
+        return (equ == 0);
+    }
+
+    private int equalsInt(Object obj) {
         if (this == obj) {
-            return true;
+            return 0;
         }
         if (obj == null) {
-            return false;
+            return -1;
         }
         if (getClass() != obj.getClass()) {
-            return false;
+            return -2;
         }
         UtoteRace other = (UtoteRace) obj;
         if (age == null) {
             if (other.age != null) {
-                return false;
+                return -3;
             }
         } else if (!age.equals(other.age)) {
-            return false;
+            return -4;
         }
         if (claim == null) {
             if (other.claim != null) {
-                return false;
+                return -5;
             }
         } else if (!claim.equals(other.claim)) {
-            return false;
+            return -6;
         }
         if (conditions == null) {
             if (other.conditions != null) {
-                return false;
+                return -7;
             }
         } else if (!conditions.equals(other.conditions)) {
-            return false;
+            return -8;
         }
         if (current != other.current) {
-            return false;
+            return -9;
         }
         if (distance == null) {
             if (other.distance != null) {
-                return false;
+                return -10;
             }
         } else if (!distance.equals(other.distance)) {
-            return false;
+            return -11;
         }
         if (event == null) {
             if (other.event != null) {
-                return false;
+                return -12;
             }
         } else if (!event.equals(other.event)) {
-            return false;
+            return -13;
         }
         if (finish == null) {
             if (other.finish != null) {
-                return false;
+                return -14;
             }
         } else if (!finish.equals(other.finish)) {
-            return false;
+            return -15;
         }
         if (hasChanges != other.hasChanges) {
-            return false;
+            return -16;
         }
         if (hasPools != other.hasPools) {
-            return false;
+            return -17;
         }
         if (hasRunners != other.hasRunners) {
-            return false;
+            return -18;
         }
         if (live == null) {
             if (other.live != null) {
-                return false;
+                return -19;
             }
         } else if (!live.equals(other.live)) {
-            return false;
+            return -20;
         }
         if (numberOfRunners != other.numberOfRunners) {
-            return false;
+            return -21;
         }
         if (odds != other.odds) {
-            return false;
+            return -22;
         }
         if (poolList == null) {
             if (other.poolList != null) {
-                return false;
+                return -23;
             }
         } else if (!poolList.equals(other.poolList)) {
-            return false;
+            return -24;
         }
         if (postTime == null) {
             if (other.postTime != null) {
-                return false;
+                return -25;
             }
         } else if (!postTime.equals(other.postTime)) {
-            return false;
+            return -26;
         }
         if (program != other.program) {
-            return false;
+            return -27;
         }
         if (purse == null) {
             if (other.purse != null) {
-                return false;
+                return -28;
             }
         } else if (!purse.equals(other.purse)) {
-            return false;
+            return -29;
         }
         if (raceChange == null) {
             if (other.raceChange != null) {
-                return false;
+                return -30;
             }
         } else if (!raceChange.equals(other.raceChange)) {
-            return false;
+            return -31;
         }
         if (raceId != other.raceId) {
-            return false;
+            return -32;
         }
         if (raceStatus == null) {
             if (other.raceStatus != null) {
-                return false;
+                return -33;
             }
         } else if (!raceStatus.equals(other.raceStatus)) {
-            return false;
+            return -34;
         }
         if (racetype == null) {
             if (other.racetype != null) {
-                return false;
+                return -35;
             }
         } else if (!racetype.equals(other.racetype)) {
-            return false;
+            return -36;
         }
         if (sex == null) {
             if (other.sex != null) {
-                return false;
+                return -37;
             }
         } else if (!sex.equals(other.sex)) {
-            return false;
+            return -38;
         }
         if (surface == null) {
             if (other.surface != null) {
-                return false;
+                return -39;
             }
         } else if (!surface.equals(other.surface)) {
-            return false;
+            return -40;
         }
         if (trackType == null) {
             if (other.trackType != null) {
-                return false;
+                return -41;
             }
         } else if (!trackType.equals(other.trackType)) {
-            return false;
+            return -42;
         }
-        return true;
+        return 0;
     }
 
 }

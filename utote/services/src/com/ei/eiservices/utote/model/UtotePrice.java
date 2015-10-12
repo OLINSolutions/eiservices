@@ -13,6 +13,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.ei.eiservices.utote.client.resultservice.ResultServiceStub;
+
 
 /**
  * The persistent class for the utotePrices database table.
@@ -63,6 +65,32 @@ public class UtotePrice implements Serializable {
     private UtotePoolPrice poolPrice = null;
 
     public UtotePrice() {
+    }
+
+    public void updateFromTote(ResultServiceStub.PriceEntity price) {
+        this.setFinish(price.getFinish());
+        if (price.isExchangeSpecified()) {
+            this.setExchange(price.getExchange());
+        }
+        if (price.isHoldSpecified()) {
+            this.setHold(price.getHold());
+        }
+        if (price.isPayoffSpecified()) {
+            this.setPayoff(price.getPayoff());
+        }
+        if (price.isPriceAmountSpecified()) {
+            this.setPriceAmount(price.getPriceAmount());
+        }
+        if (price.isRequiredSpecified()) {
+            this.setRequired(price.getRequired());
+        }
+        if (price.isWagerSpecified()) {
+            this.setWager(price.getWager());
+        }
+        if (price.isWinningsSpecified()) {
+            this.setWinnings(price.getWinnings());
+        }
+
     }
 
     public int getIdUtotePrice() {

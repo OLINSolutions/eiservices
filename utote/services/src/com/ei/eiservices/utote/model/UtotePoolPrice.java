@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 
+import com.ei.eiservices.utote.client.resultservice.ResultServiceStub;
+
 
 /**
  * The persistent class for the utotePoolPrices database table.
@@ -66,6 +68,21 @@ public class UtotePoolPrice implements Serializable {
     public UtotePoolPrice() {
     }
 
+    public void updateFromTote(ResultServiceStub.PoolPrice poolPrice) {
+        this.setPoolId(poolPrice.getPoolId());
+        this.setPoolName(poolPrice.getPoolName());
+
+        if (poolPrice.isPoolNameSpecified()) {
+            this.setPoolName(poolPrice.getPoolName());
+        }
+        if (poolPrice.isCarryOverSpecified()) {
+            this.setCarryOver(poolPrice.getCarryOver());
+        }
+        if (poolPrice.isRefundSpecified()) {
+            this.setRefund(poolPrice.getRefund());
+        }
+
+    }
 
     public int getIdUtotePoolPrice() {
         return this.idUtotePoolPrice;

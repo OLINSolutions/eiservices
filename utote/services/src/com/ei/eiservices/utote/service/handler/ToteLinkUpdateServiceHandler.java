@@ -283,7 +283,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
             log4j.warn(
                     "updateRunId - *** New RunId Detected and set, now performing re-initialization. *** lastRunId={}, newRunId={}",
                     _lastRunId, newRunId);
-            (new ToteLinkInitializationServiceHandler()).performInitialization();
+            ToteLinkInitializationServiceHandler.performInitialization();
         }
     }
 
@@ -299,7 +299,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
     }
 
     private boolean updateRace(String callingMethod, String updateReason, String eventId, int raceId) {
-        String method = "ToteLinkUpdateServiceHandler.updateRace::f " + callingMethod;
+        String method = "ToteLinkUpdateServiceHandler.updateRace(" + callingMethod + ")";
         log4j.entry(method);
         log4j.debug("{} - updateReason={}, eventId={}, raceId={}", method, updateReason, eventId, raceId);
 
@@ -488,40 +488,78 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                                         performedUpdate.setUpdated( RaceController.unscratchRTWRunner(newRace, newRunner, newEntry) );
 
                                         // If the new entry has changes
-                                    } else if (newEntry.hasChanges()) {
-
-                                        UtoteEntryChange newEC = newEntry.getEntryChange();
-                                        log4j.debug(
-                                                "{} - NewEntryChanges={} \nNew Entry={}, New Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}",
-                                                method, newEC.toString(), newEntry.toString(), newRunner.getRunnerId(),
-                                                eventId, raceId, newRace.getIdUtoteRace());
-
-                                        // If this is the first time there are changes, just update
-                                        if (!curEntry.hasChanges()) {
+                                    } else {
+                                        if (!newEntry.equals(curEntry)) {
                                             log4j.debug(
-                                                    "{} - New Entry has changes, cur entry does not.  Entry={}, Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}",
-                                                    method, newEntry.toString(), newRunner.getRunnerId(),
-                                                    eventId, raceId, newRace.getIdUtoteRace());
-                                            performedUpdate.setUpdated( RaceController.processEntryChanges(null, newEC) );
-
-                                            // Otherwise, look to see if anything new has changed
-                                        } else {
-
-                                            UtoteEntryChange curEC = curEntry.getEntryChange();
-                                            log4j.debug(
-                                                    "{} - CurEntryChanges={} \nNew Entry={}, new Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}",
-                                                    method, curEC.toString(), newEntry.toString(), newRunner.getRunnerId(),
-                                                    eventId, raceId, newRace.getIdUtoteRace());
-
-                                            // Look for any other changes
-                                            if (curEC.hasDifferences(newEC)) {
+                                                    "{} - New Entry and Cur Entry are not the same. New Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}\ncurEntry={}\nnewEntry={}",
+                                                    method,  newRunner.getRunnerId(),
+                                                    eventId, raceId, newRace.getIdUtoteRace(), curEntry.toString(), newEntry.toString());
+                                            if (!newEntry.getJockey().trim().equalsIgnoreCase(curEntry.getJockey().trim())) {
                                                 log4j.debug(
-                                                        "{} - New Entry has changes, cur entry already had changes.  Entry={}, Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}",
+                                                        "{} - **** JOCKEY CHANGE **** - Old Value={}, New Value = {}. For new Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}\ncurEntry={}\nnewEntry={}",
+                                                        method, curEntry.getJockey(), newEntry.getJockey(), newRunner.getRunnerId(),
+                                                        eventId, raceId, newRace.getIdUtoteRace());
+                                            }
+                                            if (!newEntry.getMedication().trim().equalsIgnoreCase(curEntry.getMedication().trim())) {
+                                                log4j.debug(
+                                                        "{} - **** MEDICATION CHANGE **** - Old Value={}, New Value = {}. For new Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}\ncurEntry={}\nnewEntry={}",
+                                                        method, curEntry.getMedication(), newEntry.getMedication(), newRunner.getRunnerId(),
+                                                        eventId, raceId, newRace.getIdUtoteRace());
+                                            }
+                                            if (!newEntry.getName().trim().equalsIgnoreCase(curEntry.getName().trim())) {
+                                                log4j.debug(
+                                                        "{} - **** NAME CHANGE **** - Old Value={}, New Value = {}. For new Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}\ncurEntry={}\nnewEntry={}",
+                                                        method, curEntry.getName(), newEntry.getName(), newRunner.getRunnerId(),
+                                                        eventId, raceId, newRace.getIdUtoteRace());
+                                            }
+                                            if (!newEntry.getOwner().trim().equalsIgnoreCase(curEntry.getOwner().trim())) {
+                                                log4j.debug(
+                                                        "{} - **** OWNER CHANGE **** - Old Value={}, New Value = {}. For new Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}\ncurEntry={}\nnewEntry={}",
+                                                        method, curEntry.getOwner(), newEntry.getOwner(), newRunner.getRunnerId(),
+                                                        eventId, raceId, newRace.getIdUtoteRace());
+                                            }
+                                            if (!newEntry.getTrainer().trim().equalsIgnoreCase(curEntry.getTrainer().trim())) {
+                                                log4j.debug(
+                                                        "{} - **** TRAINER CHANGE **** - Old Value={}, New Value = {}. For new Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}\ncurEntry={}\nnewEntry={}",
+                                                        method, curEntry.getTrainer(), newEntry.getTrainer(), newRunner.getRunnerId(),
+                                                        eventId, raceId, newRace.getIdUtoteRace());
+                                            }
+                                        }
+                                        if (newEntry.hasChanges()) {
+
+                                            UtoteEntryChange newEC = newEntry.getEntryChange();
+                                            log4j.debug(
+                                                    "{} - NewEntryChanges={} \nNew Entry={}, New Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}",
+                                                    method, newEC.toString(), newEntry.toString(), newRunner.getRunnerId(),
+                                                    eventId, raceId, newRace.getIdUtoteRace());
+
+                                            // If this is the first time there are changes, just update
+                                            if (!curEntry.hasChanges()) {
+                                                log4j.debug(
+                                                        "{} - New Entry has changes, cur entry does not.  Entry={}, Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}",
                                                         method, newEntry.toString(), newRunner.getRunnerId(),
                                                         eventId, raceId, newRace.getIdUtoteRace());
-                                                performedUpdate.setUpdated( RaceController.processEntryChanges(curEC, newEC) );
-                                            }
+                                                performedUpdate.setUpdated( RaceController.processEntryChanges(null, newEC) );
 
+                                                // Otherwise, look to see if anything new has changed
+                                            } else {
+
+                                                UtoteEntryChange curEC = curEntry.getEntryChange();
+                                                log4j.debug(
+                                                        "{} - CurEntryChanges={} \nNew Entry={}, new Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}",
+                                                        method, curEC.toString(), newEntry.toString(), newRunner.getRunnerId(),
+                                                        eventId, raceId, newRace.getIdUtoteRace());
+
+                                                // Look for any other changes
+                                                if (curEC.hasDifferences(newEC)) {
+                                                    log4j.debug(
+                                                            "{} - New Entry has changes, cur entry already had changes.  Entry={}, Runner={}, eventId={}, raceId={}, utoteRace.idUtoteRace={}",
+                                                            method, newEntry.toString(), newRunner.getRunnerId(),
+                                                            eventId, raceId, newRace.getIdUtoteRace());
+                                                    performedUpdate.setUpdated( RaceController.processEntryChanges(curEC, newEC) );
+                                                }
+
+                                            }
                                         }
                                     }
 
@@ -544,17 +582,16 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
         return performedUpdate.wasUpdated();
     }
 
-    public UtoteRace findExistingRace(String eventId, int raceId) {
+    public UtoteRace findExistingRace(EntityManager em, UtoteEvent anEvent, int raceId) {
         String method = "findExistingRace";
-        log4j.entry("{} - eventId, raceId", eventId, raceId);
-        final EntityManagerFactory emF = Configurator.getROEMF();
-        final EntityManager em = emF.createEntityManager();
+        log4j.entry("{} - eventId, raceId", anEvent.getEventId(), raceId);
         TypedQuery<UtoteRace> q = em.createNamedQuery("UtoteRace.findSpecific", UtoteRace.class);
-        q.setParameter("eventId", eventId);
+        q.setParameter("eventId", anEvent.getEventId());
         q.setParameter("raceId", raceId);
         UtoteRace utoteRace = null;
         try {
             utoteRace = q.getSingleResult();
+            utoteRace.load(em, anEvent);
         } catch (javax.persistence.NoResultException nre) {
             log4j.trace("{} - Received NoResultException looking for a UtoteRace", method);
         } catch (Exception e) {
@@ -562,25 +599,27 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
         }
         log4j.debug("{} - anEvent {}", method, (null == utoteRace)?"IS NULL":"WAS FOUND");
         if (null != utoteRace) {
-            log4j.debug("{} - Found existing event.  idUtoteRace={}, EventId={}, RaceId={}", method, utoteRace.getIdUtoteRace(), eventId, raceId);
+            log4j.debug("{} - Found existing event.  idUtoteRace={}, EventId={}, RaceId={}", method, utoteRace.getIdUtoteRace(), anEvent.getEventId(), raceId);
         }
-
-        if (em.isOpen()) {
-            em.close();
-        }
-        if (emF.isOpen()) {
-            emF.close();
-        }
-
         log4j.exit(method);
         return utoteRace;
     }
 
-    public UtoteEvent findExistingEvent(String eventId) {
+    public void loadNewRace(EntityManager em, UtoteEvent anEvent, UtoteRace aRace) {
+        String method = "loadNewRace";
+        log4j.entry("{} - eventId, raceId", anEvent.getEventId(), aRace.getRaceId());
+        try {
+            aRace.setEvent(anEvent);
+            aRace.load(em, anEvent);
+        } catch (Exception e) {
+            log4j.error("{} - Received Exception loading details for an UtoteRace. Msg={}.\nException={}", method, e.getMessage(), e);
+        }
+        log4j.exit(method);
+    }
+
+    public UtoteEvent findExistingEvent(EntityManager em, String eventId) {
         String method = "findExistingEvent";
         log4j.entry("{} - eventId", eventId);
-        final EntityManagerFactory emF = Configurator.getROEMF();
-        final EntityManager em = emF.createEntityManager();
         TypedQuery<UtoteEvent> q = em.createNamedQuery("UtoteEvent.findByEventId", UtoteEvent.class);
         q.setParameter("eventId", eventId);
         UtoteEvent utoteEvent = null;
@@ -596,14 +635,6 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
         if (null != utoteEvent) {
             log4j.debug("{} - Found existing event.  idUtoteEvent={}, RunId={}, EventId={}", method, utoteEvent.getRunId(), utoteEvent.getIdUtoteEvent(), eventId);
         }
-
-        if (em.isOpen()) {
-            em.close();
-        }
-        if (emF.isOpen()) {
-            emF.close();
-        }
-
         log4j.exit(method);
         return utoteEvent;
     }
@@ -1134,7 +1165,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
          * "TrackCode" - Track Code for Broadcast Data = "Track", or Type = "Event"
          */
         private void processUpdateTypeBroadcast() {
-            String method = "processUpdateTypeBroadcast";
+            String method = "processUpdateTypeBroadcast ("+(_update.isEventIdSpecified() ? _update.getEventId() : "N/A")+"."+ (_update.isRaceIdSpecified() ? _update.getRaceId() : "N/A")+")";
             log4j.debug(
                     "{} - **** UPDATE TYPE=BROADCAST **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}",
                     method, _update.isDataSpecified() ? _update.getData() : "N/A",
@@ -1145,32 +1176,35 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                                                             _update.isRaceIdSpecified() ? _update.getRaceId() : "N/A",
                                                                     _update.isTrackCodeSpecified() ? _update.getTrackCode() : "N/A");
 
+            final EntityManagerFactory emF = Configurator.getROEMF();
+            final EntityManager em = emF.createEntityManager();
+
             // Is an event specified?
             if (_update.isEventIdSpecified()) {
 
                 // Get the current version of the event
-                UtoteEvent curEvent = findExistingEvent(_update.getEventId());
+                UtoteEvent curEvent = findExistingEvent(em, _update.getEventId());
                 if (null != curEvent) {
-
-                    log4j.debug("{} - **** UPDATE TYPE=BROADCAST - Found existing event: **** EventId={}\nEvent={}", method, curEvent.getEventId(), curEvent.toString(false));
+                    log4j.debug("{} - **** UPDATE TYPE=BROADCAST - EXISTING UtoteEvent: **** EventId={}\nEvent={}", method, curEvent.getEventId(), curEvent.toString(false));
 
                     // Update the base Event image in the database
                     UtoteEvent newEvent = ProgramRequestProcessor.getEvent(_update.getEventId());
-                    boolean eventChanged = newEvent.equals(curEvent);
+                    log4j.debug("{} - **** UPDATE TYPE=BROADCAST - NEW UtoteEvent: **** EventId={}\nEvent={}", method, newEvent.getEventId(), newEvent.toString(false));
+                    boolean eventChanged = !newEvent.equals(curEvent);
 
                     // Is a Race specified too
                     if (_update.isRaceIdSpecified()) {
 
                         // Get the current version of the race
-                        UtoteRace curRace = findExistingRace(_update.getEventId(), _update.getRaceId());
+                        UtoteRace curRace = findExistingRace(em, newEvent, _update.getRaceId());
                         if (null != curRace) {
-
-                            log4j.debug("{} - **** UPDATE TYPE=BROADCAST - Found existing race: **** EventId={}, RaceId={}\ncurRace={}", method, curRace.getEventId(), curRace.getRaceId(), curRace.toString(false));
+                            curRace.setEvent(curEvent);
+                            log4j.debug("{} - **** UPDATE TYPE=BROADCAST - EXISTING UtoteRace: **** EventId={}, RaceId={}\ncurRace={}", method, curRace.getEventId(), curRace.getRaceId(), curRace.toString(false));
 
                             // Get the new Race object
-                            UtoteRace newRace = ProgramRequestProcessor.getRace(_update.getEventId(), _update.getRaceId());
-                            log4j.debug("{} - **** UPDATE TYPE=BROADCAST - New race: **** EventId={}, RaceId={}\nnewRace={}", method, newRace.getEventId(), newRace.getRaceId(), newRace.toString(false));
-
+                            UtoteRace newRace = ProgramRequestProcessor.getRaceDetails(_update.getEventId(), _update.getRaceId());
+                            loadNewRace(em, newEvent, newRace);
+                            log4j.debug("{} - **** UPDATE TYPE=BROADCAST - NEW UtoteRace: **** EventId={}, RaceId={}\nnewRace={}", method, newRace.getEventId(), newRace.getRaceId(), newRace.toString(false));
 
                             // Check for differences
                             if (!newRace.equals(curRace)) {
@@ -1182,7 +1216,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                                     newEvent = ProgramRequestProcessor.getEventDetails(_update.getEventId());
 
                                     log4j.debug(
-                                            "{} - **** NEW RACE AND EXISTING RACE ARE DIFFERENT, AND NEW EVENT AND EXISTING EVENT ARE DIFFERENT - UPDATE TYPE=BROADCAST **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nCur event={}\nNew event={}\nCur race={}\nNew race={}",
+                                            "{} - **** UPDATE TYPE=BROADCAST - NEW Race != EXISTING Race, NEW Event != EXISTING Event **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nCur event={}\nNew event={}\nCur race={}\nNew race={}",
                                             method, _update.isDataSpecified() ? _update.getData() : "N/A",
                                                     _update.isGroupSpecified() ? _update.getGroup() : "N/A",
                                                             _update.isTrackSpecified() ? _update.getTrack() : "N/A",
@@ -1196,12 +1230,9 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                                                                                                     newRace.toString(false));
                                 } else {
 
-                                    // Pull in the updated race
-                                    newRace = ProgramRequestProcessor.getRaceDetails(_update.getEventId(), _update.getRaceId());
-                                    log4j.debug("{} - **** UPDATE TYPE=BROADCAST - New race: **** EventId={}, RaceId={}\nnewRace={}", method, newRace.getEventId(), newRace.getRaceId(), newRace.toString(false));
 
                                     log4j.debug(
-                                            "{} - **** NEW RACE AND EXISTING RACE ARE DIFFERENT, AND NEW EVENT LOADED AFTER RECEIVING UPDATE TYPE=BROADCAST **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nNew event={}\nCur race={}\nNew race={}",
+                                            "{} - **** UPDATE TYPE=BROADCAST - NEW Race != EXISTING Race, NEW Event Loaded **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nNew event={}\nCur race={}\nNew race={}",
                                             method, _update.isDataSpecified() ? _update.getData() : "N/A",
                                                     _update.isGroupSpecified() ? _update.getGroup() : "N/A",
                                                             _update.isTrackSpecified() ? _update.getTrack() : "N/A",
@@ -1215,7 +1246,87 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
 
                                 }
 
-                            } else {
+                            } else { // RACES ARE EQUAL
+
+                                // Compare the inner objects
+                                if (null != newRace.getRunners()) {
+
+                                    newRace.getRunners().stream().forEach(newRunner -> {
+
+                                        if (null != curRace.getRunners()) {
+
+                                            curRace.getRunners().stream()
+                                            .filter(curRunner -> (curRunner.getRunnerId() == newRunner.getRunnerId()))
+                                            .forEach(curRunner -> {
+
+                                                // Matched a new runner to an existing runner, see if they differ
+                                                if (curRunner.equals(newRunner)) {
+
+                                                    if (null != newRunner.getEntries()) {
+
+                                                        // Now, verify that the Entries don't differ
+                                                        newRunner.getEntries().stream().forEach(newEntry -> {
+
+                                                            if (null != curRunner.getEntries()) {
+
+                                                                curRunner.getEntries().stream()
+                                                                .filter(curEntry -> (curEntry.isSameEntry(newEntry)))
+                                                                .forEach(curEntry -> {
+
+                                                                    // Matched a new entry and an existing entry
+                                                                    if (curEntry.equals(newEntry)) {
+                                                                        // Entries are the same
+                                                                    } else {
+                                                                        // Entry differs
+                                                                        log4j.debug(
+                                                                                "{} - **** UPDATE TYPE=BROADCAST - Races, and Runner are equal, NEW Entry != EXISTING Entry **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nCur Entry={}\nNew Entry={}",
+                                                                                method, _update.isDataSpecified() ? _update.getData() : "N/A",
+                                                                                        _update.isGroupSpecified() ? _update.getGroup() : "N/A",
+                                                                                                _update.isTrackSpecified() ? _update.getTrack() : "N/A",
+                                                                                                        _update.isPostSpecified() ? _update.getPost() : "N/A",
+                                                                                                                _update.isEventIdSpecified() ? _update.getEventId() : "N/A",
+                                                                                                                        _update.isRaceIdSpecified() ? _update.getRaceId() : "N/A",
+                                                                                                                                _update.isTrackCodeSpecified() ? _update.getTrackCode() : "N/A",
+                                                                                                                                        curEntry.toString(),
+                                                                                                                                        newEntry.toString());
+                                                                    }
+
+                                                                });
+
+                                                            } else {
+                                                                log4j.debug("{} - **** UPDATE TYPE=BROADCAST - Races Equal, Runner match, New runner has entries, Cur runner has no entries **** ", method);
+                                                            }
+
+                                                        });
+
+                                                    } else {
+                                                        log4j.debug("{} - **** UPDATE TYPE=BROADCAST - Races Equal, Runner match, New runner has no entries **** ", method);
+                                                    }
+
+                                                } else { // curRunnner and newRunner differ
+                                                    log4j.debug(
+                                                            "{} - **** UPDATE TYPE=BROADCAST - Races Equal, NEW Runner != EXISTING Runner **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nCur Runner={}\nNew Runner={}",
+                                                            method, _update.isDataSpecified() ? _update.getData() : "N/A",
+                                                                    _update.isGroupSpecified() ? _update.getGroup() : "N/A",
+                                                                            _update.isTrackSpecified() ? _update.getTrack() : "N/A",
+                                                                                    _update.isPostSpecified() ? _update.getPost() : "N/A",
+                                                                                            _update.isEventIdSpecified() ? _update.getEventId() : "N/A",
+                                                                                                    _update.isRaceIdSpecified() ? _update.getRaceId() : "N/A",
+                                                                                                            _update.isTrackCodeSpecified() ? _update.getTrackCode() : "N/A",
+                                                                                                                    curRunner.toString(),
+                                                                                                                    newRunner.toString());
+                                                }
+                                            });
+
+                                        } else {
+                                            log4j.debug("{} - **** UPDATE TYPE=BROADCAST - Races Equal, CurRace has no runners **** ", method);
+                                        }
+
+                                    });
+
+                                } else {
+                                    log4j.debug("{} - **** UPDATE TYPE=BROADCAST - Races Equal, NewRace has no runners **** ", method);
+                                }
 
                                 // Compare the two and log the results
                                 if (eventChanged) {
@@ -1224,7 +1335,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                                     newEvent = ProgramRequestProcessor.getEventDetails(_update.getEventId());
 
                                     log4j.debug(
-                                            "{} - **** NEW RACE LOADED, AND NEW EVENT AND EXISTING EVENT ARE DIFFERENT - UPDATE TYPE=BROADCAST **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nCur event={}\nNew event={}\nNew Race={}",
+                                            "{} - **** UPDATE TYPE=BROADCAST - Races Equal, NEW Event != EXISTING Event **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nCur event={}\nNew event={}\nNew Race={}",
                                             method, _update.isDataSpecified() ? _update.getData() : "N/A",
                                                     _update.isGroupSpecified() ? _update.getGroup() : "N/A",
                                                             _update.isTrackSpecified() ? _update.getTrack() : "N/A",
@@ -1237,7 +1348,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                                                                                                     newRace.toString(false));
                                 } else {
                                     log4j.debug(
-                                            "{} - **** RACES SAME, AND EVENT SAME AFTER RECEIVING UPDATE TYPE=BROADCAST **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nNew event={}\nNew race={}",
+                                            "{} - **** UPDATE TYPE=BROADCAST - RACES SAME, AND EVENT SAME **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nNew event={}\nNew race={}",
                                             method, _update.isDataSpecified() ? _update.getData() : "N/A",
                                                     _update.isGroupSpecified() ? _update.getGroup() : "N/A",
                                                             _update.isTrackSpecified() ? _update.getTrack() : "N/A",
@@ -1257,13 +1368,14 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                             // New Race, pull it in
                             // Refresh the new Race object
                             UtoteRace newRace = ProgramRequestProcessor.getRaceDetails(_update.getEventId(), _update.getRaceId());
-                            log4j.debug("{} - **** UPDATE TYPE=BROADCAST - New race: **** EventId={}, RaceId={}\nnewRace={}", method, newRace.getEventId(), newRace.getRaceId(), newRace.toString(false));
+                            newRace.load(em, newEvent);
+                            log4j.debug("{} - **** UPDATE TYPE=BROADCAST - NEW UtoteRace: **** EventId={}, RaceId={}\nnewRace={}", method, newRace.getEventId(), newRace.getRaceId(), newRace.toString(false));
 
                             // If the event changed, note that too
                             if (eventChanged) {
 
                                 log4j.debug(
-                                        "{} - **** NEW RACE LOADED, AND EVENT CHANGED AFTER RECEIVING UPDATE TYPE=BROADCAST **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nCur event={}\nNew event={}\nNew race={}",
+                                        "{} - **** UPDATE TYPE=BROADCAST - NEW Race Loaded, NEW Event != EXISTING Event **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nCur event={}\nNew event={}\nNew race={}",
                                         method, _update.isDataSpecified() ? _update.getData() : "N/A",
                                                 _update.isGroupSpecified() ? _update.getGroup() : "N/A",
                                                         _update.isTrackSpecified() ? _update.getTrack() : "N/A",
@@ -1278,7 +1390,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                             } else {
 
                                 log4j.debug(
-                                        "{} - **** NEW RACE AND NEW EVENT LOADED AFTER RECEIVING UPDATE TYPE=BROADCAST **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nNew event={}\nNew race={}",
+                                        "{} - **** UPDATE TYPE=BROADCAST - NEW Race, NEW Event Loaded **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nNew event={}\nNew race={}",
                                         method, _update.isDataSpecified() ? _update.getData() : "N/A",
                                                 _update.isGroupSpecified() ? _update.getGroup() : "N/A",
                                                         _update.isTrackSpecified() ? _update.getTrack() : "N/A",
@@ -1301,7 +1413,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                             newEvent = ProgramRequestProcessor.getEventDetails(_update.getEventId());
 
                             log4j.debug(
-                                    "{} - **** NEW EVENT AND EXISTING EVENT ARE DIFFERENT - UPDATE TYPE=BROADCAST **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nCur event={}\nNew event={}",
+                                    "{} - **** UPDATE TYPE=BROADCAST - NEW Event != EXISTING Event **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nCur event={}\nNew event={}",
                                     method, _update.isDataSpecified() ? _update.getData() : "N/A",
                                             _update.isGroupSpecified() ? _update.getGroup() : "N/A",
                                                     _update.isTrackSpecified() ? _update.getTrack() : "N/A",
@@ -1313,7 +1425,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                                                                                             newEvent.toString(false));
                         } else {
                             log4j.debug(
-                                    "{} - **** NEW EVENT LOADED AFTER RECEIVING UPDATE TYPE=BROADCAST **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nNew event={}",
+                                    "{} - **** UPDATE TYPE=BROADCAST - NEW Event Loaded **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nNew event={}",
                                     method, _update.isDataSpecified() ? _update.getData() : "N/A",
                                             _update.isGroupSpecified() ? _update.getGroup() : "N/A",
                                                     _update.isTrackSpecified() ? _update.getTrack() : "N/A",
@@ -1331,8 +1443,9 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                     // Refresh the new Event object
                     UtoteEvent newEvent = ProgramRequestProcessor.getEventDetails(_update.getEventId());
                     log4j.debug(
-                            "{} - **** NEW EVENT LOADED AFTER RECEIVING UPDATE TYPE=BROADCAST **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nNew event={}",
-                            method, _update.isDataSpecified() ? _update.getData() : "N/A",
+                            "{} - **** UPDATE TYPE=BROADCAST - NEW Event Loaded **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}\nNew event={}",
+                            method,
+                            _update.isDataSpecified() ? _update.getData() : "N/A",
                                     _update.isGroupSpecified() ? _update.getGroup() : "N/A",
                                             _update.isTrackSpecified() ? _update.getTrack() : "N/A",
                                                     _update.isPostSpecified() ? _update.getPost() : "N/A",
@@ -1344,7 +1457,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                 }
             } else {
                 log4j.debug(
-                        "{} - **** IGNORING NON-SPECIFIC UPDATE TYPE=BROADCAST **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}",
+                        "{} - **** UPDATE TYPE=BROADCAST - IGNORING NON-SPECIFIC UPDATE **** Data={}, Group={}, Track={}, Post={}, EventId={}, RaceId={}, TrackCode={}",
                         method, _update.isDataSpecified() ? _update.getData() : "N/A",
                                 _update.isGroupSpecified() ? _update.getGroup() : "N/A",
                                         _update.isTrackSpecified() ? _update.getTrack() : "N/A",
@@ -1352,6 +1465,13 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                                                         _update.isEventIdSpecified() ? _update.getEventId() : "N/A",
                                                                 _update.isRaceIdSpecified() ? _update.getRaceId() : "N/A",
                                                                         _update.isTrackCodeSpecified() ? _update.getTrackCode() : "N/A");
+            }
+
+            if (em.isOpen()) {
+                em.close();
+            }
+            if (emF.isOpen()) {
+                emF.close();
             }
 
         }
@@ -1433,7 +1553,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                 if (!linkIsUp()) {
                     // Re-initialize the United Tote interface
                     log4j.debug("{} - *** Received Action = {} *** Performing Initialization", method, uAction);
-                    (new ToteLinkInitializationServiceHandler()).performInitialization();
+                    ToteLinkInitializationServiceHandler.performInitialization();
                     log4j.info("{} - *** Received Action = {} *** Initialization complete", method, uAction);
                 } else {
                     log4j.info("{} - *** Received Action = {} *** Link is already up, skipping initialization complete",
@@ -1510,7 +1630,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                 // Tote system is active and ready for interaction
                 log4j.debug("{} - *** Received Action = {} *** Waiting for Tote to return Okay", method, uAction);
                 // CheckToteStatus should return blank at this point. (Its okay)
-                (new ToteLinkInitializationServiceHandler()).waitForOkay();
+                ToteLinkInitializationServiceHandler.waitForOkay();
                 log4j.info("{} - *** Received Action = {} *** Tote returned Okay", method, uAction);
                 break;
             case STATUS_CHANGE_ACTION_START: // System is starting
@@ -1519,7 +1639,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                 // Begin morning startup routine (Check ToteStatus)
                 // Update RunId if in use to track ToteSystem Runs
                 log4j.info("{} - *** Received Action = {} *** Performing Start response", method, uAction);
-                (new ToteLinkInitializationServiceHandler()).performStart();
+                ToteLinkInitializationServiceHandler.performStart();
                 break;
             case STATUS_CHANGE_ACTION_END: // System is cleaning up
                 log4j.info("{} - *** Received Action = {} *** Ending Link", method, uAction);
@@ -1679,8 +1799,8 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
             // Make sure that the Tote Link interface is accepting requests
             if (!linkIsUp()) {
                 log4j.error(
-                        "{} - *** SKIPPING ToteLink StatusChange MESSAGE *** Received a Status Change request with an Event action, but the Tote Link interface is down.",
-                        method);
+                        "{} - *** SKIPPING ToteLink StatusChange MESSAGE *** Received a Status Change request with an action={}, event={}, race={}, but the Tote Link interface is down.",
+                        method, uAction, _statusChange.isEventIdSpecified()?_statusChange.getEventId():"None", _statusChange.isRaceIdSpecified()?_statusChange.getRaceId():"None");
                 return;
             }
 

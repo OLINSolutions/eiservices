@@ -29,10 +29,12 @@ public class Configurator {
 
     private static final String SERVER_DOMAIN = "SERVER_DOMAIN";
     private static final String SERVER_DOMAIN_PROD = "racetrackwarriors.com";
+    private static final String SERVER_DOMAIN_BETA = "rtwbeta.com";
 
     private static final String SERVER_MODE = "SERVER_MODE";
     private static final String SERVER_MODE_PROD = "PROD";
     private static final String SERVER_MODE_BETA = "BETA";
+    private static final String SERVER_MODE_DEV = "DEV";
 
     private static final String UTOTE_MODE= "UTOTE_MODE";
     private static final String UTOTE_SYSTEM_ID = "UTOTE_SYSTEM_ID";
@@ -99,6 +101,7 @@ public class Configurator {
     private static final String UNINITIALIZED = "";
     private static final String PROD_CONFIG_PROPERTIES_PATH = "/config/prod.properties";
     private static final String BETA_CONFIG_PROPERTIES_PATH = "/config/beta.properties";
+    private static final String DEV_CONFIG_PROPERTIES_PATH = "/config/dev.properties";
 
     private static boolean _initialized = false;
     private static String _utoteMode = UNINITIALIZED;
@@ -136,19 +139,22 @@ public class Configurator {
         try {
             String configPropertiesPath = PROD_CONFIG_PROPERTIES_PATH;
 
-            // Determine what mode we are operating under: Prod, Beta, Test
+            // Determine what mode we are operating under: Prod, Beta, Dev
             InetAddress address = java.net.InetAddress.getLocalHost();
             String hostname = address.getHostName();
             assert (null != hostname) : "address.getHostName() returned a null value";
-            log4j.info("UtoteService Running on host {}, looking for Production domain ending with {}.", hostname, SERVER_DOMAIN_PROD);
             _properties.put(SERVER_DOMAIN, hostname);
             if (hostname.toLowerCase().endsWith(SERVER_DOMAIN_PROD)) {
                 _properties.put(SERVER_DOMAIN, hostname);
                 _properties.put(SERVER_MODE, SERVER_MODE_PROD);
-            } else {
+            } else if (hostname.toLowerCase().endsWith(SERVER_DOMAIN_BETA)) {
                 configPropertiesPath = BETA_CONFIG_PROPERTIES_PATH;
                 _properties.put(SERVER_MODE, SERVER_MODE_BETA);
+            } else {
+                configPropertiesPath = DEV_CONFIG_PROPERTIES_PATH;
+                _properties.put(SERVER_MODE, SERVER_MODE_DEV);
             }
+            log4j.info("UtoteService Running on host {}, Configuring for SERVER_MODE={} using Properties from {}.", hostname, _properties.get(SERVER_MODE), configPropertiesPath);
 
             // Load the properties from the appropriate config file
             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(configPropertiesPath);
@@ -361,12 +367,9 @@ public class Configurator {
         return Configurator.getProperty(UTOTE_PASSWORD);
     }
 
+    @SuppressWarnings("unchecked")
     public static boolean isSupportedTrackType(String trackType) {
-        @SuppressWarnings("unchecked")
-        List<String> lst = (List<String>) Configurator.getObject(UTOTE_EVENT_TRACK_TYPES);
-        boolean found = lst.contains(trackType);
-        log4j.debug("isSupportedTrackType - found={}, incoming trackType={}, lst={}", found, trackType, lst.toString());
-        return (found);
+        return ((List<String>) Configurator.getObject(UTOTE_EVENT_TRACK_TYPES)).contains(trackType);
     }
 
     @SuppressWarnings("unchecked")
@@ -461,9 +464,6 @@ public class Configurator {
     }
 
     public static void test() {
-        if (_initialized) {
-            return;
-        }
         log4j.entry();
         if (!_initialized) {
             init();

@@ -39,7 +39,7 @@ public class UtoteRequestResponseLogger {
     public static final String UTOTE_RESPONSE_GET_RESULT        = "GetResultResponse";
     public static final String UTOTE_RESPONSE_GET_CONFIG 		= "GetConfigurationResponse";
 
-    public int saveToteStatusRequest(ToteStatusServiceStub.GetToteStatus getToteStatusInput) {
+    public static int saveToteStatusRequest(ToteStatusServiceStub.GetToteStatus getToteStatusInput) {
         log4j.entry("saveToteStatusRequest - ", getToteStatusInput);
 
         // Get an Entity Manager
@@ -77,7 +77,7 @@ public class UtoteRequestResponseLogger {
 
     }
 
-    public int saveToteStatusResponse(int idUtoteRequestLog, ToteStatusServiceStub.GetToteStatusResponse sResponse) {
+    public static int saveToteStatusResponse(int idUtoteRequestLog, ToteStatusServiceStub.GetToteStatusResponse sResponse) {
         log4j.entry("saveToteStatusResponse - ", idUtoteRequestLog, sResponse);
 
         // Get an Entity Manager
@@ -154,7 +154,7 @@ public class UtoteRequestResponseLogger {
 
     }
 
-    public int saveGetEventsRequest(ProgramServiceStub.GetEvents getEventsInput) {
+    public static int saveGetEventsRequest(ProgramServiceStub.GetEvents getEventsInput) {
         log4j.entry("saveGetEventRequest - ", getEventsInput);
 
         // Get an Entity Manager
@@ -201,7 +201,7 @@ public class UtoteRequestResponseLogger {
 
     }
 
-    public int saveGetEventsResponse(int idUtoteRequestLog, ProgramServiceStub.GetEventsResponse eResponse, Integer idUtoteResponse) {
+    public static int saveGetEventsResponse(int idUtoteRequestLog, ProgramServiceStub.GetEventsResponse eResponse, Integer idUtoteResponse) {
         log4j.entry("saveGetEventResponse - ", idUtoteRequestLog, eResponse, idUtoteResponse);
 
         // Get an Entity Manager
@@ -287,7 +287,7 @@ public class UtoteRequestResponseLogger {
 
     }
 
-    public int saveGetEventDetailRequest(ProgramServiceStub.GetEventDetail getEventDetailInput) {
+    public static int saveGetEventDetailRequest(ProgramServiceStub.GetEventDetail getEventDetailInput) {
         log4j.entry("saveGetEventDetail - ", getEventDetailInput);
 
         // Get an Entity Manager
@@ -344,7 +344,7 @@ public class UtoteRequestResponseLogger {
 
     }
 
-    public int saveGetEventDetailResponse(int idUtoteRequestLog, ProgramServiceStub.GetEventDetailResponse eResponse, Integer idUtoteResponse) {
+    public static int saveGetEventDetailResponse(int idUtoteRequestLog, ProgramServiceStub.GetEventDetailResponse eResponse, Integer idUtoteResponse) {
         log4j.entry("saveGetEventDetailResponse - ", idUtoteRequestLog, eResponse, idUtoteResponse);
 
         // Get an Entity Manager
@@ -433,7 +433,7 @@ public class UtoteRequestResponseLogger {
 
     }
 
-    public int saveGetRaceRequest(ProgramServiceStub.GetRace getRaceInput) {
+    public static int saveGetRaceRequest(ProgramServiceStub.GetRace getRaceInput) {
         log4j.entry("saveGetRaceRequest - ", getRaceInput);
 
         // Get an Entity Manager
@@ -488,7 +488,7 @@ public class UtoteRequestResponseLogger {
 
     }
 
-    public int saveGetRaceResponse(int idUtoteRequestLog, ProgramServiceStub.GetRaceResponse rResponse, Integer idUtoteResponse) {
+    public static int saveGetRaceResponse(int idUtoteRequestLog, ProgramServiceStub.GetRaceResponse rResponse, Integer idUtoteResponse) {
         log4j.entry("saveGetRaceResponse - ", idUtoteRequestLog, rResponse, idUtoteResponse);
 
         // Get an Entity Manager
@@ -574,7 +574,7 @@ public class UtoteRequestResponseLogger {
 
     }
 
-    public int saveGetResultRequest(ResultServiceStub.GetResult getResultInput) {
+    public static int saveGetResultRequest(ResultServiceStub.GetResult getResultInput) {
         log4j.entry("saveGetResultRequest - ", getResultInput);
 
         // Get an Entity Manager
@@ -614,7 +614,7 @@ public class UtoteRequestResponseLogger {
 
     }
 
-    public int saveGetResultResponse(int idUtoteRequestLog, ResultServiceStub.GetResultResponse rResponse, Integer idUtoteResponse) {
+    public static int saveGetResultResponse(int idUtoteRequestLog, ResultServiceStub.GetResultResponse rResponse, Integer idUtoteResponse) {
         log4j.entry("saveGetResultResponse - ", idUtoteRequestLog, rResponse, idUtoteResponse);
 
         // Get an Entity Manager
@@ -700,7 +700,7 @@ public class UtoteRequestResponseLogger {
 
     }
 
-    public int saveGetConfigurationRequest(ConfigurationServiceStub.GetConfiguration getConfigInput) {
+    public static int saveGetConfigurationRequest(ConfigurationServiceStub.GetConfiguration getConfigInput) {
         log4j.entry("saveGetConfigurationRequest - ", getConfigInput);
 
         // Get an Entity Manager
@@ -738,7 +738,7 @@ public class UtoteRequestResponseLogger {
 
     }
 
-    public int saveGetConfigurationResponse(int idUtoteRequestLog, ConfigurationServiceStub.ConfigurationResponse response, Integer idUtoteResponse) {
+    public static int saveGetConfigurationResponse(int idUtoteRequestLog, ConfigurationServiceStub.ConfigurationResponse response, Integer idUtoteResponse) {
         log4j.entry("saveGetConfigurationResponse - ", idUtoteRequestLog, response, idUtoteResponse);
 
         // Get an Entity Manager

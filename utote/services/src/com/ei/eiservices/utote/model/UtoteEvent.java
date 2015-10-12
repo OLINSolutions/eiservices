@@ -175,6 +175,9 @@ public class UtoteEvent implements Serializable {
     }
 
     public void updateFromTote(ProgramServiceStub.Event event) {
+        this.setRunId(Integer.parseInt(event.getRunId()));
+        this.setEventId(event.getEventId());
+        this.setEventTime(event.getEventTime().getTime());
         if (event.isBreakToSpecified()) {
             this.setBreakTo(event.getBreakTo());
         }
@@ -694,138 +697,164 @@ public class UtoteEvent implements Serializable {
      */
     @Override
     public boolean equals(Object obj) {
+        int equ = equalsInt(obj);
+        log4j.debug("UtoteEvent.equals - {}", (0==equ)?"IS EQUAL":"equalsInt failed at "+equ);
+        return (equ == 0);
+    }
+
+    private int equalsInt(Object obj) {
         if (this == obj) {
-            return true;
+            return 0;
         }
         if (obj == null) {
-            return false;
+            return -1;
         }
         if (getClass() != obj.getClass()) {
-            return false;
+            return -2;
         }
         UtoteEvent other = (UtoteEvent) obj;
         if (breakTo == null) {
             if (other.breakTo != null) {
-                return false;
+                return -3;
             }
-        } else if (!breakTo.equals(other.breakTo)) {
-            return false;
+        } else if (0 != breakTo.compareTo(other.breakTo)) {
+            return -4;
         }
         if (channel == null) {
             if (other.channel != null) {
-                return false;
+                return -5;
             }
         } else if (!channel.equals(other.channel)) {
-            return false;
-        }
-        if (currencyId == null) {
-            if (other.currencyId != null) {
-                return false;
-            }
-        } else if (!currencyId.equals(other.currencyId)) {
-            return false;
+            return -6;
         }
         if (eventClass == null) {
             if (other.eventClass != null) {
-                return false;
+                return -7;
             }
         } else if (!eventClass.equals(other.eventClass)) {
-            return false;
+            return -8;
         }
         if (eventId == null) {
             if (other.eventId != null) {
-                return false;
+                return -9;
             }
         } else if (!eventId.equals(other.eventId)) {
-            return false;
+            return -10;
         }
         if (eventInfo == null) {
             if (other.eventInfo != null) {
-                return false;
+                return -11;
             }
         } else if (!eventInfo.equals(other.eventInfo)) {
-            return false;
+            return -12;
         }
         if (eventName == null) {
             if (other.eventName != null) {
-                return false;
+                return -13;
             }
         } else if (!eventName.equals(other.eventName)) {
-            return false;
+            return -14;
         }
         if (eventStatus == null) {
             if (other.eventStatus != null) {
-                return false;
+                return -15;
             }
         } else if (!eventStatus.equals(other.eventStatus)) {
-            return false;
+            return -16;
         }
         if (eventTime == null) {
             if (other.eventTime != null) {
-                return false;
+                return -17;
             }
         } else if (!eventTime.equals(other.eventTime)) {
-            return false;
+            return -18;
         }
         if (eventType == null) {
             if (other.eventType != null) {
-                return false;
+                return -19;
             }
         } else if (!eventType.equals(other.eventType)) {
-            return false;
+            return -20;
         }
         if (hasRaces != other.hasRaces) {
-            return false;
+            return -21;
         }
         if (parlay != other.parlay) {
-            return false;
+            return -22;
         }
         if (raceList == null) {
             if (other.raceList != null) {
-                return false;
+                return -23;
             }
         } else if (!raceList.equals(other.raceList)) {
-            return false;
+            return -24;
         }
         if (runId != other.runId) {
-            return false;
+            return -25;
         }
         if (trackCondition == null) {
             if (other.trackCondition != null) {
-                return false;
+                return -26;
             }
         } else if (!trackCondition.equals(other.trackCondition)) {
-            return false;
+            return -27;
         }
         if (trackId == null) {
             if (other.trackId != null) {
-                return false;
+                return -28;
             }
         } else if (!trackId.equals(other.trackId)) {
-            return false;
+            return -29;
         }
         if (trackName == null) {
             if (other.trackName != null) {
-                return false;
+                return -30;
             }
         } else if (!trackName.equals(other.trackName)) {
-            return false;
+            return -31;
         }
         if (trackType == null) {
             if (other.trackType != null) {
-                return false;
+                return -32;
             }
         } else if (!trackType.equals(other.trackType)) {
-            return false;
+            return -33;
         }
         if (turfTrack == null) {
             if (other.turfTrack != null) {
-                return false;
+                return -34;
             }
         } else if (!turfTrack.equals(other.turfTrack)) {
-            return false;
+            return -35;
         }
-        return true;
+        if (currencyId == null) {
+            if (other.currencyId != null) {
+                return -36;
+            }
+        } else if (!currencyId.equals(other.currencyId)) {
+            return -37;
+        }
+        return 0;
     }
+
+    public static Collection<UtoteEvent> findAll(EntityManager em) {
+        String method = "UtoteEvent.findAll";
+        log4j.entry(method);
+
+        Collection<UtoteEvent> eventList = null;
+        try {
+            TypedQuery<UtoteEvent> q = em.createNamedQuery("UtoteEvent.findAll", UtoteEvent.class);
+            eventList = q.getResultList();
+        } catch (javax.persistence.NoResultException nre) {
+            log4j.debug("{} - Received NoResultException looking for all Events",
+                    method);
+        } catch (Exception e) {
+            log4j.debug("{} - Received Exception looking for all events, ExceptionMsg={}, Exception={}",
+                    method, e.getMessage(), e);
+        }
+        log4j.exit(method+" - " + ((null == eventList) ? "NOT FOUND" : "FOUND"));
+        return eventList;
+    }
+
 
 }

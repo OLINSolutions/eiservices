@@ -153,10 +153,51 @@ public class RaceController implements Serializable {
         return res;
     }
 
+    private static volatile boolean _finalInProgress = false;
+    private static final Object _finalInProgressMonitor = new Object();
+    private static volatile String _finalEventId = null;
+    private static volatile int _finalRaceId = 0;
+
+    private static volatile boolean _finalWaiting = false;
+    private static final Object _finalWaitingMonitor = new Object();
+
+    public static void unlockFinalWaiter() {
+        synchronized (_finalWaitingMonitor) {
+            _finalWaiting = false;
+            _finalWaitingMonitor.notifyAll(); // unlock again
+        }
+    }
+
+    public static void waitForFinalToFinish() {
+        _finalWaiting = true;
+        while (_finalWaiting) {
+            synchronized (_finalWaitingMonitor) {
+                try {
+                    _finalWaitingMonitor.wait(); // wait until notified
+                } catch (Exception e) {}
+            }
+        }
+    }
+
     public static void processRaceFinal(UtoteRace theRace) {
         String method = "RaceController.processRaceFinal";
         log4j.entry(method + " - eventId, raceId", theRace.getEventId(), theRace.getRaceId());
 
+
+        // If we are already mid-call, wait to process this call until we are done.
+        if (_finalInProgress) {
+            log4j.info("{} - About to process a Final status for Event={} and Race={}, but already processing a final result for Event={} and Race={}. Waiting until it is complete to continue.",
+                    method, theRace.getEventId(), theRace.getRaceId(), _finalEventId, _finalRaceId);
+            waitForFinalToFinish();
+        }
+
+        // Turn on global in-process flag as this
+        // is intended to be a singleton
+        synchronized (_finalInProgressMonitor) {
+            _finalInProgress = true;
+            _finalEventId = theRace.getEventId();
+            _finalRaceId = theRace.getRaceId();
+        }
 
         // Look for the parent event(Track) for this race
         //   and make sure our RTW event info was loaded; could be an unsupported track
@@ -180,112 +221,136 @@ public class RaceController implements Serializable {
                         "{} - Found RTW Race matching eventId={}, trackId={}, Race={}",
                         method, parentEvent.getEventId(), parentEvent.getTrackId(), r.toString());
 
-                // Open the transaction
-                rtwEm.getTransaction().begin();
+                // Verify that the race has not already been marked as Final
+                if (!r.getRacesprocessresult() || !r.getRacesjdresultstatus()) {
 
-                // Update the flags for both RTW and JockeyDraft
-                // status to closed
-                r.setRacesresultstatus(true);
-                r.setRacesjdresultstatus(true);
-                log4j.debug(
-                        "{} - Updated racesresultstatus and racesjdresultstatus to true for RTW Race matching trackId={}, tracksid={}, racesdate={}, racesid={}, and eventId={}",
-                        method, parentEvent.getTrackId(), r.getTracksid(), r.getRacesdate(), r.getRacesid(),
-                        parentEvent.getEventId());
+                    // Open the transaction
+                    rtwEm.getTransaction().begin();
 
-                // Get the final results for the race from the Tote provider
-                UtoteResult utoteResult = (new ResultRequestProcessor()).getResults(theRace.getEventId(), theRace.getRaceId());
-                log4j.debug("{} - Found Tote Results for eventId={}, raceId={}, utoteResult={}", method, theRace.getEventId(), theRace.getRaceId(), utoteResult.toString(true));
+                    // Update the flags for both RTW and JockeyDraft
+                    // status to closed
+                    r.setRacesresultstatus(true);
+                    r.setRacesjdresultstatus(true);
+                    log4j.debug(
+                            "{} - Updated racesresultstatus and racesjdresultstatus to true for RTW Race matching trackId={}, tracksid={}, racesdate={}, racesid={}, and eventId={}",
+                            method, parentEvent.getTrackId(), r.getTracksid(), r.getRacesdate(), r.getRacesid(),
+                            parentEvent.getEventId());
 
-                // Get the RTW Horses related to this race
-                Collection<Horse> horses = Horse.getActiveRaceHorses(rtwEm, r.getRacesid());
-                log4j.debug("{} - Found {} horses for eventId={}, raceId={}", method, horses.size(), theRace.getEventId(), theRace.getRaceId());
+                    // Get the final results for the race from the Tote provider
+                    UtoteResult utoteResult = ResultRequestProcessor.getResults(theRace.getEventId(), theRace.getRaceId());
+                    log4j.debug("{} - Found Tote Results for eventId={}, raceId={}, utoteResult={}", method, theRace.getEventId(), theRace.getRaceId(), utoteResult.toString(true));
 
-                // Iterate through the RTW horses and create corresponding
-                // rows in the RTW results table based on the standings returned by the Tote provider
-                horses.stream()
-                .forEach(h -> {
+                    // Get the RTW Horses related to this race
+                    Collection<Horse> horses = Horse.getActiveRaceHorses(rtwEm, r.getRacesid());
+                    log4j.debug("{} - Found {} horses for eventId={}, raceId={}", method, horses.size(), theRace.getEventId(), theRace.getRaceId());
 
-                    // Create and initialize the result objects for the current horse
-                    Result res = newResult(parentEvent, r, h);
-                    Jockeysresult jres = newJockeysresult(parentEvent, r, h);
+                    // Iterate through the RTW horses and create corresponding
+                    // rows in the RTW results table based on the standings returned by the Tote provider
+                    horses.stream()
+                    .forEach(h -> {
 
-                    // Look for a matching finisher in the Tote results
-                    log4j.debug("{} - About to iterate positions for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
-                    utoteResult.getPositions().stream()
-                    .sorted((p1, p2) -> Integer.compare(p1.getPositionId(),p2.getPositionId()))
-                    .forEach(p -> {
+                        // Create and initialize the result objects for the current horse
+                        Result res = newResult(parentEvent, r, h);
+                        Jockeysresult jres = newJockeysresult(parentEvent, r, h);
 
-                        log4j.debug("{} - About to look for finishers at p.positionId={} for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, p.getPositionId(), theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
+                        // Look for a matching finisher in the Tote results
+                        log4j.debug("{} - About to iterate positions for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
+                        utoteResult.getPositions().stream()
+                        .filter(p -> (p.getPositionId() <= 3))
+                        .sorted((p1, p2) -> Integer.compare(p1.getPositionId(),p2.getPositionId()))
+                        .forEach(p -> {
 
-                        //Get the finishers that ran at this position
-                        //  The filter expression will match against any horse, coupled or not, that has the same runner number
-                        p.getFinishers().stream()
-                        .filter(f -> (f.getRunnerId() == h.getHorsesprogramnumberValue()))
-                        .forEach(f -> {
+                            log4j.debug("{} - About to look for finishers at p.positionId={} for horse with eventId={}, raceId={}, horsesid={}, horsename={}, horsesprogramnumber={}", method, p.getPositionId(), theRace.getEventId(), theRace.getRaceId(), h.getHorsesid(), h.getHorsesname(), h.getHorsesprogramnumber());
 
-                            log4j.debug("{} - Matched a finisher for p.getPositionId={} eventId={}, raceId={}, f.name={}, f.runnerId={}, f.getRtwHorsesProgramNumber()={}, f.getRTWhorsesid()={}, h.getHorsesid()={}", method, p.getPositionId(), theRace.getEventId(), theRace.getRaceId(), f.getName(), f.getRunnerId(), f.getRtwHorsesProgramNumber(), f.getRTWhorsesid(), h.getHorsesid());
+                            //Get the finishers that ran at this position
+                            //  The filter expression will match against any horse, coupled or not, that has the same runner number
+                            p.getFinishers().stream()
+                            .filter(f -> (f.getRTWhorsesid() == h.getHorsesid()))
+                            .forEach(f -> {
 
-                            // Put the Daily win/place/show values into the result object
-                            res.setResultswinamount(f.getRtwWinAmount().floatValue());
-                            res.setResultsplaceamount(f.getRtwPlaceAmount().floatValue());
-                            res.setResultsshowamount(f.getRtwShowAmount().floatValue());
+                                log4j.debug("{} - Matched a finisher for p.getPositionId={} eventId={}, raceId={}, f.name={}, f.runnerId={}, f.getRtwHorsesProgramNumber()={}, f.getRTWhorsesid()={}, h.getHorsesid()={}", method, p.getPositionId(), theRace.getEventId(), theRace.getRaceId(), f.getName(), f.getRunnerId(), f.getRtwHorsesProgramNumber(), f.getRTWhorsesid(), h.getHorsesid());
 
-                            // Display the RTW winning amounts for this finisher
-                            log4j.debug("{} - Updated RTW Daily finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==res)?"NULL":res.toString());
+                                // Put the Daily win/place/show values into the result object
+                                res.setResultswinamount(f.getRtwWinAmount().floatValue());
+                                res.setResultsplaceamount(f.getRtwPlaceAmount().floatValue());
+                                res.setResultsshowamount(f.getRtwShowAmount().floatValue());
 
-                            // Put the JockeyDriaft win/place/show values into the JD result object
-                            jres.setJockeysresultswinamounts(f.getRtwWinAmount().floatValue());
-                            jres.setJockeysresultsplaceamounts(f.getRtwPlaceAmount().floatValue());
-                            jres.setJockeysresultsshowamounts(f.getRtwShowAmount().floatValue());
-                            jres.setJockeysresultstotalamounts(
-                                    (f.getRtwWinAmount()
-                                            .add(f.getRtwPlaceAmount()
-                                                    .add(f.getRtwShowAmount())))
-                                    .floatValue());
+                                // Display the RTW winning amounts for this finisher
+                                log4j.debug("{} - Updated RTW Daily finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==res)?"NULL":res.toString());
 
-                            // Display the JD winning amounts for this finisher
-                            log4j.debug("{} - Updated JockeyDraft finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==jres)?"NULL":jres.toString());
+                                // Put the JockeyDriaft win/place/show values into the JD result object
+                                jres.setJockeysresultswinamounts(f.getRtwWinAmount().floatValue());
+                                jres.setJockeysresultsplaceamounts(f.getRtwPlaceAmount().floatValue());
+                                jres.setJockeysresultsshowamounts(f.getRtwShowAmount().floatValue());
+                                jres.setJockeysresultstotalamounts(
+                                        (f.getRtwWinAmount()
+                                                .add(f.getRtwPlaceAmount()
+                                                        .add(f.getRtwShowAmount())))
+                                        .floatValue());
+
+                                // Display the JD winning amounts for this finisher
+                                log4j.debug("{} - Updated JockeyDraft finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, p.getPositionId={}, f.getRunnerId={}, res={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), p.getPositionId(), f.getRunnerId(), (null==jres)?"NULL":jres.toString());
 
 
-                        }); // End of forEach Finisher
-                        log4j.debug("{} - Finished looking for finishers at p.positionId={} for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, p.getPositionId(), theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
+                            }); // End of forEach Finisher
+                            log4j.debug("{} - Finished looking for finishers at p.positionId={} for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, p.getPositionId(), theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
 
-                    }); // End of forEach Position
-                    log4j.debug("{} - Finished iterating positions for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
+                        }); // End of forEach Position
+                        log4j.debug("{} - Finished iterating positions for horse with eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
 
-                    // Persist the result objects for the current horse
+                        // Persist the result objects for the current horse
+                        try {
+                            log4j.debug("{} - About to persisted RTW and JD Daily finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, res={}, jres={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), (null==res)?"NULL":res.toString(), (null==jres)?"NULL":jres.toString());
+                            rtwEm.persist(res);
+                            rtwEm.persist(jres);
+                            log4j.debug("{} - Persisted RTW and JD Daily finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
+                        } catch (Exception e1) {
+                            log4j.error("{} -Could not persist RTW and JD finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, res={}, jres={}, exceptionMsg={}, exception={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), (null==res)?"NULL":res.toString(), (null==jres)?"NULL":jres.toString(), e1.getMessage(), e1);
+                        }
+
+                    }); // End of forEach Horse
+                    log4j.debug("{} - Finished looking through horses for eventId={}, raceId={}", method, horses.size(), theRace.getEventId(), theRace.getRaceId());
+
+                    // Commit the transaction
                     try {
-                        log4j.debug("{} - About to persisted RTW and JD Daily finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, res={}, jres={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), (null==res)?"NULL":res.toString(), (null==jres)?"NULL":jres.toString());
-                        rtwEm.persist(res);
-                        rtwEm.persist(jres);
-                        log4j.debug("{} - Persisted RTW and JD Daily finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber());
-                    } catch (Exception e1) {
-                        log4j.error("{} -Could not persist RTW and JD finisher results for eventId={}, raceId={}, horsename={}, horsesprogramnumber={}, res={}, jres={}, exceptionMsg={}, exception={}", method, theRace.getEventId(), theRace.getRaceId(), h.getHorsesname(), h.getHorsesprogramnumber(), (null==res)?"NULL":res.toString(), (null==jres)?"NULL":jres.toString(), e1.getMessage(), e1);
+                        log4j.debug("{} - Calling commit on Race, RTW and JD Result objects for Race with eventId={}, raceId={}, RTWRace={}", method, theRace.getEventId(), theRace.getRaceId(), r.toString());
+                        rtwEm.getTransaction().commit();
+                        log4j.debug("{} - Race, RTW and JD Results comitted for Race with eventId={}, raceId={}, RTWRace={}", method, theRace.getEventId(), theRace.getRaceId(), r.toString());
+                    } catch (Exception e) {
+                        log4j.error("{} - Exception while trying to commit Race, RTW, and JD Results for Race with eventId={}, raceId={}, RTWRace={}, exceptionMsg={}, exception={}", method, theRace.getEventId(), theRace.getRaceId(), r.toString(), e.getMessage(), e);
+                    } finally {
+                        if (rtwEm.getTransaction().isActive()) {
+                            rtwEm.getTransaction().rollback();
+                        }
                     }
 
-                }); // End of forEach Horse
-                log4j.debug("{} - Finished looking through horses for eventId={}, raceId={}", method, horses.size(), theRace.getEventId(), theRace.getRaceId());
+                } else {
+                    // Race has already been processed, so skip
+                    log4j.info(
+                            "{} - Found RTW Race matching eventId={}, trackId={}, Race={} to process final results, but it has already been marked as done.",
+                            method, parentEvent.getEventId(), parentEvent.getTrackId(), r.toString());
 
-                // Commit the transaction
-                try {
-                    log4j.debug("{} - Calling commit on Race, RTW and JD Result objects for Race with eventId={}, raceId={}, RTWRace={}", method, theRace.getEventId(), theRace.getRaceId(), r.toString());
-                    rtwEm.getTransaction().commit();
-                    log4j.debug("{} - Race, RTW and JD Results comitted for Race with eventId={}, raceId={}, RTWRace={}", method, theRace.getEventId(), theRace.getRaceId(), r.toString());
-                } catch (Exception e) {
-                    log4j.error("{} - Exception while trying to commit Race, RTW, and JD Results for Race with eventId={}, raceId={}, RTWRace={}, exceptionMsg={}, exception={}", method, theRace.getEventId(), theRace.getRaceId(), r.toString(), e.getMessage(), e);
-                } finally {
-                    if (rtwEm.getTransaction().isActive()) {
-                        rtwEm.getTransaction().rollback();
-                    }
                 }
+
 
             }
 
             // Close down the persistence connections
-            rtwEm.close();
-            rtwEmF.close();
+            if (rtwEm.isOpen()) {
+                rtwEm.close();
+            }
+            if (rtwEmF.isOpen()) {
+                rtwEmF.close();
+            }
 
         }
+
+        // Turn off global in-process flag as this
+        // is intended to be a singleton
+        synchronized (_finalInProgressMonitor) {
+            _finalInProgress = false;
+        }
+        unlockFinalWaiter();
 
         log4j.exit(method);
 
@@ -545,8 +610,8 @@ public class RaceController implements Serializable {
                             rtwEm.getTransaction().begin();
 
                             // Jockey changed?
-                            if (((null == curEC) && newEC.isJockeyChanged())
-                                    || (!(curEC.isJockeyChanged() == newEC.isJockeyChanged()))) {
+                            if (((null == curEC) && newEC.isJockeyChanged()) ||
+                                    (!(curEC.isJockeyChanged() == newEC.isJockeyChanged()))) {
                                 log4j.debug("{} - existing h.jockeysid={}, new h.jockeysid={}", h.getJockeysid(), theEntry.getJockey());
                                 // TODO: Process jockey change
                                 log4j.info("{} - TODO: Process Jockey Change", method);
@@ -1291,7 +1356,7 @@ public class RaceController implements Serializable {
                             rtwEm.getTransaction().commit();
                             msgs = new StringBuilder[]{new StringBuilder(),new StringBuilder()};
                             msgs[0] = msgs[0].append("<br>Horse Number ").append(h.getHorsesprogramnumber()).append(",").append(h.getHorsesname()).append(", was scratched at ").append(getMsgTimestamp());
-                            msgs[1] = msgs[1].append("| Horse ").append(h.getHorsesprogramnumber()).append(",").append(h.getHorsesname()).append(",scratched @").append(getMsgTimestamp());
+                            msgs[1] = msgs[1].append("|| Horse ").append(h.getHorsesprogramnumber()).append(", ").append(h.getHorsesname()).append(", scratched @").append(getMsgTimestamp());
                             log4j.info(
                                     "{} - Updated HorsesScratchIndicator to 'Y' for RTW Horse matching horseName={}, runnerNumber={}, raceId={}, trackId={}, and eventId={}",
                                     method, h.getHorsesname(), theRunner.getRunnerId(), theRace.getRaceId(),
