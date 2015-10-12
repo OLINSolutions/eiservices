@@ -1,0 +1,1994 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="52efddef-b521-40f9-a9ff-d8aa19fd42bc" activeEnvironment="Default" name="ToteProgramService" resourceRoot="${projectDir}" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="e1e4990d-839f-4ca4-898e-3566661b4109" wsaVersion="NONE" name="Program-BASIC-S" type="wsdl" bindingName="{http://tempuri.org/}Program-BASIC-S" soapVersion="1_1" anonymous="optional" definition="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.cxf.CXFAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  <con:entry key="EXSH" value="false"/>
+  <con:entry key="Java Args" value=""/>
+  <con:entry key="Class Folder" value=""/>
+  <con:entry key="Exclude namespaces" value="&lt;xml-fragment/>"/>
+  <con:entry key="build.xml" value="true"/>
+  <con:entry key="Bindings" value=""/>
+  <con:entry key="Implementation" value="true"/>
+  <con:entry key="Server" value="false"/>
+  <con:entry key="Tool Args" value=""/>
+  <con:entry key="Output Packages" value="&lt;xml-fragment/>"/>
+  <con:entry key="All Code" value="false"/>
+  <con:entry key="Use cached WSDL" value="false"/>
+  <con:entry key="DEX" value="true"/>
+  <con:entry key="Validate WSDL" value="true"/>
+  <con:entry key="Output Directory" value="/Users/jordanolin/projects/ei/eiservices/utote/ProgramService"/>
+  <con:entry key="Compile" value="false"/>
+  <con:entry key="WSDL" value="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?wsdl"/>
+  <con:entry key="DNS" value="true"/>
+  <con:entry key="Catalog" value=""/>
+  <con:entry key="Package" value="com.ei.eiservices.utote.programservice.client"/>
+  <con:entry key="Client" value="true"/>
+</xml-fragment>]]></con:setting><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.axis2.Axis2WSDL2CodeAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  <con:entry key="test-case" value="true"/>
+  <con:entry key="adb writeClasses" value="false"/>
+  <con:entry key="namespace mapping" value="&lt;xml-fragment/>"/>
+  <con:entry key="serverside-interface" value="false"/>
+  <con:entry key="adb wrapClasses" value="false"/>
+  <con:entry key="port name" value="Program-BASIC-S"/>
+  <con:entry key="unpack classes" value="false"/>
+  <con:entry key="server-side" value="false"/>
+  <con:entry key="service name" value="ProgramService"/>
+  <con:entry key="async" value="false"/>
+  <con:entry key="Tool Args" value=""/>
+  <con:entry key="JIBX bindingfile" value=""/>
+  <con:entry key="Use cached WSDL" value="false"/>
+  <con:entry key="sync" value="false"/>
+  <con:entry key="generate all" value="false"/>
+  <con:entry key="Output Directory" value="/Users/jordanolin/projects/ei/eiservices/utote/ProgramService"/>
+  <con:entry key="databinding method" value="xmlbeans"/>
+  <con:entry key="WSDL" value="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?wsdl"/>
+  <con:entry key="Package" value=""/>
+  <con:entry key="service descriptor" value="false"/>
+</xml-fragment>]]></con:setting></con:settings><con:definitionCache type="TEXT" rootPart="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?wsdl"><con:part><con:url>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ProgramService" targetNamespace="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:i0="http://tempuri.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+  <wsdl:import namespace="http://tempuri.org/" location="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?wsdl=wsdl0"/>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://schema.unitedtote.com/ToteLink/2008/06/Program/Imports">
+      <xsd:import schemaLocation="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd0" namespace="http://schema.unitedtote.com/ToteLink/2008/06/Common"/>
+      <xsd:import schemaLocation="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd1" namespace="http://schema.unitedtote.com/ToteLink/2008/06/Program"/>
+      <xsd:import schemaLocation="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd5" namespace="http://schema.unitedtote.com/ToteLink/Faults/2008/10"/>
+      <xsd:import schemaLocation="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd6" namespace="http://www.microsoft.com/practices/EnterpriseLibrary/2007/01/wcf/validation"/>
+      <xsd:import schemaLocation="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+      <xsd:import schemaLocation="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
+      <xsd:import schemaLocation="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd4" namespace="http://schema.unitedtote.com/ToteLink/ToteDataTypes/2008/04"/>
+      <xsd:import schemaLocation="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd7" namespace="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="Program_Keepalive_InputMessage">
+    <wsdl:part name="parameters" element="q1:Keepalive" xmlns:q1="http://schema.unitedtote.com/ToteLink/2008/06/Common"/>
+  </wsdl:message>
+  <wsdl:message name="Program_Keepalive_OutputMessage">
+    <wsdl:part name="parameters" element="q2:KeepaliveResponse" xmlns:q2="http://schema.unitedtote.com/ToteLink/2008/06/Common"/>
+  </wsdl:message>
+  <wsdl:message name="Program_GetEvents_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetEvents"/>
+  </wsdl:message>
+  <wsdl:message name="Program_GetEvents_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventsResponse"/>
+  </wsdl:message>
+  <wsdl:message name="Program_GetEvents_ToteFaultFault_FaultMessage">
+    <wsdl:part name="detail" element="q3:ToteLinkFault" xmlns:q3="http://schema.unitedtote.com/ToteLink/Faults/2008/10"/>
+  </wsdl:message>
+  <wsdl:message name="Program_GetEvents_ValidationFaultFault_FaultMessage">
+    <wsdl:part name="detail" element="q4:ValidationFault" xmlns:q4="http://www.microsoft.com/practices/EnterpriseLibrary/2007/01/wcf/validation"/>
+  </wsdl:message>
+  <wsdl:message name="Program_GetEventDetail_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventDetail"/>
+  </wsdl:message>
+  <wsdl:message name="Program_GetEventDetail_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventDetailResponse"/>
+  </wsdl:message>
+  <wsdl:message name="Program_GetEventDetail_ToteFaultFault_FaultMessage">
+    <wsdl:part name="detail" element="q5:ToteLinkFault" xmlns:q5="http://schema.unitedtote.com/ToteLink/Faults/2008/10"/>
+  </wsdl:message>
+  <wsdl:message name="Program_GetEventDetail_ValidationFaultFault_FaultMessage">
+    <wsdl:part name="detail" element="q6:ValidationFault" xmlns:q6="http://www.microsoft.com/practices/EnterpriseLibrary/2007/01/wcf/validation"/>
+  </wsdl:message>
+  <wsdl:message name="Program_GetRace_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetRace"/>
+  </wsdl:message>
+  <wsdl:message name="Program_GetRace_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetRaceResponse"/>
+  </wsdl:message>
+  <wsdl:message name="Program_GetRace_ToteFaultFault_FaultMessage">
+    <wsdl:part name="detail" element="q7:ToteLinkFault" xmlns:q7="http://schema.unitedtote.com/ToteLink/Faults/2008/10"/>
+  </wsdl:message>
+  <wsdl:message name="Program_GetRace_ValidationFaultFault_FaultMessage">
+    <wsdl:part name="detail" element="q8:ValidationFault" xmlns:q8="http://www.microsoft.com/practices/EnterpriseLibrary/2007/01/wcf/validation"/>
+  </wsdl:message>
+  <wsdl:portType name="Program">
+    <wsdl:operation name="Keepalive">
+      <wsdl:input wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Common/Keepalive/Keepalive" message="tns:Program_Keepalive_InputMessage"/>
+      <wsdl:output wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Common/Keepalive/KeepaliveResponse" message="tns:Program_Keepalive_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetEvents">
+      <wsdl:input wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEvents" message="tns:Program_GetEvents_InputMessage"/>
+      <wsdl:output wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventsResponse" message="tns:Program_GetEvents_OutputMessage"/>
+      <wsdl:fault wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventsToteFaultFault" name="ToteFaultFault" message="tns:Program_GetEvents_ToteFaultFault_FaultMessage"/>
+      <wsdl:fault wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventsValidationFaultFault" name="ValidationFaultFault" message="tns:Program_GetEvents_ValidationFaultFault_FaultMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventDetail">
+      <wsdl:input wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetail" message="tns:Program_GetEventDetail_InputMessage"/>
+      <wsdl:output wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetailResponse" message="tns:Program_GetEventDetail_OutputMessage"/>
+      <wsdl:fault wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetailToteFaultFault" name="ToteFaultFault" message="tns:Program_GetEventDetail_ToteFaultFault_FaultMessage"/>
+      <wsdl:fault wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetailValidationFaultFault" name="ValidationFaultFault" message="tns:Program_GetEventDetail_ValidationFaultFault_FaultMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetRace">
+      <wsdl:input wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRace" message="tns:Program_GetRace_InputMessage"/>
+      <wsdl:output wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRaceResponse" message="tns:Program_GetRace_OutputMessage"/>
+      <wsdl:fault wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRaceToteFaultFault" name="ToteFaultFault" message="tns:Program_GetRace_ToteFaultFault_FaultMessage"/>
+      <wsdl:fault wsaw:Action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRaceValidationFaultFault" name="ValidationFaultFault" message="tns:Program_GetRace_ValidationFaultFault_FaultMessage"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:service name="ProgramService">
+    <wsdl:port name="Program-BASIC" binding="i0:Program-BASIC">
+      <soap:address location="http://usdcpdxtl03.utote.com:8088/ToteLink/ProgramService/BASIC"/>
+    </wsdl:port>
+    <wsdl:port name="Program-BASIC-S" binding="i0:Program-BASIC-S">
+      <soap:address location="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/BASIC"/>
+    </wsdl:port>
+    <wsdl:port name="Program-TCP" binding="i0:Program-TCP">
+      <soap12:address location="net.tcp://usdcpdxtl03.utote.com:8089/ToteLink/ProgramService/TCP"/>
+      <wsa10:EndpointReference>
+        <wsa10:Address>net.tcp://usdcpdxtl03.utote.com:8089/ToteLink/ProgramService/TCP</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+    <wsdl:port name="Program-WS" binding="i0:Program-WS">
+      <soap12:address location="http://usdcpdxtl03.utote.com:8088/ToteLink/ProgramService/WS"/>
+      <wsa10:EndpointReference>
+        <wsa10:Address>http://usdcpdxtl03.utote.com:8088/ToteLink/ProgramService/WS</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+    <wsdl:port name="Program-WS-S" binding="i0:Program-WS-S">
+      <soap12:address location="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/WS"/>
+      <wsa10:EndpointReference>
+        <wsa10:Address>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/WS</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?wsdl=wsdl0</con:url><con:content><![CDATA[<wsdl:definitions targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:i0="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+  <wsp:Policy wsu:Id="Program-BASIC-S_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <http:BasicAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http"/>
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <sp:HttpsToken RequireClientCertificate="false"/>
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256/>
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict/>
+              </wsp:Policy>
+            </sp:Layout>
+          </wsp:Policy>
+        </sp:TransportBinding>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsp:Policy wsu:Id="Program-TCP_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1"/>
+        <wsaw:UsingAddressing/>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsp:Policy wsu:Id="Program-WS_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <wsaw:UsingAddressing/>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsp:Policy wsu:Id="Program-WS-S_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <http:BasicAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http"/>
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <sp:HttpsToken RequireClientCertificate="false"/>
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256/>
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict/>
+              </wsp:Policy>
+            </sp:Layout>
+          </wsp:Policy>
+        </sp:TransportBinding>
+        <wsaw:UsingAddressing/>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:import namespace="http://schema.unitedtote.com/ToteLink/2008/06/Program" location="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?wsdl"/>
+  <wsdl:types/>
+  <wsdl:binding name="Program-BASIC" type="i0:Program">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Keepalive">
+      <soap:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Common/Keepalive/Keepalive" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEvents">
+      <soap:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEvents" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventDetail">
+      <soap:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetail" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetRace">
+      <soap:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRace" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="Program-BASIC-S" type="i0:Program">
+    <wsp:PolicyReference URI="#Program-BASIC-S_policy"/>
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Keepalive">
+      <soap:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Common/Keepalive/Keepalive" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEvents">
+      <soap:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEvents" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventDetail">
+      <soap:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetail" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetRace">
+      <soap:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRace" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="Program-TCP" type="i0:Program">
+    <wsp:PolicyReference URI="#Program-TCP_policy"/>
+    <soap12:binding transport="http://schemas.microsoft.com/soap/tcp"/>
+    <wsdl:operation name="Keepalive">
+      <soap12:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Common/Keepalive/Keepalive" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEvents">
+      <soap12:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEvents" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap12:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap12:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventDetail">
+      <soap12:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetail" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap12:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap12:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetRace">
+      <soap12:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRace" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap12:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap12:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="Program-WS" type="i0:Program">
+    <wsp:PolicyReference URI="#Program-WS_policy"/>
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Keepalive">
+      <soap12:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Common/Keepalive/Keepalive" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEvents">
+      <soap12:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEvents" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap12:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap12:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventDetail">
+      <soap12:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetail" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap12:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap12:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetRace">
+      <soap12:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRace" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap12:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap12:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="Program-WS-S" type="i0:Program">
+    <wsp:PolicyReference URI="#Program-WS-S_policy"/>
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Keepalive">
+      <soap12:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Common/Keepalive/Keepalive" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEvents">
+      <soap12:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEvents" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap12:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap12:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventDetail">
+      <soap12:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetail" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap12:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap12:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetRace">
+      <soap12:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRace" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ToteFaultFault">
+        <soap12:fault name="ToteFaultFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ValidationFaultFault">
+        <soap12:fault name="ValidationFaultFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd0</con:url><con:content><![CDATA[<xs:schema elementFormDefault="qualified" targetNamespace="http://schema.unitedtote.com/ToteLink/2008/06/Common" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+  <xs:import schemaLocation="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+  <xs:import schemaLocation="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
+  <xs:element name="Keepalive">
+    <xs:complexType>
+      <xs:sequence/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="KeepaliveResponse">
+    <xs:complexType>
+      <xs:sequence/>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ToteLinkRequest">
+    <xs:sequence>
+      <xs:element name="Source" type="tns:Source"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ToteLinkRequest" nillable="true" type="tns:ToteLinkRequest"/>
+  <xs:complexType name="Source">
+    <xs:annotation>
+      <xs:appinfo>
+        <IsValueType xmlns="http://schemas.microsoft.com/2003/10/Serialization/">true</IsValueType>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="SystemId" nillable="true" type="xs:string"/>
+      <xs:element name="SourceId" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Source" nillable="true" type="tns:Source"/>
+  <xs:complexType name="ToteLinkResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="RunId" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="GroupId" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Error" type="tns:Error">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Source" type="tns:Source">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ToteLinkResponse" nillable="true" type="tns:ToteLinkResponse"/>
+  <xs:complexType name="Error">
+    <xs:annotation>
+      <xs:appinfo>
+        <IsValueType xmlns="http://schemas.microsoft.com/2003/10/Serialization/">true</IsValueType>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Number" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Params" nillable="true" type="q1:ArrayOfstring" xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Error" nillable="true" type="tns:Error"/>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd2</con:url><con:content><![CDATA[<xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/">
+  <xs:element name="anyType" nillable="true" type="xs:anyType"/>
+  <xs:element name="anyURI" nillable="true" type="xs:anyURI"/>
+  <xs:element name="base64Binary" nillable="true" type="xs:base64Binary"/>
+  <xs:element name="boolean" nillable="true" type="xs:boolean"/>
+  <xs:element name="byte" nillable="true" type="xs:byte"/>
+  <xs:element name="dateTime" nillable="true" type="xs:dateTime"/>
+  <xs:element name="decimal" nillable="true" type="xs:decimal"/>
+  <xs:element name="double" nillable="true" type="xs:double"/>
+  <xs:element name="float" nillable="true" type="xs:float"/>
+  <xs:element name="int" nillable="true" type="xs:int"/>
+  <xs:element name="long" nillable="true" type="xs:long"/>
+  <xs:element name="QName" nillable="true" type="xs:QName"/>
+  <xs:element name="short" nillable="true" type="xs:short"/>
+  <xs:element name="string" nillable="true" type="xs:string"/>
+  <xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte"/>
+  <xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt"/>
+  <xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong"/>
+  <xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort"/>
+  <xs:element name="char" nillable="true" type="tns:char"/>
+  <xs:simpleType name="char">
+    <xs:restriction base="xs:int"/>
+  </xs:simpleType>
+  <xs:element name="duration" nillable="true" type="tns:duration"/>
+  <xs:simpleType name="duration">
+    <xs:restriction base="xs:duration">
+      <xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?"/>
+      <xs:minInclusive value="-P10675199DT2H48M5.4775808S"/>
+      <xs:maxInclusive value="P10675199DT2H48M5.4775807S"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="guid" nillable="true" type="tns:guid"/>
+  <xs:simpleType name="guid">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:attribute name="FactoryType" type="xs:QName"/>
+  <xs:attribute name="Id" type="xs:ID"/>
+  <xs:attribute name="Ref" type="xs:IDREF"/>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd3</con:url><con:content><![CDATA[<xs:schema elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+  <xs:complexType name="ArrayOfstring">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfstring" nillable="true" type="tns:ArrayOfstring"/>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd1</con:url><con:content><![CDATA[<xs:schema elementFormDefault="qualified" targetNamespace="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schema.unitedtote.com/ToteLink/2008/06/Program">
+  <xs:import schemaLocation="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd0" namespace="http://schema.unitedtote.com/ToteLink/2008/06/Common"/>
+  <xs:import schemaLocation="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd4" namespace="http://schema.unitedtote.com/ToteLink/ToteDataTypes/2008/04"/>
+  <xs:element name="GetEvents">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="EventsRequest" nillable="true" type="tns:EventsRequest"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="EventsRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="q1:ToteLinkRequest" xmlns:q1="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="TournamentId" nillable="true" type="xs:string">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="ContestId" nillable="true" type="xs:string">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Races" type="xs:boolean">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="EventsRequest" nillable="true" type="tns:EventsRequest"/>
+  <xs:element name="GetEventsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="EventsResponse" nillable="true" type="tns:EventsResponse"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="EventsResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="q2:ToteLinkResponse" xmlns:q2="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="TournamentId" nillable="true" type="xs:string">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="ContestId" nillable="true" type="xs:string">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Events" nillable="true" type="tns:Events">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="EventsResponse" nillable="true" type="tns:EventsResponse"/>
+  <xs:complexType name="Events">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Event" nillable="true" type="tns:Event"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Events" nillable="true" type="tns:Events"/>
+  <xs:complexType name="Event">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Races" nillable="true" type="tns:Races">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="EventId" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="RunId" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="EventName" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="TrackId" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="TrackName" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="TrackCondition" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="TurfTrack" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="EventTime" type="xs:dateTime">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="EventInfo" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="EventType" nillable="true" type="tns:EventType">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="TrackType" nillable="true" type="tns:TrackType">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="EventClass" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CurrencyId" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Parlay" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Channel" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="EventStatus" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="RaceList" nillable="true" type="q3:CompressedList" xmlns:q3="http://schema.unitedtote.com/ToteLink/ToteDataTypes/2008/04">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="BreakTo" nillable="true" type="xs:decimal">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Event" nillable="true" type="tns:Event"/>
+  <xs:complexType name="Races">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Race" nillable="true" type="tns:Race"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Races" nillable="true" type="tns:Races"/>
+  <xs:complexType name="Race">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Pools" nillable="true" type="tns:Pools">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Runners" nillable="true" type="tns:Runners">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="RaceChanges" nillable="true" type="tns:RaceChanges">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="RaceId" type="xs:int"/>
+      <xs:element minOccurs="0" name="RaceStatus" nillable="true" type="tns:RaceStatus">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="TrackType" nillable="true" type="tns:TrackType">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Current" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="PostTime" nillable="true" type="xs:dateTime">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="NumberOfRunners" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Finish" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Program" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Odds" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Conditions" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="RaceType" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Surface" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Distance" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Purse" type="xs:decimal">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Sex" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Age" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Claim" type="xs:decimal">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Live" nillable="true" type="q4:CompressedList" xmlns:q4="http://schema.unitedtote.com/ToteLink/ToteDataTypes/2008/04">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="PoolList" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Race" nillable="true" type="tns:Race"/>
+  <xs:complexType name="Pools">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Pool" nillable="true" type="tns:Pool"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Pools" nillable="true" type="tns:Pools"/>
+  <xs:complexType name="Pool">
+    <xs:sequence>
+      <xs:element name="PoolId" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="PoolNumber" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="PoolName" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="PoolRaces" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="RaceList" nillable="true" type="q5:CompressedList" xmlns:q5="http://schema.unitedtote.com/ToteLink/ToteDataTypes/2008/04">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Legs" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Unordered" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Combine" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Quick" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="String" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Wheel" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Box" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="PowerBox" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Leading" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="KeyWheel" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="KeyBox" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="SingleBetMinimum" nillable="true" type="xs:decimal">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="MultipleBetMinimum" nillable="true" type="xs:decimal">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="WagerMinimum" nillable="true" type="xs:decimal">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Maximum" nillable="true" type="xs:decimal">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Parlay" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Probables" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="WBMaximum" nillable="true" type="xs:decimal">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Multiple" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Auto" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Segmented" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Straight" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="FractionalMinimum" nillable="true" type="xs:decimal">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Exchange" nillable="true" type="tns:ExchangeWagers">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Fractional" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Pool" nillable="true" type="tns:Pool"/>
+  <xs:simpleType name="ExchangeWagers">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Cash"/>
+      <xs:enumeration value="Exchange"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ExchangeWagers" nillable="true" type="tns:ExchangeWagers"/>
+  <xs:complexType name="Runners">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Runner" nillable="true" type="tns:Runner"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Runners" nillable="true" type="tns:Runners"/>
+  <xs:complexType name="Runner">
+    <xs:sequence>
+      <xs:element name="RunnerId" type="xs:int"/>
+      <xs:element minOccurs="0" name="Entries" nillable="true" type="tns:Entries">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Scratch" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Odds" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Runner" nillable="true" type="tns:Runner"/>
+  <xs:complexType name="Entries">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Entry" nillable="true" type="tns:Entry"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Entries" nillable="true" type="tns:Entries"/>
+  <xs:complexType name="Entry">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="EntryId" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Scratch" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Jockey" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Weight" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Trainer" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Owner" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Position" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Medication" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="EntryChanges" nillable="true" type="tns:EntryChanges">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Entry" nillable="true" type="tns:Entry"/>
+  <xs:complexType name="EntryChanges">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Change" nillable="true" type="tns:EntryChange"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EntryChanges" nillable="true" type="tns:EntryChanges"/>
+  <xs:complexType name="EntryChange">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Name" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Position" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Weight" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Medication" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Jockey" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Trainer" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Owner" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Other" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EntryChange" nillable="true" type="tns:EntryChange"/>
+  <xs:complexType name="RaceChanges">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Change" nillable="true" type="tns:RaceChange"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RaceChanges" nillable="true" type="tns:RaceChanges"/>
+  <xs:complexType name="RaceChange">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="RaceType" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Distance" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Sex" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Age" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Purse" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Claim" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Breed" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Surface" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RaceChange" nillable="true" type="tns:RaceChange"/>
+  <xs:simpleType name="RaceStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Open"/>
+      <xs:enumeration value="Closed"/>
+      <xs:enumeration value="Post"/>
+      <xs:enumeration value="Final"/>
+      <xs:enumeration value="Cancelled"/>
+      <xs:enumeration value="Locked"/>
+      <xs:enumeration value="UnCancel"/>
+      <xs:enumeration value="UnOfficial"/>
+      <xs:enumeration value="Begin"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="RaceStatus" nillable="true" type="tns:RaceStatus"/>
+  <xs:simpleType name="TrackType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="JaiAlai"/>
+      <xs:enumeration value="Thoroughbred"/>
+      <xs:enumeration value="Greyhound"/>
+      <xs:enumeration value="Quarterhorse"/>
+      <xs:enumeration value="Harness"/>
+      <xs:enumeration value="Arabian"/>
+      <xs:enumeration value="Mixed"/>
+      <xs:enumeration value="Cycle"/>
+      <xs:enumeration value="Boat"/>
+      <xs:enumeration value="Vehicle"/>
+      <xs:enumeration value="Sports"/>
+      <xs:enumeration value="Other"/>
+      <xs:enumeration value="Unknown"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="TrackType" nillable="true" type="tns:TrackType"/>
+  <xs:simpleType name="EventType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Current"/>
+      <xs:enumeration value="Future"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="EventType" nillable="true" type="tns:EventType"/>
+  <xs:element name="GetEventDetail">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="EventsRequest" nillable="true" type="tns:EventDetailRequest"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="EventDetailRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="q6:ToteLinkRequest" xmlns:q6="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+        <xs:sequence>
+          <xs:element name="EventId" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="TournamentId" nillable="true" type="xs:string">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="ContestId" nillable="true" type="xs:string">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Program" type="xs:boolean">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Races" type="xs:boolean">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Pools" type="xs:boolean">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Runners" type="xs:boolean">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="EventDetailRequest" nillable="true" type="tns:EventDetailRequest"/>
+  <xs:element name="GetEventDetailResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="EventsResponse" nillable="true" type="tns:EventDetailResponse"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="EventDetailResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="q7:ToteLinkResponse" xmlns:q7="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="TournamentId" nillable="true" type="xs:string">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="ContestId" nillable="true" type="xs:string">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="EventDetail" nillable="true" type="tns:Event">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="EventDetailResponse" nillable="true" type="tns:EventDetailResponse"/>
+  <xs:element name="GetRace">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="RaceRequest" nillable="true" type="tns:RaceRequest"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="RaceRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="q8:ToteLinkRequest" xmlns:q8="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+        <xs:sequence>
+          <xs:element name="EventId" nillable="true" type="xs:string"/>
+          <xs:element name="RaceId" type="xs:int"/>
+          <xs:element minOccurs="0" name="TournamentId" nillable="true" type="xs:string">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="ContestId" nillable="true" type="xs:string">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Program" type="xs:boolean">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Pools" type="xs:boolean">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Runners" type="xs:boolean">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="RaceRequest" nillable="true" type="tns:RaceRequest"/>
+  <xs:element name="GetRaceResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="RaceResponse" nillable="true" type="tns:RaceResponse"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="RaceResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="q9:ToteLinkResponse" xmlns:q9="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="EventId" nillable="true" type="xs:string">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Race" nillable="true" type="tns:Race">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="RaceResponse" nillable="true" type="tns:RaceResponse"/>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd4</con:url><con:content><![CDATA[<xs:schema elementFormDefault="qualified" targetNamespace="http://schema.unitedtote.com/ToteLink/ToteDataTypes/2008/04" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schema.unitedtote.com/ToteLink/ToteDataTypes/2008/04">
+  <xs:simpleType name="CompressedList">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]+(-[0-9]+)?(,[0-9]+(-[0-9]+)?)*"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="CompressedList" nillable="true" type="tns:CompressedList"/>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd5</con:url><con:content><![CDATA[<xs:schema elementFormDefault="qualified" targetNamespace="http://schema.unitedtote.com/ToteLink/Faults/2008/10" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schema.unitedtote.com/ToteLink/Faults/2008/10">
+  <xs:complexType name="ToteLinkFault">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ToteLinkFault" nillable="true" type="tns:ToteLinkFault"/>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd6</con:url><con:content><![CDATA[<xs:schema elementFormDefault="qualified" targetNamespace="http://www.microsoft.com/practices/EnterpriseLibrary/2007/01/wcf/validation" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.microsoft.com/practices/EnterpriseLibrary/2007/01/wcf/validation">
+  <xs:import schemaLocation="https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd7" namespace="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF"/>
+  <xs:complexType name="ValidationFault">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Details" nillable="true" type="q1:ArrayOfValidationDetail" xmlns:q1="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ValidationFault" nillable="true" type="tns:ValidationFault"/>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService?xsd=xsd7</con:url><con:content><![CDATA[<xs:schema elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF">
+  <xs:complexType name="ArrayOfValidationDetail">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ValidationDetail" nillable="true" type="tns:ValidationDetail"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfValidationDetail" nillable="true" type="tns:ArrayOfValidationDetail"/>
+  <xs:complexType name="ValidationDetail">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Key" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Tag" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ValidationDetail" nillable="true" type="tns:ValidationDetail"/>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint></con:endpoints><con:operation id="29064629-0dff-4067-a353-76189684a7e8" isOneWay="false" action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetail" name="GetEventDetail" bindingOperationName="GetEventDetail" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b1bfcb4f-36a7-461a-930e-c13290078552" name="Request - As TSG / EQUTST"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prog="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prog:GetEventDetail>
+         <!--Optional:-->
+         <prog:EventsRequest>
+            <com:Source>
+               <com:SystemId>TSG</com:SystemId>
+               <com:SourceId>EQUTST</com:SourceId>
+            </com:Source>
+            <prog:EventId>XX1</prog:EventId>
+            <!--Optional:-->
+            <prog:Program>false</prog:Program>
+            <!--Optional:-->
+            <prog:Races>true</prog:Races>
+            <!--Optional:-->
+            <prog:Pools>true</prog:Pools>
+            <!--Optional:-->
+            <prog:Runners>true</prog:Runners>
+         </prog:EventsRequest>
+      </prog:GetEventDetail>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>equus@utote.com</con:username><con:password>32Q0u1U5$</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetail"/><con:wsrmConfig version="1.2"/></con:call><con:call id="e513e380-3c7f-4111-b126-6ff20da9eb5f" name="Request - As POR / EQUTL1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl01.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prog="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prog:GetEventDetail>
+         <!--Optional:-->
+         <prog:EventsRequest>
+            <com:Source>
+               <com:SystemId>POR</com:SystemId>
+               <com:SourceId>EQUTL1</com:SourceId>
+            </com:Source>
+            <prog:EventId>GPW</prog:EventId>
+            <prog:Program>true</prog:Program>
+            <!--Optional:-->
+            <prog:Races>true</prog:Races>
+            <!--Optional:-->
+            <prog:Pools>true</prog:Pools>
+            <!--Optional:-->
+            <prog:Runners>true</prog:Runners>
+         </prog:EventsRequest>
+      </prog:GetEventDetail>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>equus@utote.com</con:username><con:password>32Q0u1U5$</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetail"/><con:wsrmConfig version="1.2"/></con:call><con:call id="edceafda-d977-4e10-88af-6baf801af594" name="Request - As POR / EQUTLX"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl01.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prog="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prog:GetEventDetail>
+         <!--Optional:-->
+         <prog:EventsRequest>
+            <com:Source>
+               <com:SystemId>POR</com:SystemId>
+               <com:SourceId>EQUTL1</com:SourceId>
+            </com:Source>
+            <prog:EventId>FCM</prog:EventId>
+            <prog:Program>true</prog:Program>
+            <!--Optional:-->
+            <prog:Races>true</prog:Races>
+            <!--Optional:-->
+            <prog:Pools>true</prog:Pools>
+            <!--Optional:-->
+            <prog:Runners>true</prog:Runners>
+         </prog:EventsRequest>
+      </prog:GetEventDetail>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>equus@utote.com</con:username><con:password>32Q0u1U5$</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetail"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="fe548d6c-aa14-49bb-8677-297eb0204bf3" isOneWay="false" action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEvents" name="GetEvents" bindingOperationName="GetEvents" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a34ca367-41dc-4254-a3fe-d5eb152af3e7" name="Request - As TSG / EQUTST"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prog="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prog:GetEvents>
+         <!--Optional:-->
+         <prog:EventsRequest>
+            <com:Source>
+               <com:SystemId>TSG</com:SystemId>
+               <com:SourceId>EQUTST</com:SourceId>
+            </com:Source>
+         </prog:EventsRequest>
+      </prog:GetEvents>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>equus@utote.com</con:username><con:password>32Q0u1U5$</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEvents"/><con:wsrmConfig version="1.2"/></con:call><con:call id="06dd2395-066b-4810-b2e4-e9a479c70c8b" name="Request - As POR / EQUTL1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl01.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prog="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prog:GetEvents>
+         <!--Optional:-->
+         <prog:EventsRequest>
+            <com:Source>
+               <com:SystemId>POR</com:SystemId>
+               <com:SourceId>EQUTL1</com:SourceId>
+            </com:Source>
+            <prog:Races>false</prog:Races>
+         </prog:EventsRequest>
+      </prog:GetEvents>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>equus@utote.com</con:username><con:password>32Q0u1U5$</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEvents"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="2ab1f52f-1af4-4e34-8346-39bcfc8db9f0" isOneWay="false" action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRace" name="GetRace" bindingOperationName="GetRace" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d52799bd-4824-4d55-a8f9-3d549cff186a" name="Request - As TSG / EQUTST"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prog="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prog:GetRace>
+         <prog:RaceRequest>
+            <com:Source>
+               <com:SystemId>TSG</com:SystemId>
+               <com:SourceId>EQUTST</com:SourceId>
+            </com:Source>
+            <prog:EventId>XX5</prog:EventId>
+            <prog:RaceId>14</prog:RaceId>
+            <prog:Runners>true</prog:Runners>
+            <prog:Program>true</prog:Program>
+         </prog:RaceRequest>
+      </prog:GetRace>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>equus@utote.com</con:username><con:password>32Q0u1U5$</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRace"/><con:wsrmConfig version="1.2"/></con:call><con:call id="2959b97a-accf-491f-8eb8-07102038ac35" name="Request - As POR / EQUTL1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl01.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prog="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prog:GetRace>
+         <prog:RaceRequest>
+            <com:Source>
+               <com:SystemId>POR</com:SystemId>
+               <com:SourceId>EQUTL1</com:SourceId>
+            </com:Source>
+            <prog:EventId>PHD</prog:EventId>
+            <prog:RaceId>3</prog:RaceId>
+            <prog:Runners>true</prog:Runners>
+            <prog:Program>true</prog:Program>
+            <prog:Pools>true</prog:Pools>
+         </prog:RaceRequest>
+      </prog:GetRace>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>equus@utote.com</con:username><con:password>32Q0u1U5$</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRace"/><con:wsrmConfig version="1.2"/></con:call><con:call id="083ebae8-6616-4960-9c8e-72d88df3864e" name="Request 3"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prog="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prog:GetRace>
+         <!--Optional:-->
+         <prog:RaceRequest>
+            <com:Source>
+               <com:SystemId>?</com:SystemId>
+               <com:SourceId>?</com:SourceId>
+            </com:Source>
+            <prog:EventId>?</prog:EventId>
+            <prog:RaceId>?</prog:RaceId>
+            <!--Optional:-->
+            <prog:TournamentId>?</prog:TournamentId>
+            <!--Optional:-->
+            <prog:ContestId>?</prog:ContestId>
+            <!--Optional:-->
+            <prog:Program>?</prog:Program>
+            <!--Optional:-->
+            <prog:Pools>?</prog:Pools>
+            <!--Optional:-->
+            <prog:Runners>?</prog:Runners>
+         </prog:RaceRequest>
+      </prog:GetRace>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRace"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="d8a81c92-14a3-49ed-815e-4cafbc845e5a" isOneWay="false" action="http://schema.unitedtote.com/ToteLink/2008/06/Common/Keepalive/Keepalive" name="Keepalive" bindingOperationName="Keepalive" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="9a9919e2-f090-4d47-bbae-63b92d67e363" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <com:Keepalive/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://schema.unitedtote.com/ToteLink/2008/06/Common/Keepalive/Keepalive"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite id="3793f694-6994-4e49-875c-0ef16740aecf" name="ToteProgramService-BASIC-S TestSuite"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="33d65d7e-09ba-4dca-afcc-28d16f6b7b10" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="GetEventDetail TestCase" searchProperties="true"><con:settings/><con:testStep type="request" id="916d45f4-f506-4e7d-ad83-ded083344f5d" name="GetEventDetail"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>Program-BASIC-S</con:interface><con:operation>GetEventDetail</con:operation><con:request name="GetEventDetail" id="02723e13-e66d-4469-8ab6-d8838ef70afa"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prog="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prog:GetEventDetail>
+         <!--Optional:-->
+         <prog:EventsRequest>
+            <com:Source>
+               <com:SystemId>?</com:SystemId>
+               <com:SourceId>?</com:SourceId>
+            </com:Source>
+            <prog:EventId>?</prog:EventId>
+            <!--Optional:-->
+            <prog:TournamentId>?</prog:TournamentId>
+            <!--Optional:-->
+            <prog:ContestId>?</prog:ContestId>
+            <!--Optional:-->
+            <prog:Program>?</prog:Program>
+            <!--Optional:-->
+            <prog:Races>?</prog:Races>
+            <!--Optional:-->
+            <prog:Pools>?</prog:Pools>
+            <!--Optional:-->
+            <prog:Runners>?</prog:Runners>
+         </prog:EventsRequest>
+      </prog:GetEventDetail>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:wsaConfig action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEventDetail"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="fccef461-3afc-4243-b51f-6d5b2d3b54d0" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="GetEvents TestCase" searchProperties="true"><con:settings/><con:testStep type="request" id="08c241d4-41ce-4a0c-9331-a87b921cd44c" name="GetEvents"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>Program-BASIC-S</con:interface><con:operation>GetEvents</con:operation><con:request name="GetEvents" id="6bc9d3c4-4422-47ea-91cd-20a831339dcb"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prog="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prog:GetEvents>
+         <!--Optional:-->
+         <prog:EventsRequest>
+            <com:Source>
+               <com:SystemId>TSG</com:SystemId>
+               <com:SourceId>EQUTST</com:SourceId>
+            </com:Source>
+         </prog:EventsRequest>
+      </prog:GetEvents>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>equus@utote.com</con:username><con:password>32Q0u1U5$</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetEvents" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="GetEvents2" id="732731a8-c9e7-4aea-8087-e9d222a402e1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>Program-BASIC-S</con:interface><con:operation>GetEvents</con:operation><con:request name="GetEvents2" id="ac438a8f-8c1f-4782-8e77-e2328e251980"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prog="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prog:GetEvents>
+         <!--Optional:-->
+         <prog:EventsRequest>
+            <com:Source>
+               <com:SystemId>?</com:SystemId>
+               <com:SourceId>?</com:SourceId>
+            </com:Source>
+            <!--Optional:-->
+            <prog:TournamentId>?</prog:TournamentId>
+            <!--Optional:-->
+            <prog:ContestId>?</prog:ContestId>
+            <!--Optional:-->
+            <prog:Races>?</prog:Races>
+         </prog:EventsRequest>
+      </prog:GetEvents>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0be556ed-d42a-4646-9989-3f2233d68a3c"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="ff8bdc81-562e-45b3-9ce8-86e287993200" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="GetRace TestCase" searchProperties="true"><con:settings/><con:testStep type="request" id="ca5d0091-6f8e-48c8-9888-0de02b12bcd7" name="GetRace"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>Program-BASIC-S</con:interface><con:operation>GetRace</con:operation><con:request name="GetRace" id="d7ebf983-9b5b-4182-860e-c8cb856c1bd2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prog="http://schema.unitedtote.com/ToteLink/2008/06/Program" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prog:GetRace>
+         <!--Optional:-->
+         <prog:RaceRequest>
+            <com:Source>
+               <com:SystemId>?</com:SystemId>
+               <com:SourceId>?</com:SourceId>
+            </com:Source>
+            <prog:EventId>?</prog:EventId>
+            <prog:RaceId>?</prog:RaceId>
+            <!--Optional:-->
+            <prog:TournamentId>?</prog:TournamentId>
+            <!--Optional:-->
+            <prog:ContestId>?</prog:ContestId>
+            <!--Optional:-->
+            <prog:Program>?</prog:Program>
+            <!--Optional:-->
+            <prog:Pools>?</prog:Pools>
+            <!--Optional:-->
+            <prog:Runners>?</prog:Runners>
+         </prog:RaceRequest>
+      </prog:GetRace>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:wsaConfig action="http://schema.unitedtote.com/ToteLink/2008/06/Program/Program/GetRace"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="9c8a6bf2-aa61-4c27-af49-c9054da412ae" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Keepalive TestCase" searchProperties="true"><con:settings/><con:testStep type="request" id="44fd0197-f329-4983-8458-ecdcc8351b89" name="Keepalive"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>Program-BASIC-S</con:interface><con:operation>Keepalive</con:operation><con:request name="Keepalive" id="f7d1140c-df16-48d4-aa71-f277070f0527"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>https://usdcpdxtl03.utote.com:8090/ToteLink/ProgramService/BASIC</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:com="http://schema.unitedtote.com/ToteLink/2008/06/Common">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <com:Keepalive/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:wsaConfig action="http://schema.unitedtote.com/ToteLink/2008/06/Common/Keepalive/Keepalive"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>

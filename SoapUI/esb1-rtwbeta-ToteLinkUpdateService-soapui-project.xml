@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="6874aa28-5711-4326-83a8-e67500df2e16" activeEnvironment="Default" name="beta.esb1.ToteLinkUpdateService" resourceRoot="${projectDir}" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="252467c7-231d-4170-b744-a1960647e095" wsaVersion="NONE" name="ToteLinkUpdateSOAP" type="wsdl" bindingName="{http://tempuri.org/}ToteLinkUpdateSOAP" soapVersion="1_1" anonymous="optional" definition="http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService?wsdl"><con:part><con:url>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ToteLinkUpdate" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tmp="http://tempuri.org/" xmlns:tns="http://tempuri.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import namespace="http://tempuri.org/" schemaLocation="ToteLinkUpdateService?xsd=StatusNotification.xsd"/>
+      <xsd:import namespace="http://tempuri.org/" schemaLocation="ToteLinkUpdateService?xsd=UpdateNotification.xsd"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="UpdateNotificationRequest">
+    <wsdl:part name="parameters" element="tmp:UpdateNotification"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="StatusNotificationRequest">
+    <wsdl:part name="parameters" element="tmp:StatusNotification"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ToteLinkUpdate">
+    <wsdl:operation name="StatusNotification">
+      <wsdl:input message="tmp:StatusNotificationRequest"></wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateNotification">
+      <wsdl:input message="tmp:UpdateNotificationRequest"></wsdl:input>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ToteLinkUpdateSOAP" type="tmp:ToteLinkUpdate">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="StatusNotification">
+      <soap:operation soapAction="http://tempuri.org/IUpdateService/StatusNotification" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateNotification">
+      <soap:operation soapAction="http://tempuri.org/IUpdateService/UpdateNotification" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ToteLinkUpdateService">
+    <wsdl:port name="ToteLinkUpdateSOAP" binding="tmp:ToteLinkUpdateSOAP">
+      <soap:address location="http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService?xsd=StatusNotification.xsd</con:url><con:content><![CDATA[<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://tempuri.org/" xmlns:tsc="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+  <xs:import namespace="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" schemaLocation="ToteLinkUpdateService?xsd=StatusChange.xsd"/>
+  <xs:complexType name="StatusNotification">
+    <xs:sequence>
+      <xs:element name="StatusChange" type="tsc:StatusChange"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="StatusNotification" nillable="true" type="tns:StatusNotification"/>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService?xsd=StatusChange.xsd</con:url><con:content><![CDATA[<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+  <xs:complexType name="StatusChange">
+    <xs:sequence>
+      <xs:element name="SiteId" nillable="true" type="xs:string"/>
+      <xs:element name="RunId" nillable="true" type="xs:string"/>
+      <xs:element name="MessageTime" nillable="true" type="xs:dateTime"/>
+      <xs:element name="TransactionTime" nillable="true" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="EventId" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="RaceId" nillable="true" type="xs:int"/>
+      <xs:element minOccurs="0" name="Source" nillable="true" type="xs:string"/>
+      <xs:element name="Action" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Status" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="MTP" nillable="true" type="xs:long"/>
+      <xs:element minOccurs="0" name="SourceIds" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="StatusChange" nillable="true" type="tns:StatusChange"/>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService?xsd=UpdateNotification.xsd</con:url><con:content><![CDATA[<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://tempuri.org/" xmlns:tu="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+  <xs:import namespace="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" schemaLocation="ToteLinkUpdateService?xsd=Updates.xsd"/>
+  <xs:complexType name="UpdateNotification">
+    <xs:sequence>
+      <xs:element name="Updates" type="tu:Updates"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="UpdateNotification" nillable="true" type="tns:UpdateNotification"/>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService?xsd=Updates.xsd</con:url><con:content><![CDATA[<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+  <xs:complexType name="Updates">
+    <xs:sequence>
+      <xs:element name="SiteId" nillable="true" type="xs:string"/>
+      <xs:element name="RunId" nillable="true" type="xs:string"/>
+      <xs:element name="MessageTime" nillable="true" type="xs:dateTime"/>
+      <xs:element name="TransactionTime" nillable="true" type="xs:dateTime"/>
+      <xs:element name="Type" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Data" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Section" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Group" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Track" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Post" nillable="true" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="EventId" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="RaceId" nillable="true" type="xs:int"/>
+      <xs:element minOccurs="0" name="Source" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="SourceIds" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="TrackCode" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Updates" nillable="true" type="tns:Updates"/>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService/</con:endpoint></con:endpoints><con:operation id="192cdad1-f2f0-414e-881a-92ea139a53d4" isOneWay="false" action="http://tempuri.org/IUpdateService/StatusNotification" name="StatusNotification" bindingOperationName="StatusNotification" type="One-Way" inputName="" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="3a537f85-d044-4196-a961-0224c3691580" name="Request - beta esb1 - stop"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/" xmlns:pub="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tem:StatusNotification>
+         <tem:StatusChange>
+            <pub:SiteId>TSG</pub:SiteId>
+            <pub:RunId>2721</pub:RunId>
+            <pub:MessageTime>2015-07-22T18:37:00.000Z</pub:MessageTime>
+            <pub:TransactionTime>2015-07-22T18:37:00.000Z</pub:TransactionTime>
+            <pub:Action>stop</pub:Action>
+            <pub:SourceIds>EQUTST</pub:SourceIds>
+         </tem:StatusChange>
+      </tem:StatusNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://tempuri.org/IUpdateService/StatusNotification"/><con:wsrmConfig version="1.2"/></con:call><con:call id="eb3ae1e0-b075-47f3-af8b-5c548986200a" name="Request - beta esb1 - start"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService/</con:endpoint><con:request><![CDATA[<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+   <s:Body>
+      <StatusNotification xmlns="http://tempuri.org/">
+         <StatusChange xmlns:a="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+            <a:SiteId>TSG</a:SiteId>
+            <a:RunId>2741</a:RunId>
+            <a:MessageTime>2015-08-11T16:20:00.000Z</a:MessageTime>
+            <a:TransactionTime>2015-08-11T16:20:00.000Z</a:TransactionTime>
+            <a:Action>start</a:Action>
+            <a:SourceIds>EQUTST</a:SourceIds>
+         </StatusChange>
+      </StatusNotification>
+   </s:Body>
+</s:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://tempuri.org/IUpdateService/StatusNotification"/><con:wsrmConfig version="1.2"/></con:call><con:call id="47fb35e3-8f1b-4846-a2be-ee24060cc7f3" name="Request - beta esb1 - end"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService/</con:endpoint><con:request><![CDATA[<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+   <s:Body>
+      <StatusNotification xmlns="http://tempuri.org/">
+         <StatusChange xmlns:a="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+            <a:SiteId>TSG</a:SiteId>
+            <a:RunId>2729</a:RunId>
+            <a:MessageTime>2015-07-31T01:20:00.000Z</a:MessageTime>
+            <a:TransactionTime>2015-07-31T01:20:00.000Z</a:TransactionTime>
+            <a:Action>end</a:Action>
+            <a:SourceIds>EQUTST</a:SourceIds>
+         </StatusChange>
+      </StatusNotification>
+   </s:Body>
+</s:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://tempuri.org/IUpdateService/StatusNotification"/><con:wsrmConfig version="1.2"/></con:call><con:call id="3af10bb5-7b95-482a-ac3a-03ff76ed091b" name="Request - beta esb1 - Keepalive"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService/</con:endpoint><con:request><![CDATA[<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+   <s:Body>
+      <StatusNotification xmlns="http://tempuri.org/">
+         <StatusChange xmlns:a="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+            <a:SiteId>TSG</a:SiteId>
+            <a:RunId/>
+            <a:MessageTime>2015-07-29T12:10:49.50946Z</a:MessageTime>
+            <a:TransactionTime>2015-07-29T12:10:49.50946Z</a:TransactionTime>
+            <a:Action>keepalive</a:Action>
+            <a:EventId>up</a:EventId>
+            <a:Source>up</a:Source>
+            <a:Status>closed</a:Status>
+            <a:SourceIds>EQUTST</a:SourceIds>
+         </StatusChange>
+      </StatusNotification>
+   </s:Body>
+</s:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://tempuri.org/IUpdateService/StatusNotification"/><con:wsrmConfig version="1.2"/></con:call><con:call id="4f4698dd-b0fa-4e82-9219-40a7c0923a88" name="Request - beta esb1 - open"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService/</con:endpoint><con:request><![CDATA[<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+   <s:Body>
+      <StatusNotification xmlns="http://tempuri.org/">
+         <StatusChange xmlns:a="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+            <a:SiteId>TSG</a:SiteId>
+            <a:RunId>2741</a:RunId>
+            <a:MessageTime>2015-08-11T16:21:00.000Z</a:MessageTime>
+            <a:TransactionTime>2015-08-11T16:21:00.000Z</a:TransactionTime>
+            <a:Action>open</a:Action>
+            <a:SourceIds>EQUTST</a:SourceIds>
+         </StatusChange>
+      </StatusNotification>
+   </s:Body>
+</s:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://tempuri.org/IUpdateService/StatusNotification"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="725a99b9-90bc-476c-8aab-bedf39046b60" isOneWay="false" action="http://tempuri.org/IUpdateService/UpdateNotification" name="UpdateNotification" bindingOperationName="UpdateNotification" type="One-Way" inputName="" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="2b21cd3c-e01c-48f9-be87-ca53af960cee" name="Request - beta esb1 - Odds"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService/</con:endpoint><con:request><![CDATA[<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+   <s:Body>
+      <UpdateNotification xmlns="http://tempuri.org/">
+         <Updates xmlns:a="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+            <a:SiteId>TSG</a:SiteId>
+            <a:RunId>2721</a:RunId>
+            <a:MessageTime>2015-07-22T15:59:01.000Z</a:MessageTime>
+            <a:TransactionTime>2015-07-22T15:59:01.000Z</a:TransactionTime>
+            <a:Type>Odds</a:Type>
+            <a:EventId>XX2</a:EventId>
+            <a:RaceId>17</a:RaceId>
+            <a:SourceIds>EQUTST</a:SourceIds>
+         </Updates>
+      </UpdateNotification>
+   </s:Body>
+</s:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://tempuri.org/IUpdateService/UpdateNotification"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite id="846c8f78-c142-4770-be23-554558475f62" name="ToteLinkUpdateSOAP TestSuite"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="793e03e9-06ae-4834-a168-a4dd564912ea" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="StatusNotification TestCase" searchProperties="true"><con:settings/><con:testStep type="request" id="c10609f4-9813-433f-acce-b39d511078f8" name="StatusNotification"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ToteLinkUpdateSOAP</con:interface><con:operation>StatusNotification</con:operation><con:request name="StatusNotification" id="33e21a8a-b9bb-4e39-83e0-ac4f0be83319"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/" xmlns:pub="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tem:StatusNotification>
+         <tem:StatusChange>
+            <pub:SiteId>?</pub:SiteId>
+            <pub:RunId>?</pub:RunId>
+            <pub:MessageTime>?</pub:MessageTime>
+            <pub:TransactionTime>?</pub:TransactionTime>
+            <!--Optional:-->
+            <pub:EventId>?</pub:EventId>
+            <!--Optional:-->
+            <pub:RaceId>?</pub:RaceId>
+            <!--Optional:-->
+            <pub:Source>?</pub:Source>
+            <pub:Action>?</pub:Action>
+            <!--Optional:-->
+            <pub:Status>?</pub:Status>
+            <!--Optional:-->
+            <pub:MTP>?</pub:MTP>
+            <!--Optional:-->
+            <pub:SourceIds>?</pub:SourceIds>
+         </tem:StatusChange>
+      </tem:StatusNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:wsaConfig action="http://tempuri.org/IUpdateService/StatusNotification"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="8eed8f26-7422-4d57-9d9e-75f4d65daaaa" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="UpdateNotification TestCase" searchProperties="true"><con:settings/><con:testStep type="request" id="395548d2-d922-438f-bb3f-aa741edf2489" name="UpdateNotification"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ToteLinkUpdateSOAP</con:interface><con:operation>UpdateNotification</con:operation><con:request name="UpdateNotification" id="a84bee35-391f-46e6-af88-b1fdccf8b5b3"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/" xmlns:pub="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tem:UpdateNotification>
+         <tem:Updates>
+            <pub:SiteId>?</pub:SiteId>
+            <pub:RunId>?</pub:RunId>
+            <pub:MessageTime>?</pub:MessageTime>
+            <pub:TransactionTime>?</pub:TransactionTime>
+            <pub:Type>?</pub:Type>
+            <!--Optional:-->
+            <pub:Data>?</pub:Data>
+            <!--Optional:-->
+            <pub:Section>?</pub:Section>
+            <!--Optional:-->
+            <pub:Group>?</pub:Group>
+            <!--Optional:-->
+            <pub:Track>?</pub:Track>
+            <!--Optional:-->
+            <pub:Post>?</pub:Post>
+            <!--Optional:-->
+            <pub:EventId>?</pub:EventId>
+            <!--Optional:-->
+            <pub:RaceId>?</pub:RaceId>
+            <!--Optional:-->
+            <pub:Source>?</pub:Source>
+            <!--Optional:-->
+            <pub:SourceIds>?</pub:SourceIds>
+            <!--Optional:-->
+            <pub:TrackCode>?</pub:TrackCode>
+         </tem:Updates>
+      </tem:UpdateNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:wsaConfig action="http://tempuri.org/IUpdateService/UpdateNotification"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>

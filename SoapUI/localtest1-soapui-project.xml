@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="43450e93-a030-444a-949b-be61705d3e12" activeEnvironment="Default" name="localtest1" resourceRoot="${projectDir}" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="78ca33ca-18d0-4a3c-9aaa-98d48c951843" wsaVersion="NONE" name="ToteLinkUpdateSOAP" type="wsdl" bindingName="{http://schema.unitedtote.com/ToteLink/2008/06/PubSub}ToteLinkUpdateSOAP" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/UtoteServices/services/ToteLinkUpdateService?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/UtoteServices/services/ToteLinkUpdateService?wsdl"><con:part><con:url>http://localhost:8080/UtoteServices/services/ToteLinkUpdateService?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ToteLinkUpdate" targetNamespace="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://schema.unitedtote.com/ToteLink/2008/06/PubSub" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+      <xs:complexType name="Updates">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="SiteId" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="1" name="RunId" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="1" name="MessageTime" nillable="true" type="xs:dateTime"/>
+          <xs:element minOccurs="1" name="TransactionTime" nillable="true" type="xs:dateTime"/>
+          <xs:element minOccurs="1" name="Type" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="Data" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="Section" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="Group" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="Track" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="Post" nillable="true" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="EventId" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="RaceId" nillable="true" type="xs:int"/>
+          <xs:element minOccurs="0" name="Source" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="SourceIds" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="TrackCode" nillable="true" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Updates" nillable="true" type="tns:Updates"/>
+      <xs:complexType name="StatusChange">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="SiteId" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="1" name="RunId" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="1" name="MessageTime" nillable="true" type="xs:dateTime"/>
+          <xs:element minOccurs="1" name="TransactionTime" nillable="true" type="xs:dateTime"/>
+          <xs:element minOccurs="1" name="Action" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="EventId" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="RaceId" nillable="true" type="xs:int"/>
+          <xs:element minOccurs="0" name="Source" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="Status" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="MTP" nillable="true" type="xs:long"/>
+          <xs:element minOccurs="0" name="SourceIds" nillable="true" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="StatusChange" nillable="true" type="tns:StatusChange"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="StatusNotificationRequest">
+    <wsdl:part name="parameters" element="tns:StatusChange"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="UpdateNotificationRequest">
+    <wsdl:part name="parameters" element="tns:Updates"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ToteLinkUpdate">
+    <wsdl:operation name="StatusNotification">
+      <wsdl:input message="tns:StatusNotificationRequest"></wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateNotification">
+      <wsdl:input message="tns:UpdateNotificationRequest"></wsdl:input>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ToteLinkUpdateSOAP" type="tns:ToteLinkUpdate">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="StatusNotification">
+      <soap:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/PubSub/StatusNotification" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateNotification">
+      <soap:operation soapAction="http://schema.unitedtote.com/ToteLink/2008/06/PubSub/UpdateNotification" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ToteLinkUpdateService">
+    <wsdl:port name="ToteLinkUpdateSOAP" binding="tns:ToteLinkUpdateSOAP">
+      <soap:address location="http://localhost:8080/UtoteServices/services/ToteLinkUpdateService/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/UtoteServices/services/ToteLinkUpdateService/</con:endpoint></con:endpoints><con:operation id="cb780d80-7e8a-4622-a370-9c3072c0da91" isOneWay="false" action="http://schema.unitedtote.com/ToteLink/2008/06/PubSub/StatusNotification" name="StatusNotification" bindingOperationName="StatusNotification" type="One-Way" inputName="" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7e696f38-51ff-4727-b488-ab84468416a6" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://esb1.rtwbeta.com:5380/UtoteServices/services/ToteLinkUpdateService/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pub="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <pub:StatusChange>
+         <SiteId>CHD</SiteId>
+         <RunId>Run3</RunId>
+         <MessageTime>2015-07-14T20:53:00</MessageTime>
+         <TransactionTime>2015-07-14T20:53:00</TransactionTime>
+         <!--Optional:-->
+         <EventId>E3</EventId>
+         <!--Optional:-->
+         <RaceId>3</RaceId>
+         <!--Optional:-->
+         <Source>SoapUI</Source>
+         <Action>cancelled</Action>
+         <!--Optional:-->
+         <Status>cancelled</Status>
+         <!--Optional:-->
+         <MTP>3</MTP>
+         <!--Optional:-->
+         <SourceIds>SUI001,SUI002;SUI003,SUI004</SourceIds>
+      </pub:StatusChange>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://schema.unitedtote.com/ToteLink/2008/06/PubSub/StatusNotification"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="fede8fa2-f98c-452f-8afd-c52364c1385e" isOneWay="false" action="http://schema.unitedtote.com/ToteLink/2008/06/PubSub/UpdateNotification" name="UpdateNotification" bindingOperationName="UpdateNotification" type="One-Way" inputName="" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="557b42da-1149-478e-bd18-e4ee6b6578df" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/UtoteServices/services/ToteLinkUpdateService/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pub="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <pub:Updates>
+         <SiteId>?</SiteId>
+         <RunId>?</RunId>
+         <MessageTime>?</MessageTime>
+         <TransactionTime>?</TransactionTime>
+         <Type>?</Type>
+         <!--Optional:-->
+         <Data>?</Data>
+         <!--Optional:-->
+         <Section>?</Section>
+         <!--Optional:-->
+         <Group>?</Group>
+         <!--Optional:-->
+         <Track>?</Track>
+         <!--Optional:-->
+         <Post>?</Post>
+         <!--Optional:-->
+         <EventId>?</EventId>
+         <!--Optional:-->
+         <RaceId>?</RaceId>
+         <!--Optional:-->
+         <Source>?</Source>
+         <!--Optional:-->
+         <SourceIds>?</SourceIds>
+         <!--Optional:-->
+         <TrackCode>?</TrackCode>
+      </pub:Updates>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://schema.unitedtote.com/ToteLink/2008/06/PubSub/UpdateNotification"/></con:call></con:operation></con:interface><con:testSuite id="d01fda01-723e-483e-b717-6ec0306d90fc" name="ToteLinkUpdateSOAP TestSuite"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="8d2ce6b6-9fb7-4ce4-bf55-ac6ace9c343a" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="StatusNotification TestCase" searchProperties="true"><con:settings/><con:testStep type="request" id="75e88cb7-d02f-4195-9ece-af059bb7b274" name="StatusNotification"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ToteLinkUpdateSOAP</con:interface><con:operation>StatusNotification</con:operation><con:request name="StatusNotification" id="d35bb9d3-082d-4314-839c-d44133f7d937"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/UtoteServices/services/ToteLinkUpdateService/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pub="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <pub:StatusChange>
+         <SiteId>?</SiteId>
+         <RunId>?</RunId>
+         <MessageTime>?</MessageTime>
+         <TransactionTime>?</TransactionTime>
+         <Action>?</Action>
+         <!--Optional:-->
+         <EventId>?</EventId>
+         <!--Optional:-->
+         <RaceId>?</RaceId>
+         <!--Optional:-->
+         <Source>?</Source>
+         <!--Optional:-->
+         <Status>?</Status>
+         <!--Optional:-->
+         <MTP>?</MTP>
+         <!--Optional:-->
+         <SourceIds>?</SourceIds>
+      </pub:StatusChange>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:wsaConfig action="http://schema.unitedtote.com/ToteLink/2008/06/PubSub/StatusNotification"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="699e155e-5182-420c-adcb-0cfb52cafbce" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="UpdateNotification TestCase" searchProperties="true"><con:settings/><con:testStep type="request" id="bc2d1c6d-77e2-4919-a13b-b006834acb0b" name="UpdateNotification"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ToteLinkUpdateSOAP</con:interface><con:operation>UpdateNotification</con:operation><con:request name="UpdateNotification" id="214a069c-0bd4-4e97-8334-6268db9aaeb0"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/UtoteServices/services/ToteLinkUpdateService/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pub="http://schema.unitedtote.com/ToteLink/2008/06/PubSub">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <pub:Updates>
+         <SiteId>?</SiteId>
+         <RunId>?</RunId>
+         <MessageTime>?</MessageTime>
+         <TransactionTime>?</TransactionTime>
+         <Type>?</Type>
+         <!--Optional:-->
+         <Data>?</Data>
+         <!--Optional:-->
+         <Section>?</Section>
+         <!--Optional:-->
+         <Group>?</Group>
+         <!--Optional:-->
+         <Track>?</Track>
+         <!--Optional:-->
+         <Post>?</Post>
+         <!--Optional:-->
+         <EventId>?</EventId>
+         <!--Optional:-->
+         <RaceId>?</RaceId>
+         <!--Optional:-->
+         <Source>?</Source>
+         <!--Optional:-->
+         <SourceIds>?</SourceIds>
+         <!--Optional:-->
+         <TrackCode>?</TrackCode>
+      </pub:Updates>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:wsaConfig action="http://schema.unitedtote.com/ToteLink/2008/06/PubSub/UpdateNotification"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>
