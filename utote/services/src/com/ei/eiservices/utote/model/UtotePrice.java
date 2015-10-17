@@ -187,11 +187,10 @@ public class UtotePrice implements Serializable {
         this.poolPrice = poolPrice;
     }
 
-    public boolean containsFinisher(int runnerId) {
+    public boolean containsFinisher(UtoteFinisher f) {
         String finishers[] = this.finish.split("/");
-        String runner = Integer.toString(runnerId);
         for (String finisher : finishers) {
-            if (finisher.equalsIgnoreCase(runner)) {
+            if (finisher.equalsIgnoreCase(f.getRtwHorsesProgramNumber())) {
                 return true;
             }
         }

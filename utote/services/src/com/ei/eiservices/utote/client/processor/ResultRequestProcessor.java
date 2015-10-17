@@ -61,16 +61,22 @@ public class ResultRequestProcessor {
         UtotePosition p = f.getPosition();
         UtoteResult r = p.getResult();
 
-        // Find the pools that are related to this finisher
+        // Find specifically the WIN/PLC/SHW pools that are related to this finisher
         log4j.debug("{} - eventId={}, raceId={}, p.getPositionId={}, f.getRunnerId={}", method, r.getEventId(), r.getRaceId(), p.getPositionId(), f.getRunnerId());
         r.getPoolPrices().stream()
-        .filter(pp -> pp.hasPrices())
+        .filter(pp -> (pp.hasPrices()
+                && (pp.getPoolId().equalsIgnoreCase(POOL_WIN_ID)
+                        || pp.getPoolId().equalsIgnoreCase(POOL_PLACE_ID)
+                        || pp.getPoolId().equalsIgnoreCase(POOL_SHOW_ID)
+                        )
+                )
+                )
         .forEach(pp -> {
 
             // Find the price pools that are related to this finisher
-            log4j.debug("{} - eventId={}, raceId={}, p.getPositionId={}, f.getRunnerId={}, pp.getPoolName={}", method, r.getEventId(), r.getRaceId(), p.getPositionId(), f.getRunnerId(), pp.getPoolName());
+            log4j.debug("{} - eventId={}, raceId={}, p.getPositionId={}, f.getRtwHorsesProgramNumber={}, pp.getPoolName={}", method, r.getEventId(), r.getRaceId(), p.getPositionId(), f.getRtwHorsesProgramNumber(), pp.getPoolName());
             pp.getPrices().stream()
-            .filter( prc -> prc.containsFinisher(f.getRunnerId()) )
+            .filter( prc -> prc.containsFinisher(f) )
             .forEach(prc -> {
 
                 // Calculate the winnings based on an RTW-based standard wager
@@ -95,7 +101,7 @@ public class ResultRequestProcessor {
                 }
             });
         });
-        log4j.debug("{} - eventId={}, raceId={}, p.getPositionId={}, f.getRunnerId={}, win={}, place={}, show={}", method, r.getEventId(), r.getRaceId(), p.getPositionId(), f.getRunnerId(), f.getRtwWinAmount(), f.getRtwPlaceAmount(), f.getRtwShowAmount());
+        log4j.debug("{} - eventId={}, raceId={}, p.getPositionId={}, update UtoteFinisher={}", method, r.getEventId(), r.getRaceId(), p.getPositionId(), f.toString());
         log4j.exit(method);
     }
 

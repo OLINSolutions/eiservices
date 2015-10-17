@@ -145,11 +145,7 @@ public class UtoteFinisher implements Serializable {
 
 
     public String getRtwHorsesProgramNumber() {
-        String pn = String.valueOf(runnerId);
-        if (null != entryId) {
-            pn += entryId;
-        }
-        return pn;
+        return String.valueOf(runnerId).concat((null != entryId)?entryId:"");
     }
 
     /* (non-Javadoc)
