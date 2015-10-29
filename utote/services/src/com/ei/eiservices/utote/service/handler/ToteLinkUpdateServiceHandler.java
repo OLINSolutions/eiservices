@@ -884,7 +884,8 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                     _statusChange.getRaceId());
             if (null != theRace) {
                 try {
-                    RaceController.updateStatusAndPostTime(theRace, true /* Update the status */, false /* not cancelled */, false /* Don't update post time */);
+                    updateRace(method, _statusChange.getAction(), _statusChange.getEventId(), _statusChange.getRaceId());
+                    // RaceController.updateStatusAndPostTime(theRace, true /* Update the status */, false /* not cancelled */, false /* Don't update post time */);
                 } catch (Exception e) {
                     log4j.error(
                             "{} - *** Action = Race final *** Exception={} calling updateStatusAndPostTime for raceId={} and eventId={} in order to mark as \"{}\", and set post time to \"{}\"\nfor Event={}\n{}",
@@ -1176,6 +1177,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
                                                             _update.isRaceIdSpecified() ? _update.getRaceId() : "N/A",
                                                                     _update.isTrackCodeSpecified() ? _update.getTrackCode() : "N/A");
 
+            /*
             final EntityManagerFactory emF = Configurator.getROEMF();
             final EntityManager em = emF.createEntityManager();
 
@@ -1473,7 +1475,7 @@ public class ToteLinkUpdateServiceHandler implements ToteLinkUpdateServiceSkelet
             if (emF.isOpen()) {
                 emF.close();
             }
-
+             */
         }
 
         private void processUpdateType() {

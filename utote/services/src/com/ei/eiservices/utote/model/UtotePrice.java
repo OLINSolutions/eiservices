@@ -188,7 +188,7 @@ public class UtotePrice implements Serializable {
     }
 
     public boolean containsFinisher(UtoteFinisher f) {
-        String finishers[] = this.finish.split("/");
+        String finishers[] = this.finish.split("[/,]");
         for (String finisher : finishers) {
             if (finisher.equalsIgnoreCase(f.getRtwHorsesProgramNumber())) {
                 return true;

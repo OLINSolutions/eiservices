@@ -35,6 +35,7 @@ import com.ei.eiservices.utote.client.programservice.ProgramServiceStub;
 @NamedQueries({
     @NamedQuery(name="UtoteEvent.findAll", query="SELECT u FROM UtoteEvent u"),
     @NamedQuery(name="UtoteEvent.findByEventId", query="SELECT e from UtoteEvent e where e.eventId = :eventId"),
+    @NamedQuery(name="UtoteEvent.findByRunIdAndEventId", query="SELECT e from UtoteEvent e where e.runId = :runId and e.eventId = :eventId"),
     @NamedQuery(name="UtoteEvent.findSpecific", query="SELECT e from UtoteEvent e where e.runId = :runId and e.eventId = :eventId and e.eventTime = :eventTime")
 })
 public class UtoteEvent implements Serializable {

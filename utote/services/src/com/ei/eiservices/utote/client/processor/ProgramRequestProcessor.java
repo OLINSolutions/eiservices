@@ -9,7 +9,6 @@ package com.ei.eiservices.utote.client.processor;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -425,23 +424,22 @@ public class ProgramRequestProcessor {
         return uRaces;
     }
 
-    private static UtoteEvent findEvent(EntityManager em, String runId, String eventId, Date eventTime) {
-        log4j.entry("findEvent - runId, eventId, eventTime", runId, eventId, eventTime);
-        TypedQuery<UtoteEvent> q = em.createNamedQuery("UtoteEvent.findSpecific", UtoteEvent.class);
+    private static UtoteEvent findEvent(EntityManager em, String runId, String eventId) {
+        log4j.entry("findEvent - runId, eventId, eventTime", runId, eventId);
+        TypedQuery<UtoteEvent> q = em.createNamedQuery("UtoteEvent.findByRunIdAndEventId", UtoteEvent.class);
         q.setParameter("runId", Integer.parseInt(runId));
         q.setParameter("eventId", eventId);
-        q.setParameter("eventTime", eventTime);
         UtoteEvent utoteEvent = null;
         try {
             utoteEvent = q.getSingleResult();
             utoteEvent.setTransients();
         } catch (javax.persistence.NoResultException nre) {
-            log4j.trace("findEvent - Received NoResultException looking for an event");
+            log4j.trace("findEvent - findByRunIdAndEventId - Received NoResultException looking for an event");
         } catch (Exception e) {
-            log4j.error("findEvent - Received Exception looking for an event. Msg={}.\nException={}", e.getMessage(), e);
+            log4j.error("findEvent - findByRunIdAndEventId - Received Exception looking for an event. Msg={}.\nException={}", e.getMessage(), e);
         }
         if (null == utoteEvent) {
-            log4j.debug("findEvent - Existing event NOT FOUND.  RunId={}, EventId={}, EventTime={}", runId, eventId, eventTime);
+            log4j.debug("findEvent - findByRunIdAndEventId - Existing event NOT FOUND.  RunId={}, EventId={}", runId, eventId);
         }
         log4j.exit("findEvent");
         return utoteEvent;
@@ -555,7 +553,7 @@ public class ProgramRequestProcessor {
         // See if the entity already exists
         boolean newEvent = false;
         UtoteEvent utoteEvent =
-                findEvent(em, event.getRunId(), event.getEventId(), event.getEventTime().getTime());
+                findEvent(em, event.getRunId(), event.getEventId());
         if (null == utoteEvent) {
             utoteEvent = new UtoteEvent();
             newEvent = true;
