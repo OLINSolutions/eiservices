@@ -9,7 +9,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -154,18 +153,22 @@ public class RaceController implements Serializable {
         return res;
     }
 
-    private static final ReentrantLock synchronousFinalProcessingLock = new ReentrantLock(true); // Fair threading model to prevent barging
+    /*
+     * private static final ReentrantLock synchronousFinalProcessingLock = new ReentrantLock(true); // Fair threading model to prevent barging
+     */
 
     public static void processRaceFinal(UtoteRace theRace) {
         String method = "RaceController.processRaceFinal";
         log4j.entry(method + " - eventId, raceId", theRace.getEventId(), theRace.getRaceId());
 
+        /*
         // Always lock the thread to force synchronous execution
         log4j.info("{} - About to process a Final status for Event={} and Race={}.",
                 method, theRace.getEventId(), theRace.getRaceId());
         synchronousFinalProcessingLock.lock();
         log4j.info("{} - Lock aquired to process a Final status for Event={} and Race={}.",
                 method, theRace.getEventId(), theRace.getRaceId());
+         */
 
         try {
 
@@ -314,10 +317,14 @@ public class RaceController implements Serializable {
 
         } finally {
 
+            /*
             // Release the lock allowing the next waiting final status to be processed
             // if any have been enqueued.
             synchronousFinalProcessingLock.unlock();
             log4j.info("{} - Lock release, finished processing Final status for Event={} and Race={}.",
+                    method, theRace.getEventId(), theRace.getRaceId());
+             */
+            log4j.debug("{} - Finished processing Final status for Event={} and Race={}.",
                     method, theRace.getEventId(), theRace.getRaceId());
 
         }

@@ -85,8 +85,8 @@ public class UtoteRace implements Serializable {
     @Column(nullable=true)
     private Integer idParent = null;
 
-    @Column(length=255, nullable=false)
-    private String live = null;
+    @Column(length=255, nullable=true)
+    private String live = "";
 
     @Column(nullable=false)
     private int numberOfRunners = 0;
@@ -453,7 +453,7 @@ public class UtoteRace implements Serializable {
     }
 
     public String getLive() {
-        return this.live;
+        return (null == this.live)?"":this.live;
     }
 
     public void setLive(String live) {
@@ -485,7 +485,7 @@ public class UtoteRace implements Serializable {
     }
 
     public Long getPostTime() {
-        return this.postTime;
+        return (null == this.postTime)?Long.valueOf(0):this.postTime;
     }
 
     public void setPostTime(Long postTime) {

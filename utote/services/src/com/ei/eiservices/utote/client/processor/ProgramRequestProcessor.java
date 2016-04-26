@@ -74,7 +74,7 @@ public class ProgramRequestProcessor {
         if (entries.isEntrySpecified()) {
 
             // Get the current Runners entity collection, if exists
-            uEntries = newParent?new ArrayList<UtoteEntry>():parent.getEntries();
+            uEntries = newParent?new ArrayList<UtoteEntry>():((parent.getEntries() == null)?new ArrayList<UtoteEntry>():parent.getEntries());
 
             final EntityManagerFactory emF = Configurator.getRWEMF();
             final EntityManager em = emF.createEntityManager();
